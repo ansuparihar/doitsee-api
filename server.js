@@ -19,7 +19,7 @@ process.on("unhandledRejection", (err) => {
   process.exit(1);
 });
 
-import("./dist/index.mjs")
+import("./index.mjs")
   .then(() => {
     console.log("[doitsee-api] Bundle loaded successfully");
   })
