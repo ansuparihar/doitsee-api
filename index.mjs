@@ -81780,7 +81780,7 @@ function genOtp() {
 function toOrder(o, ctx = {}) {
   let otp = null;
   if (o.deliveryOtp) {
-    if (ctx.viewerRole === "admin") otp = o.deliveryOtp;
+    if (isSuperAdmin(ctx.viewerRole)) otp = o.deliveryOtp;
     else if (ctx.viewerRole === "customer" && o.customerId === ctx.viewerId) otp = o.deliveryOtp;
   }
   return {
@@ -82172,7 +82172,7 @@ router8.patch("/orders/:id/status", authenticate, async (req, res) => {
   const role = req.user.role;
   const next = body.data.status;
   let allowed = false;
-  if (role === "admin") {
+  if (isSuperAdmin(role)) {
     allowed = true;
   } else if (role === "vendor") {
     const vendorIds = await getMyVendorIds(req.user.id);
@@ -82226,7 +82226,7 @@ router8.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-  } else if (role !== "admin") {
+  } else if (!isSuperAdmin(role)) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
@@ -82319,7 +82319,7 @@ router8.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-  } else if (role !== "admin") {
+  } else if (!isSuperAdmin(role)) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
@@ -82370,7 +82370,7 @@ router8.post("/orders/:id/auto-assign", authenticate, async (req, res) => {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-  } else if (role !== "admin") {
+  } else if (!isSuperAdmin(role)) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
