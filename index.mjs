@@ -58785,6 +58785,7 @@ var ListOrdersResponse = objectType({
       vendorRatingComment: stringType().nullish(),
       deliveryRating: numberType().nullish(),
       deliveryRatingComment: stringType().nullish(),
+      razorpayPaymentId: stringType().nullish(),
       createdAt: stringType()
     })
   ),
@@ -58805,13 +58806,17 @@ var CreateOrderBody = objectType({
   deliveryLng: numberType().optional(),
   paymentMethod: enumType(["cod", "wallet", "online"]),
   couponCode: stringType().optional(),
-  notes: stringType().optional()
+  notes: stringType().optional(),
+  clientOrderId: stringType().optional().describe(
+    "Client-generated idempotency key (UUID). Resubmitting the same key returns the existing order instead of creating a duplicate."
+  )
 });
 var GetPaymentConfigResponse = objectType({
   upiEnabled: booleanType(),
   razorpayEnabled: booleanType(),
   upiId: stringType().nullish(),
-  upiName: stringType().nullish()
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish()
 });
 var CreateRazorpayOrderBody = objectType({
   orderId: numberType()
@@ -58884,6 +58889,7 @@ var GetOrderResponse = objectType({
   vendorRatingComment: stringType().nullish(),
   deliveryRating: numberType().nullish(),
   deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
   createdAt: stringType()
 });
 var UpdateOrderStatusParams = objectType({
@@ -58949,6 +58955,7 @@ var UpdateOrderStatusResponse = objectType({
   vendorRatingComment: stringType().nullish(),
   deliveryRating: numberType().nullish(),
   deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
   createdAt: stringType()
 });
 var AssignDeliveryParams = objectType({
@@ -59006,6 +59013,7 @@ var AssignDeliveryResponse = objectType({
   vendorRatingComment: stringType().nullish(),
   deliveryRating: numberType().nullish(),
   deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
   createdAt: stringType()
 });
 var VerifyDeliveryOtpParams = objectType({
@@ -59063,6 +59071,7 @@ var VerifyDeliveryOtpResponse = objectType({
   vendorRatingComment: stringType().nullish(),
   deliveryRating: numberType().nullish(),
   deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
   createdAt: stringType()
 });
 var RateOrderParams = objectType({
@@ -59125,6 +59134,7 @@ var RateOrderResponse = objectType({
   vendorRatingComment: stringType().nullish(),
   deliveryRating: numberType().nullish(),
   deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
   createdAt: stringType()
 });
 var AutoAssignDeliveryParams = objectType({
@@ -59598,6 +59608,7 @@ var GetAdminDashboardResponse = objectType({
       vendorRatingComment: stringType().nullish(),
       deliveryRating: numberType().nullish(),
       deliveryRatingComment: stringType().nullish(),
+      razorpayPaymentId: stringType().nullish(),
       createdAt: stringType()
     })
   ).optional(),
@@ -59671,8 +59682,14 @@ var GetAdminSettingsResponse = objectType({
   supportPhone: stringType().nullish(),
   razorpayKeyId: stringType().nullish(),
   razorpayKeySecret: stringType().nullish(),
+  razorpayWebhookSecret: stringType().nullish().describe(
+    "Razorpay webhook signing secret. Used server-side to verify webhook authenticity."
+  ),
   upiId: stringType().nullish(),
-  upiName: stringType().nullish()
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
+  )
 });
 var UpdateAdminSettingsBody = objectType({
   commissionRate: numberType().optional(),
@@ -59685,8 +59702,12 @@ var UpdateAdminSettingsBody = objectType({
   supportPhone: stringType().optional(),
   razorpayKeyId: stringType().optional(),
   razorpayKeySecret: stringType().optional(),
+  razorpayWebhookSecret: stringType().optional().describe("Razorpay webhook signing secret. Send empty string to clear."),
   upiId: stringType().optional(),
-  upiName: stringType().optional()
+  upiName: stringType().optional(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary). Send empty string to clear."
+  )
 });
 var UpdateAdminSettingsResponse = objectType({
   id: numberType(),
@@ -59700,8 +59721,14 @@ var UpdateAdminSettingsResponse = objectType({
   supportPhone: stringType().nullish(),
   razorpayKeyId: stringType().nullish(),
   razorpayKeySecret: stringType().nullish(),
+  razorpayWebhookSecret: stringType().nullish().describe(
+    "Razorpay webhook signing secret. Used server-side to verify webhook authenticity."
+  ),
   upiId: stringType().nullish(),
-  upiName: stringType().nullish()
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
+  )
 });
 var ListSubscriptionPlansResponseItem = objectType({
   id: numberType(),
@@ -64787,6 +64814,9 @@ var Index = class {
 };
 function index(name) {
   return new IndexBuilderOn(false, name);
+}
+function uniqueIndex(name) {
+  return new IndexBuilderOn(true, name);
 }
 
 // ../../node_modules/.pnpm/drizzle-orm@0.45.2_@types+pg@8.18.0_pg@8.20.0/node_modules/drizzle-orm/pg-core/primary-keys.js
@@ -80372,6 +80402,8 @@ var ordersTable = pgTable("orders", {
   couponCode: text("coupon_code"),
   notes: text("notes"),
   razorpayOrderId: text("razorpay_order_id"),
+  razorpayPaymentId: text("razorpay_payment_id"),
+  clientOrderId: text("client_order_id"),
   estimatedDeliveryTime: text("estimated_delivery_time"),
   deliveredAt: timestamp("delivered_at"),
   deliveryOtp: text("delivery_otp"),
@@ -80387,7 +80419,10 @@ var ordersTable = pgTable("orders", {
   index("orders_city_id_idx").on(t2.cityId),
   index("orders_delivery_partner_id_idx").on(t2.deliveryPartnerId),
   index("orders_status_idx").on(t2.status),
-  index("orders_created_at_idx").on(t2.createdAt)
+  index("orders_created_at_idx").on(t2.createdAt),
+  // Idempotency is scoped per customer: the same client-generated key from
+  // different customers must never collide.
+  uniqueIndex("orders_customer_client_order_id_unique").on(t2.customerId, t2.clientOrderId)
 ]);
 var insertOrderSchema = createInsertSchema(ordersTable).omit({ id: true, createdAt: true });
 
@@ -80530,8 +80565,10 @@ var adminSettingsTable = pgTable("admin_settings", {
   supportPhone: text("support_phone"),
   razorpayKeyId: text("razorpay_key_id"),
   razorpayKeySecret: text("razorpay_key_secret"),
+  razorpayWebhookSecret: text("razorpay_webhook_secret"),
   upiId: text("upi_id"),
   upiName: text("upi_name"),
+  upiQrImage: text("upi_qr_image"),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 var insertAdminSettingsSchema = createInsertSchema(adminSettingsTable).omit({ id: true });
@@ -82033,6 +82070,7 @@ function toOrder(o, ctx = {}) {
     total: Number(o.total),
     paymentMethod: o.paymentMethod,
     paymentStatus: o.paymentStatus,
+    razorpayPaymentId: o.razorpayPaymentId ?? null,
     couponCode: o.couponCode,
     notes: o.notes,
     estimatedDeliveryTime: o.estimatedDeliveryTime,
@@ -82236,7 +82274,23 @@ router8.post("/orders", authenticate, async (req, res) => {
     res.status(400).json({ error: body.error.message });
     return;
   }
-  const { vendorId, items, deliveryAddress, paymentMethod, couponCode, notes, deliveryLat, deliveryLng } = body.data;
+  const { vendorId, items, deliveryAddress, paymentMethod, couponCode, notes, deliveryLat, deliveryLng, clientOrderId } = body.data;
+  const respondExisting = async (key) => {
+    const [existing] = await db.select().from(ordersTable).where(and(eq(ordersTable.clientOrderId, key), eq(ordersTable.customerId, req.user.id)));
+    if (!existing) return false;
+    const [v] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, existing.vendorId));
+    const [vUser] = v?.userId ? await db.select().from(usersTable).where(eq(usersTable.id, v.userId)) : [];
+    res.status(200).json(toOrder(existing, {
+      customerName: req.user.name,
+      customerPhone: null,
+      vendorName: v?.shopName,
+      vendorPhone: vUser?.phone ?? null,
+      viewerRole: "customer",
+      viewerId: req.user.id
+    }));
+    return true;
+  };
+  if (clientOrderId && await respondExisting(clientOrderId)) return;
   let subtotal = 0;
   const orderItems = [];
   for (const item of items) {
@@ -82254,26 +82308,34 @@ router8.post("/orders", authenticate, async (req, res) => {
   const total = subtotal + deliveryFee;
   const deliveryOtp = genOtp();
   const [vendorForCity] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, vendorId));
-  const [order] = await db.insert(ordersTable).values({
-    customerId: req.user.id,
-    vendorId,
-    status: "pending",
-    cityId: vendorForCity?.cityId ?? null,
-    items: orderItems,
-    deliveryAddress,
-    deliveryLat: deliveryLat != null ? String(deliveryLat) : null,
-    deliveryLng: deliveryLng != null ? String(deliveryLng) : null,
-    subtotal: String(subtotal),
-    deliveryFee: String(deliveryFee),
-    discount: "0",
-    total: String(total),
-    paymentMethod,
-    paymentStatus: "pending",
-    couponCode: couponCode ?? null,
-    notes: notes ?? null,
-    estimatedDeliveryTime: "30-45 minutes",
-    deliveryOtp
-  }).returning();
+  let order;
+  try {
+    [order] = await db.insert(ordersTable).values({
+      customerId: req.user.id,
+      vendorId,
+      status: "pending",
+      cityId: vendorForCity?.cityId ?? null,
+      items: orderItems,
+      deliveryAddress,
+      deliveryLat: deliveryLat != null ? String(deliveryLat) : null,
+      deliveryLng: deliveryLng != null ? String(deliveryLng) : null,
+      subtotal: String(subtotal),
+      deliveryFee: String(deliveryFee),
+      discount: "0",
+      total: String(total),
+      paymentMethod,
+      paymentStatus: "pending",
+      couponCode: couponCode ?? null,
+      notes: notes ?? null,
+      clientOrderId: clientOrderId ?? null,
+      estimatedDeliveryTime: "30-45 minutes",
+      deliveryOtp
+    }).returning();
+  } catch (err) {
+    const code = err?.code ?? err?.cause?.code;
+    if (code === "23505" && clientOrderId && await respondExisting(clientOrderId)) return;
+    throw err;
+  }
   if (paymentMethod === "wallet") {
     await db.insert(walletTransactionsTable).values({
       userId: req.user.id,
@@ -83291,8 +83353,10 @@ function toSettings(s2) {
     supportPhone: s2.supportPhone,
     razorpayKeyId: s2.razorpayKeyId,
     razorpayKeySecret: s2.razorpayKeySecret,
+    razorpayWebhookSecret: s2.razorpayWebhookSecret,
     upiId: s2.upiId,
-    upiName: s2.upiName
+    upiName: s2.upiName,
+    upiQrImage: s2.upiQrImage
   };
 }
 router16.get("/admin/dashboard", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
@@ -83765,12 +83829,37 @@ var city_admins_default = router19;
 var import_express20 = __toESM(require_express2(), 1);
 import crypto3 from "node:crypto";
 var router20 = (0, import_express20.Router)();
+async function markOrderPaid(orderId, paymentId) {
+  const [updated] = await db.update(ordersTable).set({ paymentStatus: "paid", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
+  return updated ? "paid" : "noop";
+}
+async function markOrderFailed(orderId, paymentId) {
+  const [updated] = await db.update(ordersTable).set({ paymentStatus: "failed", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
+  return updated ? "failed" : "noop";
+}
+async function resolveOrderId(rzpOrderId, notes) {
+  const rawNote = notes?.orderId;
+  const noteId = typeof rawNote === "string" || typeof rawNote === "number" ? Number(rawNote) : NaN;
+  if (Number.isInteger(noteId) && noteId > 0) {
+    const [o] = await db.select({ id: ordersTable.id }).from(ordersTable).where(eq(ordersTable.id, noteId));
+    if (o) return o.id;
+  }
+  if (rzpOrderId) {
+    const [o] = await db.select({ id: ordersTable.id }).from(ordersTable).where(eq(ordersTable.razorpayOrderId, rzpOrderId));
+    if (o) return o.id;
+  }
+  return null;
+}
+function rawBodyOf(req) {
+  return req.rawBody;
+}
 router20.get("/payments/config", authenticate, async (_req, res) => {
   const [settings] = await db.select().from(adminSettingsTable);
   const upiId = settings?.upiId?.trim() || null;
   const upiName = settings?.upiName?.trim() || null;
+  const upiQrImage = settings?.upiQrImage?.trim() || null;
   const razorpayEnabled = Boolean(settings?.razorpayKeyId?.trim() && settings?.razorpayKeySecret?.trim());
-  res.json({ upiEnabled: Boolean(upiId), upiId, upiName, razorpayEnabled });
+  res.json({ upiEnabled: Boolean(upiId || upiQrImage), upiId, upiName, upiQrImage, razorpayEnabled });
 });
 router20.post("/payments/razorpay/order", authenticate, async (req, res) => {
   const parsed = CreateRazorpayOrderBody.safeParse(req.body);
@@ -83871,8 +83960,82 @@ router20.post("/payments/razorpay/verify", authenticate, async (req, res) => {
     res.status(400).json({ error: "Payment verification failed" });
     return;
   }
-  const [updated] = await db.update(ordersTable).set({ paymentStatus: "paid" }).where(eq(ordersTable.id, orderId)).returning();
-  res.json({ success: true, paymentStatus: updated.paymentStatus });
+  const result = await markOrderPaid(orderId, razorpayPaymentId);
+  req.log.info({ orderId, paymentId: razorpayPaymentId, result }, "Payment confirmed via client verify");
+  const [finalOrder] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
+  res.json({ success: finalOrder?.paymentStatus === "paid", paymentStatus: finalOrder?.paymentStatus ?? "paid" });
+});
+router20.post("/payments/webhook", async (req, res) => {
+  const signature = req.header("x-razorpay-signature");
+  const raw = rawBodyOf(req);
+  if (!raw || !signature) {
+    req.log.warn({ hasBody: Boolean(raw), hasSig: Boolean(signature) }, "Webhook missing raw body or signature");
+    res.status(400).json({ error: "Invalid webhook request" });
+    return;
+  }
+  const [settings] = await db.select().from(adminSettingsTable);
+  const webhookSecret = settings?.razorpayWebhookSecret?.trim();
+  if (!webhookSecret) {
+    req.log.error("Webhook received but no webhook secret configured in admin settings");
+    res.status(500).json({ error: "Webhook not configured" });
+    return;
+  }
+  const expected = crypto3.createHmac("sha256", webhookSecret).update(raw).digest("hex");
+  const expectedBuf = Buffer.from(expected);
+  const providedBuf = Buffer.from(signature);
+  const valid = expectedBuf.length === providedBuf.length && crypto3.timingSafeEqual(expectedBuf, providedBuf);
+  if (!valid) {
+    req.log.warn("Webhook signature verification failed");
+    res.status(400).json({ error: "Invalid signature" });
+    return;
+  }
+  let event;
+  try {
+    event = JSON.parse(raw.toString("utf8"));
+  } catch {
+    req.log.warn("Webhook payload is not valid JSON");
+    res.status(400).json({ error: "Invalid JSON" });
+    return;
+  }
+  const eventType = event.event;
+  try {
+    if (eventType === "payment.captured" || eventType === "order.paid") {
+      const payment = event.payload?.payment?.entity;
+      const orderEntity = event.payload?.order?.entity;
+      const rzpOrderId = payment?.order_id ?? orderEntity?.id;
+      const paymentId = payment?.id ?? null;
+      const ourOrderId = await resolveOrderId(rzpOrderId, payment?.notes ?? orderEntity?.notes);
+      if (ourOrderId == null) {
+        req.log.warn({ eventType, rzpOrderId }, "Webhook: no matching order found");
+        res.status(200).json({ received: true, handled: false });
+        return;
+      }
+      const result = await markOrderPaid(ourOrderId, paymentId);
+      req.log.info({ eventType, orderId: ourOrderId, paymentId, result }, "Webhook: payment success processed");
+      res.status(200).json({ received: true, handled: true, result });
+      return;
+    }
+    if (eventType === "payment.failed") {
+      const payment = event.payload?.payment?.entity;
+      const rzpOrderId = payment?.order_id;
+      const paymentId = payment?.id ?? null;
+      const ourOrderId = await resolveOrderId(rzpOrderId, payment?.notes);
+      if (ourOrderId == null) {
+        req.log.warn({ eventType, rzpOrderId }, "Webhook: no matching order found");
+        res.status(200).json({ received: true, handled: false });
+        return;
+      }
+      const result = await markOrderFailed(ourOrderId, paymentId);
+      req.log.info({ eventType, orderId: ourOrderId, paymentId, result }, "Webhook: payment failure processed");
+      res.status(200).json({ received: true, handled: true, result });
+      return;
+    }
+    req.log.info({ eventType }, "Webhook: unhandled event type acknowledged");
+    res.status(200).json({ received: true, handled: false });
+  } catch (err) {
+    req.log.error({ err, eventType }, "Webhook processing failed");
+    res.status(500).json({ error: "Webhook processing failed" });
+  }
 });
 var payments_default = router20;
 
@@ -83922,7 +84085,13 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express22.default.json());
+app.use(
+  import_express22.default.json({
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    }
+  })
+);
 app.use(import_express22.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 app.get("/", (_req, res) => {
@@ -83967,8 +84136,20 @@ app.use((req, res) => {
 This is the API server. Open the customer/admin/vendor app instead.`);
   }
 });
-app.use((err, _req, res, _next) => {
-  console.error("[API ERROR]", err && (err.stack || err.message || err));
+app.use((err, req, res, _next) => {
+  const log = req.log ?? logger;
+  log.error({ err }, "Unhandled request error");
+  if (res.headersSent) return;
+  const explicit = typeof err?.status === "number" && err.status || typeof err?.statusCode === "number" && err.statusCode || 0;
+  const status = explicit >= 400 && explicit < 500 ? explicit : 500;
+  if (process.env.NODE_ENV === "production") {
+    res.status(status).json({ error: status >= 500 ? "Server error" : "Bad request" });
+    return;
+  }
+  if (status !== 500) {
+    res.status(status).json({ error: err?.message || "Bad request" });
+    return;
+  }
   const cause = err?.cause || {};
   res.status(500).json({
     error: "Server error",
