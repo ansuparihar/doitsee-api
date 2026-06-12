@@ -20488,27 +20488,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router22;
+    module.exports = Router23;
     module.exports.Route = Route;
-    function Router22(options) {
-      if (!(this instanceof Router22)) {
-        return new Router22(options);
+    function Router23(options) {
+      if (!(this instanceof Router23)) {
+        return new Router23(options);
       }
       const opts = options || {};
-      function router22(req, res, next) {
-        router22.handle(req, res, next);
+      function router23(req, res, next) {
+        router23.handle(req, res, next);
       }
-      Object.setPrototypeOf(router22, this);
-      router22.caseSensitive = opts.caseSensitive;
-      router22.mergeParams = opts.mergeParams;
-      router22.params = {};
-      router22.strict = opts.strict;
-      router22.stack = [];
-      return router22;
+      Object.setPrototypeOf(router23, this);
+      router23.caseSensitive = opts.caseSensitive;
+      router23.mergeParams = opts.mergeParams;
+      router23.params = {};
+      router23.strict = opts.strict;
+      router23.stack = [];
+      return router23;
     }
-    Router22.prototype = function() {
+    Router23.prototype = function() {
     };
-    Router22.prototype.param = function param(name, fn) {
+    Router23.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -20528,7 +20528,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router22.prototype.handle = function handle(req, res, callback) {
+    Router23.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -20655,7 +20655,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router22.prototype.use = function use(handler) {
+    Router23.prototype.use = function use(handler) {
       let offset = 0;
       let path = "/";
       if (typeof handler !== "function") {
@@ -20688,7 +20688,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router22.prototype.route = function route(path) {
+    Router23.prototype.route = function route(path) {
       const route2 = new Route(path);
       const layer = new Layer(path, {
         sensitive: this.caseSensitive,
@@ -20703,7 +20703,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router22.prototype[method] = function(path) {
+      Router23.prototype[method] = function(path) {
         const route = this.route(path);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -20886,13 +20886,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router22 = require_router();
+    var Router23 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router22 = null;
+      var router23 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -20901,13 +20901,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router22 === null) {
-            router22 = new Router22({
+          if (router23 === null) {
+            router23 = new Router23({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router22;
+          return router23;
         }
       });
     };
@@ -20978,15 +20978,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router22 = this.router;
+      var router23 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router22.use(path, fn2);
+          return router23.use(path, fn2);
         }
         debug(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router22.use(path, function mounted_app(req, res, next) {
+        router23.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -23513,7 +23513,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router22 = require_router();
+    var Router23 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23535,8 +23535,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router22.Route;
-    exports.Router = Router22;
+    exports.Route = Router23.Route;
+    exports.Router = Router23;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -53944,12 +53944,12 @@ var require_src5 = __commonJS({
 });
 
 // src/app.ts
-var import_express22 = __toESM(require_express2(), 1);
+var import_express23 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express21 = __toESM(require_express2(), 1);
+var import_express22 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -58174,14 +58174,16 @@ var ListCategoriesResponseItem = objectType({
   slug: stringType(),
   icon: stringType().nullish(),
   image: stringType().nullish(),
-  isActive: booleanType().optional()
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
 });
 var ListCategoriesResponse = arrayType(ListCategoriesResponseItem);
 var CreateCategoryBody = objectType({
   name: stringType(),
   slug: stringType(),
   icon: stringType().optional(),
-  image: stringType().optional()
+  image: stringType().optional(),
+  sortOrder: numberType().optional()
 });
 var UpdateCategoryParams = objectType({
   id: coerce.number()
@@ -58191,7 +58193,8 @@ var UpdateCategoryBody = objectType({
   slug: stringType().optional(),
   icon: stringType().optional(),
   image: stringType().optional(),
-  isActive: booleanType().optional()
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
 });
 var UpdateCategoryResponse = objectType({
   id: numberType(),
@@ -58199,9 +58202,50 @@ var UpdateCategoryResponse = objectType({
   slug: stringType(),
   icon: stringType().nullish(),
   image: stringType().nullish(),
-  isActive: booleanType().optional()
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
 });
 var DeleteCategoryParams = objectType({
+  id: coerce.number()
+});
+var ListSubcategoriesQueryParams = objectType({
+  categoryId: coerce.number().optional()
+});
+var ListSubcategoriesResponseItem = objectType({
+  id: numberType(),
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var ListSubcategoriesResponse = arrayType(
+  ListSubcategoriesResponseItem
+);
+var CreateSubcategoryBody = objectType({
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  sortOrder: numberType().optional()
+});
+var UpdateSubcategoryParams = objectType({
+  id: coerce.number()
+});
+var UpdateSubcategoryBody = objectType({
+  name: stringType().optional(),
+  slug: stringType().optional(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var UpdateSubcategoryResponse = objectType({
+  id: numberType(),
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var DeleteSubcategoryParams = objectType({
   id: coerce.number()
 });
 var ListVendorsQueryParams = objectType({
@@ -58467,6 +58511,7 @@ var GetVendorStatsResponse = objectType({
 var ListProductsQueryParams = objectType({
   vendorId: coerce.number().optional(),
   categoryId: coerce.number().optional(),
+  subcategoryId: coerce.number().optional(),
   search: coerce.string().optional(),
   includePending: coerce.boolean().optional(),
   page: coerce.number().optional(),
@@ -58480,6 +58525,8 @@ var ListProductsResponse = objectType({
       vendorName: stringType().nullish(),
       categoryId: numberType(),
       categoryName: stringType().nullish(),
+      subcategoryId: numberType().nullish(),
+      subcategoryName: stringType().nullish(),
       name: stringType(),
       description: stringType().nullish(),
       price: numberType(),
@@ -58501,6 +58548,7 @@ var ListProductsResponse = objectType({
 var CreateProductBody = objectType({
   vendorId: numberType(),
   categoryId: numberType(),
+  subcategoryId: numberType().optional(),
   name: stringType(),
   description: stringType().optional(),
   price: numberType(),
@@ -58518,6 +58566,8 @@ var GetProductResponse = objectType({
   vendorName: stringType().nullish(),
   categoryId: numberType(),
   categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
   name: stringType(),
   description: stringType().nullish(),
   price: numberType(),
@@ -58536,6 +58586,7 @@ var UpdateProductParams = objectType({
 });
 var UpdateProductBody = objectType({
   categoryId: numberType().optional(),
+  subcategoryId: numberType().optional(),
   name: stringType().optional(),
   description: stringType().optional(),
   price: numberType().optional(),
@@ -58551,6 +58602,8 @@ var UpdateProductResponse = objectType({
   vendorName: stringType().nullish(),
   categoryId: numberType(),
   categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
   name: stringType(),
   description: stringType().nullish(),
   price: numberType(),
@@ -58575,6 +58628,8 @@ var ListPendingProductsResponse = objectType({
       vendorName: stringType().nullish(),
       categoryId: numberType(),
       categoryName: stringType().nullish(),
+      subcategoryId: numberType().nullish(),
+      subcategoryName: stringType().nullish(),
       name: stringType(),
       description: stringType().nullish(),
       price: numberType(),
@@ -58602,6 +58657,8 @@ var ApproveProductResponse = objectType({
   vendorName: stringType().nullish(),
   categoryId: numberType(),
   categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
   name: stringType(),
   description: stringType().nullish(),
   price: numberType(),
@@ -58624,6 +58681,8 @@ var RejectProductResponse = objectType({
   vendorName: stringType().nullish(),
   categoryId: numberType(),
   categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
   name: stringType(),
   description: stringType().nullish(),
   price: numberType(),
@@ -58780,6 +58839,8 @@ var ListOrdersResponse = objectType({
       customerPhone: stringType().nullish(),
       vendorPhone: stringType().nullish(),
       deliveryPartnerPhone: stringType().nullish(),
+      deliveryPartnerLat: numberType().nullish(),
+      deliveryPartnerLng: numberType().nullish(),
       deliveryOtp: stringType().nullish(),
       vendorRating: numberType().nullish(),
       vendorRatingComment: stringType().nullish(),
@@ -58884,6 +58945,8 @@ var GetOrderResponse = objectType({
   customerPhone: stringType().nullish(),
   vendorPhone: stringType().nullish(),
   deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
   deliveryOtp: stringType().nullish(),
   vendorRating: numberType().nullish(),
   vendorRatingComment: stringType().nullish(),
@@ -58950,6 +59013,8 @@ var UpdateOrderStatusResponse = objectType({
   customerPhone: stringType().nullish(),
   vendorPhone: stringType().nullish(),
   deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
   deliveryOtp: stringType().nullish(),
   vendorRating: numberType().nullish(),
   vendorRatingComment: stringType().nullish(),
@@ -59008,6 +59073,8 @@ var AssignDeliveryResponse = objectType({
   customerPhone: stringType().nullish(),
   vendorPhone: stringType().nullish(),
   deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
   deliveryOtp: stringType().nullish(),
   vendorRating: numberType().nullish(),
   vendorRatingComment: stringType().nullish(),
@@ -59066,6 +59133,8 @@ var VerifyDeliveryOtpResponse = objectType({
   customerPhone: stringType().nullish(),
   vendorPhone: stringType().nullish(),
   deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
   deliveryOtp: stringType().nullish(),
   vendorRating: numberType().nullish(),
   vendorRatingComment: stringType().nullish(),
@@ -59129,6 +59198,8 @@ var RateOrderResponse = objectType({
   customerPhone: stringType().nullish(),
   vendorPhone: stringType().nullish(),
   deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
   deliveryOtp: stringType().nullish(),
   vendorRating: numberType().nullish(),
   vendorRatingComment: stringType().nullish(),
@@ -59195,6 +59266,15 @@ var CreateDeliveryPartnerBody = objectType({
   phone: stringType(),
   vehicle: stringType(),
   vehicleNumber: stringType()
+});
+var AdminCreateDeliveryPartnerBody = objectType({
+  name: stringType(),
+  email: stringType(),
+  password: stringType(),
+  phone: stringType().optional(),
+  cityId: numberType(),
+  vehicle: stringType().optional(),
+  vehicleNumber: stringType().optional()
 });
 var GetDeliveryPartnerParams = objectType({
   id: coerce.number()
@@ -59603,6 +59683,8 @@ var GetAdminDashboardResponse = objectType({
       customerPhone: stringType().nullish(),
       vendorPhone: stringType().nullish(),
       deliveryPartnerPhone: stringType().nullish(),
+      deliveryPartnerLat: numberType().nullish(),
+      deliveryPartnerLng: numberType().nullish(),
       deliveryOtp: stringType().nullish(),
       vendorRating: numberType().nullish(),
       vendorRatingComment: stringType().nullish(),
@@ -68872,6 +68954,7 @@ __export(schema_exports, {
   insertOrderSchema: () => insertOrderSchema,
   insertProductSchema: () => insertProductSchema,
   insertReviewSchema: () => insertReviewSchema,
+  insertSubcategorySchema: () => insertSubcategorySchema,
   insertSubscriptionPlanSchema: () => insertSubscriptionPlanSchema,
   insertUserSchema: () => insertUserSchema,
   insertVendorSchema: () => insertVendorSchema,
@@ -68885,6 +68968,7 @@ __export(schema_exports, {
   phoneOtpsTable: () => phoneOtpsTable,
   productsTable: () => productsTable,
   reviewsTable: () => reviewsTable,
+  subcategoriesTable: () => subcategoriesTable,
   subscriptionPlansTable: () => subscriptionPlansTable,
   txTypeEnum: () => txTypeEnum,
   userRoleEnum: () => userRoleEnum,
@@ -80314,9 +80398,23 @@ var categoriesTable = pgTable("categories", {
   icon: text("icon"),
   image: text("image"),
   isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
+var subcategoriesTable = pgTable("subcategories", {
+  id: serial("id").primaryKey(),
+  categoryId: integer("category_id").notNull().references(() => categoriesTable.id),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (t2) => [
+  uniqueIndex("subcategories_category_slug_idx").on(t2.categoryId, t2.slug),
+  index("subcategories_category_id_idx").on(t2.categoryId)
+]);
 var insertCategorySchema = createInsertSchema(categoriesTable).omit({ id: true, createdAt: true });
+var insertSubcategorySchema = createInsertSchema(subcategoriesTable).omit({ id: true, createdAt: true });
 
 // ../../lib/db/src/schema/vendors.ts
 var vendorStatusEnum = pgEnum("vendor_status", ["pending", "approved", "rejected", "suspended"]);
@@ -80360,6 +80458,7 @@ var productsTable = pgTable("products", {
   id: serial("id").primaryKey(),
   vendorId: integer("vendor_id").notNull().references(() => vendorsTable.id),
   categoryId: integer("category_id").notNull().references(() => categoriesTable.id),
+  subcategoryId: integer("subcategory_id").references(() => subcategoriesTable.id),
   name: text("name").notNull(),
   description: text("description"),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
@@ -80374,7 +80473,8 @@ var productsTable = pgTable("products", {
   createdAt: timestamp("created_at").notNull().defaultNow()
 }, (t2) => [
   index("products_vendor_id_idx").on(t2.vendorId),
-  index("products_category_id_idx").on(t2.categoryId)
+  index("products_category_id_idx").on(t2.categoryId),
+  index("products_subcategory_id_idx").on(t2.subcategoryId)
 ]);
 var insertProductSchema = createInsertSchema(productsTable).omit({ id: true, createdAt: true });
 
@@ -81477,11 +81577,12 @@ var users_default = router3;
 var import_express4 = __toESM(require_express2(), 1);
 var router4 = (0, import_express4.Router)();
 function toCat(c) {
-  return { id: c.id, name: c.name, slug: c.slug, icon: c.icon, image: c.image, isActive: c.isActive };
+  return { id: c.id, name: c.name, slug: c.slug, icon: c.icon, image: c.image, isActive: c.isActive, sortOrder: c.sortOrder };
 }
 router4.get("/categories", optionalAuthenticate, async (req, res) => {
   const isAdmin = req.user?.role === "admin" || req.user?.role === "super_admin";
-  const cats = isAdmin ? await db.select().from(categoriesTable) : await db.select().from(categoriesTable).where(eq(categoriesTable.isActive, true));
+  const order = [asc(categoriesTable.sortOrder), asc(categoriesTable.name)];
+  const cats = isAdmin ? await db.select().from(categoriesTable).orderBy(...order) : await db.select().from(categoriesTable).where(eq(categoriesTable.isActive, true)).orderBy(...order);
   res.json(cats.map(toCat));
 });
 router4.post("/categories", authenticate, requireRole("admin"), async (req, res) => {
@@ -81514,9 +81615,63 @@ router4.delete("/categories/:id", authenticate, requireRole("admin"), async (req
 });
 var categories_default = router4;
 
-// src/routes/vendors.ts
+// src/routes/subcategories.ts
 var import_express5 = __toESM(require_express2(), 1);
 var router5 = (0, import_express5.Router)();
+function toSub(s2) {
+  return { id: s2.id, categoryId: s2.categoryId, name: s2.name, slug: s2.slug, isActive: s2.isActive, sortOrder: s2.sortOrder };
+}
+router5.get("/subcategories", optionalAuthenticate, async (req, res) => {
+  const isAdmin = req.user?.role === "admin" || req.user?.role === "super_admin";
+  const categoryId = req.query.categoryId != null ? parseInt(String(req.query.categoryId), 10) : null;
+  const conditions = [];
+  if (categoryId != null && !Number.isNaN(categoryId)) conditions.push(eq(subcategoriesTable.categoryId, categoryId));
+  if (!isAdmin) {
+    conditions.push(eq(subcategoriesTable.isActive, true));
+    conditions.push(eq(categoriesTable.isActive, true));
+  }
+  const where = conditions.length ? and(...conditions) : void 0;
+  const rows = await db.select({ s: subcategoriesTable }).from(subcategoriesTable).innerJoin(categoriesTable, eq(subcategoriesTable.categoryId, categoriesTable.id)).where(where).orderBy(asc(subcategoriesTable.sortOrder), asc(subcategoriesTable.name));
+  res.json(rows.map((r2) => toSub(r2.s)));
+});
+router5.post("/subcategories", authenticate, requireRole("admin"), async (req, res) => {
+  const body = CreateSubcategoryBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const [cat] = await db.select().from(categoriesTable).where(eq(categoriesTable.id, body.data.categoryId));
+  if (!cat) {
+    res.status(400).json({ error: "Parent category not found" });
+    return;
+  }
+  const [sub] = await db.insert(subcategoriesTable).values(body.data).returning();
+  res.status(201).json(toSub(sub));
+});
+router5.patch("/subcategories/:id", authenticate, requireRole("admin"), async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const body = UpdateSubcategoryBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const [sub] = await db.update(subcategoriesTable).set(body.data).where(eq(subcategoriesTable.id, id)).returning();
+  if (!sub) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  res.json(toSub(sub));
+});
+router5.delete("/subcategories/:id", authenticate, requireRole("admin"), async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  await db.delete(subcategoriesTable).where(eq(subcategoriesTable.id, id));
+  res.sendStatus(204);
+});
+var subcategories_default = router5;
+
+// src/routes/vendors.ts
+var import_express6 = __toESM(require_express2(), 1);
+var router6 = (0, import_express6.Router)();
 function toVendor(v, categoryName, includePayout = false) {
   return {
     id: v.id,
@@ -81551,7 +81706,7 @@ function toVendor(v, categoryName, includePayout = false) {
 function isAdminRole(role) {
   return role === "admin" || role === "super_admin" || role === "city_admin";
 }
-router5.get("/vendors/nearby", async (req, res) => {
+router6.get("/vendors/nearby", async (req, res) => {
   const params = ListNearbyVendorsQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -81564,7 +81719,7 @@ router5.get("/vendors/nearby", async (req, res) => {
   const vendors = await db.select({ v: vendorsTable, catName: categoriesTable.name }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(and(...conditions)).orderBy(desc(vendorsTable.rating)).limit(20);
   res.json(vendors.map(({ v, catName }) => toVendor(v, catName)));
 });
-router5.get("/vendors", optionalAuthenticate, async (req, res) => {
+router6.get("/vendors", optionalAuthenticate, async (req, res) => {
   const params = ListVendorsQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -81588,7 +81743,7 @@ router5.get("/vendors", optionalAuthenticate, async (req, res) => {
     limit
   });
 });
-router5.post("/vendors", authenticate, async (req, res) => {
+router6.post("/vendors", authenticate, async (req, res) => {
   const body = CreateVendorBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -81602,7 +81757,7 @@ router5.post("/vendors", authenticate, async (req, res) => {
   }).returning();
   res.status(201).json(toVendor(vendor, void 0, true));
 });
-router5.get("/vendors/:id", optionalAuthenticate, async (req, res) => {
+router6.get("/vendors/:id", optionalAuthenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, id));
   if (!vendor) {
@@ -81613,7 +81768,7 @@ router5.get("/vendors/:id", optionalAuthenticate, async (req, res) => {
   const includePayout = isAdminRole(req.user?.role) || vendor.userId === req.user?.id;
   res.json(toVendor(vendor, cat?.name, includePayout));
 });
-router5.patch("/vendors/:id", authenticate, async (req, res) => {
+router6.patch("/vendors/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateVendorBody.safeParse(req.body);
   if (!body.success) {
@@ -81657,7 +81812,7 @@ async function cityGuardForVendor(req, vendorId) {
   }
   return { ok: true };
 }
-router5.post("/vendors/:id/approve", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router6.post("/vendors/:id/approve", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const guard = await cityGuardForVendor(req, id);
   if (!guard.ok) {
@@ -81671,7 +81826,7 @@ router5.post("/vendors/:id/approve", authenticate, requireRole("admin", "city_ad
   }
   res.json(toVendor(vendor));
 });
-router5.post("/vendors/:id/reject", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router6.post("/vendors/:id/reject", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const guard = await cityGuardForVendor(req, id);
   if (!guard.ok) {
@@ -81685,7 +81840,7 @@ router5.post("/vendors/:id/reject", authenticate, requireRole("admin", "city_adm
   }
   res.json(toVendor(vendor));
 });
-router5.post("/vendors/:id/suspend", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router6.post("/vendors/:id/suspend", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const guard = await cityGuardForVendor(req, id);
   if (!guard.ok) {
@@ -81699,7 +81854,7 @@ router5.post("/vendors/:id/suspend", authenticate, requireRole("admin", "city_ad
   }
   res.json(toVendor(vendor));
 });
-router5.get("/vendors/:id/stats", authenticate, async (req, res) => {
+router6.get("/vendors/:id/stats", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, id));
   if (!vendor) {
@@ -81724,18 +81879,20 @@ router5.get("/vendors/:id/stats", authenticate, async (req, res) => {
     averageRating: Number(vendor.rating)
   });
 });
-var vendors_default = router5;
+var vendors_default = router6;
 
 // src/routes/products.ts
-var import_express6 = __toESM(require_express2(), 1);
-var router6 = (0, import_express6.Router)();
-function toProduct(p, vendorName, categoryName) {
+var import_express7 = __toESM(require_express2(), 1);
+var router7 = (0, import_express7.Router)();
+function toProduct(p, vendorName, categoryName, subcategoryName) {
   return {
     id: p.id,
     vendorId: p.vendorId,
     vendorName: vendorName ?? null,
     categoryId: p.categoryId,
     categoryName: categoryName ?? null,
+    subcategoryId: p.subcategoryId ?? null,
+    subcategoryName: subcategoryName ?? null,
     name: p.name,
     description: p.description,
     price: Number(p.price),
@@ -81759,7 +81916,29 @@ function getOptionalAuthRole(req) {
     return null;
   }
 }
-router6.get("/products", async (req, res) => {
+function getOptionalAuth(req) {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith("Bearer ")) return null;
+  try {
+    const p = verifyToken(auth.slice(7));
+    return { role: p.role, userId: p.userId };
+  } catch {
+    return null;
+  }
+}
+async function validateTaxonomy(categoryId, subcategoryId) {
+  const [cat] = await db.select().from(categoriesTable).where(eq(categoriesTable.id, categoryId));
+  if (!cat) return "Category not found";
+  if (!cat.isActive) return "Category is disabled";
+  if (subcategoryId != null) {
+    const [sub] = await db.select().from(subcategoriesTable).where(eq(subcategoriesTable.id, subcategoryId));
+    if (!sub) return "Subcategory not found";
+    if (sub.categoryId !== categoryId) return "Subcategory does not belong to the selected category";
+    if (!sub.isActive) return "Subcategory is disabled";
+  }
+  return null;
+}
+router7.get("/products", async (req, res) => {
   const params = ListProductsQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -81783,26 +81962,34 @@ router6.get("/products", async (req, res) => {
   const conditions = [];
   if (params.data?.vendorId) conditions.push(eq(productsTable.vendorId, params.data.vendorId));
   if (params.data?.categoryId) conditions.push(eq(productsTable.categoryId, params.data.categoryId));
+  if (params.data?.subcategoryId) conditions.push(eq(productsTable.subcategoryId, params.data.subcategoryId));
   if (params.data?.search) {
     const q = `%${params.data.search}%`;
     const searchCond = or(
       ilike(productsTable.name, q),
       ilike(productsTable.description, q),
-      ilike(vendorsTable.shopName, q)
+      ilike(vendorsTable.shopName, q),
+      ilike(categoriesTable.name, q),
+      ilike(subcategoriesTable.name, q)
     );
     if (searchCond) conditions.push(searchCond);
   }
-  if (!includePending) conditions.push(eq(productsTable.isApproved, true));
+  if (!includePending) {
+    conditions.push(eq(productsTable.isApproved, true));
+    conditions.push(eq(categoriesTable.isActive, true));
+    const subActive = or(isNull(productsTable.subcategoryId), eq(subcategoriesTable.isActive, true));
+    if (subActive) conditions.push(subActive);
+  }
   const where = conditions.length ? and(...conditions) : void 0;
-  const rows = await db.select({ p: productsTable, vName: vendorsTable.shopName, cName: categoriesTable.name }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)).where(where).orderBy(desc(productsTable.rating), desc(productsTable.createdAt)).limit(limit).offset(offset);
-  const [{ count }] = await db.select({ count: sql`count(*)` }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).where(where);
-  res.json({ data: rows.map((r2) => toProduct(r2.p, r2.vName, r2.cName)), total: Number(count), page, limit });
+  const rows = await db.select({ p: productsTable, vName: vendorsTable.shopName, cName: categoriesTable.name, sName: subcategoriesTable.name }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)).leftJoin(subcategoriesTable, eq(productsTable.subcategoryId, subcategoriesTable.id)).where(where).orderBy(desc(productsTable.rating), desc(productsTable.createdAt)).limit(limit).offset(offset);
+  const [{ count }] = await db.select({ count: sql`count(*)` }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)).leftJoin(subcategoriesTable, eq(productsTable.subcategoryId, subcategoriesTable.id)).where(where);
+  res.json({ data: rows.map((r2) => toProduct(r2.p, r2.vName, r2.cName, r2.sName)), total: Number(count), page, limit });
 });
-router6.get("/products/pending", authenticate, requireRole("admin"), async (_req, res) => {
-  const rows = await db.select({ p: productsTable, vName: vendorsTable.shopName, cName: categoriesTable.name }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)).where(eq(productsTable.isApproved, false)).orderBy(productsTable.createdAt);
-  res.json({ data: rows.map((r2) => toProduct(r2.p, r2.vName, r2.cName)), total: rows.length, page: 1, limit: rows.length });
+router7.get("/products/pending", authenticate, requireRole("admin"), async (_req, res) => {
+  const rows = await db.select({ p: productsTable, vName: vendorsTable.shopName, cName: categoriesTable.name, sName: subcategoriesTable.name }).from(productsTable).leftJoin(vendorsTable, eq(productsTable.vendorId, vendorsTable.id)).leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)).leftJoin(subcategoriesTable, eq(productsTable.subcategoryId, subcategoriesTable.id)).where(eq(productsTable.isApproved, false)).orderBy(productsTable.createdAt);
+  res.json({ data: rows.map((r2) => toProduct(r2.p, r2.vName, r2.cName, r2.sName)), total: rows.length, page: 1, limit: rows.length });
 });
-router6.post("/products", authenticate, async (req, res) => {
+router7.post("/products", authenticate, async (req, res) => {
   const body = CreateProductBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -81815,6 +82002,11 @@ router6.post("/products", authenticate, async (req, res) => {
       return;
     }
   }
+  const taxErr = await validateTaxonomy(body.data.categoryId, body.data.subcategoryId);
+  if (taxErr) {
+    res.status(400).json({ error: taxErr });
+    return;
+  }
   const [product] = await db.insert(productsTable).values({
     ...body.data,
     price: String(body.data.price),
@@ -81824,7 +82016,7 @@ router6.post("/products", authenticate, async (req, res) => {
   }).returning();
   res.status(201).json(toProduct(product));
 });
-router6.post("/products/:id/approve", authenticate, requireRole("admin"), async (req, res) => {
+router7.post("/products/:id/approve", authenticate, requireRole("admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [product] = await db.update(productsTable).set({ isApproved: true, rejectionReason: null }).where(eq(productsTable.id, id)).returning();
   if (!product) {
@@ -81833,7 +82025,7 @@ router6.post("/products/:id/approve", authenticate, requireRole("admin"), async 
   }
   res.json(toProduct(product));
 });
-router6.post("/products/:id/reject", authenticate, requireRole("admin"), async (req, res) => {
+router7.post("/products/:id/reject", authenticate, requireRole("admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const reason = String(req.body?.reason ?? "").trim() || "Not approved";
   const [product] = await db.update(productsTable).set({ isApproved: false, rejectionReason: reason, isAvailable: false }).where(eq(productsTable.id, id)).returning();
@@ -81843,7 +82035,7 @@ router6.post("/products/:id/reject", authenticate, requireRole("admin"), async (
   }
   res.json(toProduct(product));
 });
-router6.get("/products/:id", async (req, res) => {
+router7.get("/products/:id", async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [product] = await db.select().from(productsTable).where(eq(productsTable.id, id));
   if (!product) {
@@ -81869,9 +82061,18 @@ router6.get("/products/:id", async (req, res) => {
   }
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, product.vendorId));
   const [cat] = await db.select().from(categoriesTable).where(eq(categoriesTable.id, product.categoryId));
-  res.json(toProduct(product, vendor?.shopName, cat?.name));
+  const [sub] = product.subcategoryId != null ? await db.select().from(subcategoriesTable).where(eq(subcategoriesTable.id, product.subcategoryId)) : [void 0];
+  const viewer = getOptionalAuth(req);
+  const isAdmin = viewer?.role === "admin";
+  const isOwner = viewer?.role === "vendor" && vendor != null && vendor.userId === viewer.userId;
+  const privileged = isAdmin || isOwner;
+  if (!privileged && (cat?.isActive === false || sub && sub.isActive === false)) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  res.json(toProduct(product, vendor?.shopName, cat?.name, sub?.name));
 });
-router6.patch("/products/:id", authenticate, async (req, res) => {
+router7.patch("/products/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateProductBody.safeParse(req.body);
   if (!body.success) {
@@ -81890,6 +82091,15 @@ router6.patch("/products/:id", authenticate, async (req, res) => {
       return;
     }
   }
+  if (body.data.categoryId != null || body.data.subcategoryId !== void 0) {
+    const effectiveCategoryId = body.data.categoryId ?? existing.categoryId;
+    const effectiveSubcategoryId = body.data.subcategoryId !== void 0 ? body.data.subcategoryId : existing.subcategoryId;
+    const taxErr = await validateTaxonomy(effectiveCategoryId, effectiveSubcategoryId);
+    if (taxErr) {
+      res.status(400).json({ error: taxErr });
+      return;
+    }
+  }
   const updateData = { ...body.data };
   if (body.data.price != null) updateData.price = String(body.data.price);
   if (body.data.mrp != null) updateData.mrp = String(body.data.mrp);
@@ -81900,7 +82110,7 @@ router6.patch("/products/:id", authenticate, async (req, res) => {
   }
   res.json(toProduct(product));
 });
-router6.delete("/products/:id", authenticate, async (req, res) => {
+router7.delete("/products/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [existing] = await db.select().from(productsTable).where(eq(productsTable.id, id));
   if (!existing) {
@@ -81917,11 +82127,11 @@ router6.delete("/products/:id", authenticate, async (req, res) => {
   await db.delete(productsTable).where(eq(productsTable.id, id));
   res.sendStatus(204);
 });
-var products_default = router6;
+var products_default = router7;
 
 // src/routes/cart.ts
-var import_express7 = __toESM(require_express2(), 1);
-var router7 = (0, import_express7.Router)();
+var import_express8 = __toESM(require_express2(), 1);
+var router8 = (0, import_express8.Router)();
 var carts = /* @__PURE__ */ new Map();
 function buildCartResponse(cart) {
   const subtotal = cart.items.reduce((s2, i2) => s2 + i2.subtotal, 0);
@@ -81937,15 +82147,15 @@ function buildCartResponse(cart) {
     itemCount: cart.items.reduce((s2, i2) => s2 + i2.quantity, 0)
   };
 }
-router7.get("/cart", authenticate, async (req, res) => {
+router8.get("/cart", authenticate, async (req, res) => {
   const cart = carts.get(req.user.id) || { vendorId: null, vendorName: null, items: [] };
   res.json(buildCartResponse(cart));
 });
-router7.delete("/cart", authenticate, async (req, res) => {
+router8.delete("/cart", authenticate, async (req, res) => {
   carts.delete(req.user.id);
   res.sendStatus(204);
 });
-router7.post("/cart/items", authenticate, async (req, res) => {
+router8.post("/cart/items", authenticate, async (req, res) => {
   const body = AddCartItemBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -81984,7 +82194,7 @@ router7.post("/cart/items", authenticate, async (req, res) => {
   carts.set(req.user.id, cart);
   res.json(buildCartResponse(cart));
 });
-router7.patch("/cart/items/:productId", authenticate, async (req, res) => {
+router8.patch("/cart/items/:productId", authenticate, async (req, res) => {
   const productId = parseInt(String(req.params.productId), 10);
   const body = UpdateCartItemBody.safeParse(req.body);
   if (!body.success) {
@@ -82013,7 +82223,7 @@ router7.patch("/cart/items/:productId", authenticate, async (req, res) => {
   }
   res.json(buildCartResponse(cart));
 });
-router7.delete("/cart/items/:productId", authenticate, async (req, res) => {
+router8.delete("/cart/items/:productId", authenticate, async (req, res) => {
   const productId = parseInt(String(req.params.productId), 10);
   const cart = carts.get(req.user.id);
   if (!cart) {
@@ -82024,11 +82234,11 @@ router7.delete("/cart/items/:productId", authenticate, async (req, res) => {
   if (cart.items.length === 0) carts.delete(req.user.id);
   res.json(buildCartResponse(cart.items.length ? cart : { vendorId: null, vendorName: null, items: [] }));
 });
-var cart_default = router7;
+var cart_default = router8;
 
 // src/routes/orders.ts
-var import_express8 = __toESM(require_express2(), 1);
-var router8 = (0, import_express8.Router)();
+var import_express9 = __toESM(require_express2(), 1);
+var router9 = (0, import_express9.Router)();
 var VENDOR_TRANSITIONS = {
   pending: ["confirmed", "cancelled"],
   confirmed: ["preparing", "cancelled"],
@@ -82059,11 +82269,13 @@ function toOrder(o, ctx = {}) {
     deliveryPartnerId: o.deliveryPartnerId,
     deliveryPartnerName: ctx.deliveryPartnerName ?? null,
     deliveryPartnerPhone: ctx.deliveryPartnerPhone ?? null,
+    deliveryPartnerLat: ctx.deliveryPartnerLat ?? null,
+    deliveryPartnerLng: ctx.deliveryPartnerLng ?? null,
     status: o.status,
     items: o.items,
     deliveryAddress: o.deliveryAddress,
-    deliveryLat: o.deliveryLat ? Number(o.deliveryLat) : null,
-    deliveryLng: o.deliveryLng ? Number(o.deliveryLng) : null,
+    deliveryLat: o.deliveryLat != null ? Number(o.deliveryLat) : null,
+    deliveryLng: o.deliveryLng != null ? Number(o.deliveryLng) : null,
     subtotal: Number(o.subtotal),
     deliveryFee: Number(o.deliveryFee),
     discount: Number(o.discount),
@@ -82168,7 +82380,46 @@ async function notifyRiderAssigned(orderId, riderUserId, vendorShopName, address
   } catch {
   }
 }
-router8.get("/orders", authenticate, async (req, res) => {
+async function autoAssignNearestRider(order) {
+  const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
+  const cityId = order.cityId ?? vendor?.cityId ?? null;
+  const conds = [
+    eq(deliveryPartnersTable.status, "approved"),
+    eq(deliveryPartnersTable.isOnline, true)
+  ];
+  if (cityId != null) conds.push(eq(deliveryPartnersTable.cityId, cityId));
+  const partners = await db.select().from(deliveryPartnersTable).where(and(...conds));
+  const partnerIds = partners.map((p) => p.id);
+  const busy = partnerIds.length ? await db.select({ id: ordersTable.deliveryPartnerId }).from(ordersTable).where(and(eq(ordersTable.status, "picked_up"), inArray(ordersTable.deliveryPartnerId, partnerIds))) : [];
+  const busyIds = new Set(busy.map((b) => b.id).filter((id) => id != null));
+  const available = partners.filter((p) => p.id !== order.deliveryPartnerId && !busyIds.has(p.id));
+  if (available.length === 0) return null;
+  const vLat = vendor?.lat ? Number(vendor.lat) : null;
+  const vLng = vendor?.lng ? Number(vendor.lng) : null;
+  let chosen = available[0];
+  let chosenDist = null;
+  if (vLat != null && vLng != null) {
+    let bestDist = Infinity;
+    for (const p of available) {
+      if (p.currentLat == null || p.currentLng == null) continue;
+      const d = haversineKm(vLat, vLng, Number(p.currentLat), Number(p.currentLng));
+      if (d < bestDist) {
+        bestDist = d;
+        chosen = p;
+      }
+    }
+    if (Number.isFinite(bestDist)) chosenDist = Math.round(bestDist * 100) / 100;
+  }
+  const claimed = await db.update(ordersTable).set({ deliveryPartnerId: chosen.id }).where(and(
+    eq(ordersTable.id, order.id),
+    eq(ordersTable.status, "ready"),
+    sql`${ordersTable.deliveryPartnerId} IS NULL`
+  )).returning({ id: ordersTable.id });
+  if (claimed.length === 0) return null;
+  await notifyRiderAssigned(order.id, chosen.userId, vendor?.shopName ?? `Vendor #${order.vendorId}`, order.deliveryAddress);
+  return { partnerId: chosen.id, userId: chosen.userId, distanceKm: chosenDist };
+}
+router9.get("/orders", authenticate, async (req, res) => {
   const params = ListOrdersQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -82203,6 +82454,7 @@ router8.get("/orders", authenticate, async (req, res) => {
     }
     if (params.data?.status === "ready") {
       conditions.push(sql`${ordersTable.deliveryPartnerId} IS NULL`);
+      if (partner.cityId != null) conditions.push(eq(ordersTable.cityId, partner.cityId));
     } else {
       conditions.push(eq(ordersTable.deliveryPartnerId, partner.id));
     }
@@ -82242,11 +82494,16 @@ router8.get("/orders", authenticate, async (req, res) => {
     return vendorUsers.find((u) => u.id === v.userId)?.phone ?? null;
   };
   const pInfo = (id) => {
-    if (id == null) return { name: null, phone: null };
+    if (id == null) return { name: null, phone: null, lat: null, lng: null };
     const p = partners.find((x2) => x2.id === id);
-    if (!p) return { name: null, phone: null };
+    if (!p) return { name: null, phone: null, lat: null, lng: null };
     const u = partnerUsers.find((uu) => uu.id === p.userId);
-    return { name: u?.name ?? null, phone: u?.phone ?? null };
+    return {
+      name: u?.name ?? null,
+      phone: u?.phone ?? null,
+      lat: p.currentLat != null ? Number(p.currentLat) : null,
+      lng: p.currentLng != null ? Number(p.currentLng) : null
+    };
   };
   const role = req.user.role;
   res.json({
@@ -82259,6 +82516,8 @@ router8.get("/orders", authenticate, async (req, res) => {
         vendorPhone: vPhone(o.vendorId),
         deliveryPartnerName: p.name,
         deliveryPartnerPhone: p.phone,
+        deliveryPartnerLat: p.lat,
+        deliveryPartnerLng: p.lng,
         viewerRole: role,
         viewerId: req.user.id
       });
@@ -82268,7 +82527,7 @@ router8.get("/orders", authenticate, async (req, res) => {
     limit
   });
 });
-router8.post("/orders", authenticate, async (req, res) => {
+router9.post("/orders", authenticate, async (req, res) => {
   const body = CreateOrderBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -82384,7 +82643,7 @@ router8.post("/orders", authenticate, async (req, res) => {
     viewerId: req.user.id
   }));
 });
-router8.get("/orders/:id", authenticate, async (req, res) => {
+router9.get("/orders/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
   if (!order) {
@@ -82427,12 +82686,16 @@ router8.get("/orders/:id", authenticate, async (req, res) => {
   const [vendorUser] = vendor?.userId ? await db.select().from(usersTable).where(eq(usersTable.id, vendor.userId)) : [];
   let partnerName = null;
   let partnerPhone = null;
+  let partnerLat = null;
+  let partnerLng = null;
   if (order.deliveryPartnerId) {
     const [p] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.id, order.deliveryPartnerId));
     if (p) {
       const [pu] = await db.select().from(usersTable).where(eq(usersTable.id, p.userId));
       partnerName = pu?.name ?? null;
       partnerPhone = pu?.phone ?? null;
+      partnerLat = p.currentLat != null ? Number(p.currentLat) : null;
+      partnerLng = p.currentLng != null ? Number(p.currentLng) : null;
     }
   }
   res.json(toOrder(order, {
@@ -82442,11 +82705,13 @@ router8.get("/orders/:id", authenticate, async (req, res) => {
     vendorPhone: vendorUser?.phone ?? null,
     deliveryPartnerName: partnerName,
     deliveryPartnerPhone: partnerPhone,
+    deliveryPartnerLat: partnerLat,
+    deliveryPartnerLng: partnerLng,
     viewerRole: role,
     viewerId: req.user.id
   }));
 });
-router8.patch("/orders/:id/status", authenticate, async (req, res) => {
+router9.patch("/orders/:id/status", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateOrderStatusBody.safeParse(req.body);
   if (!body.success) {
@@ -82494,9 +82759,21 @@ router8.patch("/orders/:id/status", authenticate, async (req, res) => {
     await db.update(deliveryPartnersTable).set({ totalDeliveries: sql`total_deliveries + 1` }).where(eq(deliveryPartnersTable.id, updated.deliveryPartnerId));
   }
   await notifyStatusChange(updated, prev);
-  res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
+  let finalOrder = updated;
+  if (next === "ready" && !updated.deliveryPartnerId) {
+    try {
+      const assigned = await autoAssignNearestRider(updated);
+      if (assigned) {
+        const [refreshed] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
+        if (refreshed) finalOrder = refreshed;
+      }
+    } catch (err) {
+      req.log.warn({ err, orderId: id }, "Auto-assign nearest rider on ready failed");
+    }
+  }
+  res.json(toOrder(finalOrder, { viewerRole: role, viewerId: req.user.id }));
 });
-router8.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
+router9.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const otp = String(req.body?.otp ?? "").trim();
   if (!otp) {
@@ -82535,7 +82812,7 @@ router8.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
   await notifyStatusChange(updated, prev);
   res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
 });
-router8.post("/orders/:id/rate", authenticate, async (req, res) => {
+router9.post("/orders/:id/rate", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
   if (!order) {
@@ -82575,7 +82852,7 @@ router8.post("/orders/:id/rate", authenticate, async (req, res) => {
   }
   res.json(toOrder(updated, { viewerRole: "customer", viewerId: req.user.id }));
 });
-router8.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
+router9.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = AssignDeliveryBody.safeParse(req.body);
   if (!body.success) {
@@ -82602,6 +82879,14 @@ router8.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
       res.status(409).json({ error: "Order already assigned" });
       return;
     }
+    if (partner.cityId != null) {
+      const [v] = await db.select({ cityId: vendorsTable.cityId }).from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
+      const resolvedCity = order.cityId ?? v?.cityId ?? null;
+      if (resolvedCity != null && resolvedCity !== partner.cityId) {
+        res.status(403).json({ error: "Order is not in your city" });
+        return;
+      }
+    }
   } else if (role === "vendor") {
     const vendorIds = await getMyVendorIds(req.user.id);
     if (!vendorIds.includes(order.vendorId)) {
@@ -82627,7 +82912,12 @@ router8.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
       return;
     }
   }
-  const [updated] = await db.update(ordersTable).set({ deliveryPartnerId: body.data.deliveryPartnerId }).where(eq(ordersTable.id, id)).returning();
+  const whereCond = role === "delivery_partner" ? and(eq(ordersTable.id, id), sql`${ordersTable.deliveryPartnerId} IS NULL`) : eq(ordersTable.id, id);
+  const [updated] = await db.update(ordersTable).set({ deliveryPartnerId: body.data.deliveryPartnerId }).where(whereCond).returning();
+  if (!updated) {
+    res.status(409).json({ error: "Order already assigned" });
+    return;
+  }
   if (role !== "delivery_partner") {
     const [p] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.id, body.data.deliveryPartnerId));
     const [v] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, updated.vendorId));
@@ -82645,7 +82935,7 @@ function haversineKm(aLat, aLng, bLat, bLng) {
   const h2 = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h2));
 }
-router8.post("/orders/:id/auto-assign", authenticate, async (req, res) => {
+router9.post("/orders/:id/auto-assign", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
   if (!order) {
@@ -82667,47 +82957,28 @@ router8.post("/orders/:id/auto-assign", authenticate, async (req, res) => {
     res.status(409).json({ error: "Order not ready for assignment" });
     return;
   }
-  const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
-  const partners = await db.select().from(deliveryPartnersTable).where(and(eq(deliveryPartnersTable.status, "approved"), eq(deliveryPartnersTable.isOnline, true)));
-  const partnerIds = partners.map((p) => p.id);
-  const busy = partnerIds.length ? await db.select({ id: ordersTable.deliveryPartnerId }).from(ordersTable).where(and(eq(ordersTable.status, "picked_up"), inArray(ordersTable.deliveryPartnerId, partnerIds))) : [];
-  const busyIds = new Set(busy.map((b) => b.id).filter((id2) => id2 != null));
-  const available = partners.filter((p) => p.id !== order.deliveryPartnerId && !busyIds.has(p.id));
-  if (available.length === 0) {
+  if (order.deliveryPartnerId) {
+    res.status(409).json({ error: "Order already has a rider assigned" });
+    return;
+  }
+  const assigned = await autoAssignNearestRider(order);
+  if (!assigned) {
     res.status(404).json({ error: "No available delivery partner online" });
     return;
   }
-  const vLat = vendor?.lat ? Number(vendor.lat) : null;
-  const vLng = vendor?.lng ? Number(vendor.lng) : null;
-  let chosen = available[0];
-  let chosenDist = null;
-  if (vLat != null && vLng != null) {
-    let bestDist = Infinity;
-    for (const p of available) {
-      if (p.currentLat == null || p.currentLng == null) continue;
-      const d = haversineKm(vLat, vLng, Number(p.currentLat), Number(p.currentLng));
-      if (d < bestDist) {
-        bestDist = d;
-        chosen = p;
-      }
-    }
-    if (Number.isFinite(bestDist)) chosenDist = Math.round(bestDist * 100) / 100;
-  }
-  await db.update(ordersTable).set({ deliveryPartnerId: chosen.id }).where(and(eq(ordersTable.id, id), ne(ordersTable.status, "picked_up")));
-  const [partnerUser] = await db.select().from(usersTable).where(eq(usersTable.id, chosen.userId));
-  await notifyRiderAssigned(id, chosen.userId, vendor?.shopName ?? `Vendor #${order.vendorId}`, order.deliveryAddress);
+  const [partnerUser] = await db.select().from(usersTable).where(eq(usersTable.id, assigned.userId));
   res.json({
     orderId: id,
-    deliveryPartnerId: chosen.id,
-    deliveryPartnerName: partnerUser?.name ?? `Partner #${chosen.id}`,
-    distanceKm: chosenDist
+    deliveryPartnerId: assigned.partnerId,
+    deliveryPartnerName: partnerUser?.name ?? `Partner #${assigned.partnerId}`,
+    distanceKm: assigned.distanceKm
   });
 });
-var orders_default = router8;
+var orders_default = router9;
 
 // src/routes/delivery.ts
-var import_express9 = __toESM(require_express2(), 1);
-var router9 = (0, import_express9.Router)();
+var import_express10 = __toESM(require_express2(), 1);
+var router10 = (0, import_express10.Router)();
 function toPartner(p, user, opts) {
   const includePII = opts?.includePII ?? true;
   return {
@@ -82742,7 +83013,7 @@ function toPartner(p, user, opts) {
     createdAt: p.createdAt.toISOString()
   };
 }
-router9.get("/delivery-partners", authenticate, async (req, res) => {
+router10.get("/delivery-partners", authenticate, async (req, res) => {
   const params = ListDeliveryPartnersQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -82792,7 +83063,7 @@ router9.get("/delivery-partners", authenticate, async (req, res) => {
     limit
   });
 });
-router9.post("/delivery-partners", authenticate, async (req, res) => {
+router10.post("/delivery-partners", authenticate, async (req, res) => {
   const body = CreateDeliveryPartnerBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -82802,7 +83073,58 @@ router9.post("/delivery-partners", authenticate, async (req, res) => {
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, partner.userId));
   res.status(201).json(toPartner(partner, user));
 });
-router9.get("/delivery-partners/:id", authenticate, async (req, res) => {
+router10.post("/delivery-partners/admin", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+  const body = AdminCreateDeliveryPartnerBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const { name, email: email3, password, phone, cityId, vehicle, vehicleNumber } = body.data;
+  let targetCityId = cityId;
+  if (req.user.role === "city_admin") {
+    if (req.user.cityId == null) {
+      res.status(403).json({ error: "City admin has no city assigned" });
+      return;
+    }
+    targetCityId = req.user.cityId;
+  }
+  const normalizedEmail = email3.trim().toLowerCase();
+  const [existing] = await db.select().from(usersTable).where(eq(usersTable.email, normalizedEmail));
+  if (existing) {
+    res.status(400).json({ error: "Email already registered" });
+    return;
+  }
+  const hashed = await bcryptjs_default.hash(password, 10);
+  try {
+    const { user, partner } = await db.transaction(async (tx) => {
+      const [user2] = await tx.insert(usersTable).values({
+        name: name.trim(),
+        email: normalizedEmail,
+        password: hashed,
+        phone: phone?.trim() || null,
+        role: "delivery_partner"
+      }).returning();
+      const [partner2] = await tx.insert(deliveryPartnersTable).values({
+        userId: user2.id,
+        cityId: targetCityId ?? null,
+        vehicle: vehicle?.trim() || null,
+        vehicleNumber: vehicleNumber?.trim() || null,
+        status: "approved",
+        kycStatus: "approved"
+      }).returning();
+      return { user: user2, partner: partner2 };
+    });
+    res.status(201).json(toPartner(partner, user));
+  } catch (err) {
+    const code = err?.code ?? err?.cause?.code;
+    if (code === "23505") {
+      res.status(400).json({ error: "Email already registered" });
+      return;
+    }
+    throw err;
+  }
+});
+router10.get("/delivery-partners/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [partner] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.id, id));
   if (!partner) {
@@ -82816,7 +83138,7 @@ router9.get("/delivery-partners/:id", authenticate, async (req, res) => {
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, partner.userId));
   res.json(toPartner(partner, user));
 });
-router9.patch("/delivery-partners/:id", authenticate, async (req, res) => {
+router10.patch("/delivery-partners/:id", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateDeliveryPartnerBody.safeParse(req.body);
   if (!body.success) {
@@ -82895,7 +83217,7 @@ async function cityGuardForPartner(req, partnerId) {
   }
   return { ok: true };
 }
-router9.post("/delivery-partners/:id/approve", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router10.post("/delivery-partners/:id/approve", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const guard = await cityGuardForPartner(req, parseInt(String(req.params.id), 10));
   if (!guard.ok) {
     res.status(guard.status).json({ error: guard.error });
@@ -82909,7 +83231,7 @@ router9.post("/delivery-partners/:id/approve", authenticate, requireRole("admin"
   }
   res.json(toPartner(partner));
 });
-router9.post("/delivery-partners/:id/suspend", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router10.post("/delivery-partners/:id/suspend", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const guard = await cityGuardForPartner(req, id);
   if (!guard.ok) {
@@ -82923,7 +83245,7 @@ router9.post("/delivery-partners/:id/suspend", authenticate, requireRole("admin"
   }
   res.json(toPartner(partner));
 });
-router9.post("/delivery-partners/:id/reject", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router10.post("/delivery-partners/:id/reject", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const guard = await cityGuardForPartner(req, id);
   if (!guard.ok) {
@@ -82937,7 +83259,7 @@ router9.post("/delivery-partners/:id/reject", authenticate, requireRole("admin",
   }
   res.json(toPartner(partner));
 });
-router9.get("/delivery-partners/:id/stats", authenticate, async (req, res) => {
+router10.get("/delivery-partners/:id/stats", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [partner] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.id, id));
   if (!partner) {
@@ -82966,16 +83288,16 @@ router9.get("/delivery-partners/:id/stats", authenticate, async (req, res) => {
     averageRating: Number(partner.rating)
   });
 });
-var delivery_default = router9;
+var delivery_default = router10;
 
 // src/routes/wallet.ts
-var import_express10 = __toESM(require_express2(), 1);
-var router10 = (0, import_express10.Router)();
-router10.get("/wallet", authenticate, async (req, res) => {
+var import_express11 = __toESM(require_express2(), 1);
+var router11 = (0, import_express11.Router)();
+router11.get("/wallet", authenticate, async (req, res) => {
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user.id));
   res.json({ userId: req.user.id, balance: Number(user?.walletBalance ?? 0) });
 });
-router10.get("/wallet/transactions", authenticate, async (req, res) => {
+router11.get("/wallet/transactions", authenticate, async (req, res) => {
   const params = ListWalletTransactionsQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -82991,7 +83313,7 @@ router10.get("/wallet/transactions", authenticate, async (req, res) => {
     createdAt: t2.createdAt.toISOString()
   })));
 });
-router10.post("/wallet/topup", authenticate, async (req, res) => {
+router11.post("/wallet/topup", authenticate, async (req, res) => {
   const body = TopUpWalletBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83007,11 +83329,11 @@ router10.post("/wallet/topup", authenticate, async (req, res) => {
   const [user] = await db.update(usersTable).set({ walletBalance: sql`wallet_balance + ${amount}` }).where(eq(usersTable.id, req.user.id)).returning();
   res.json({ userId: req.user.id, balance: Number(user?.walletBalance ?? 0) });
 });
-var wallet_default = router10;
+var wallet_default = router11;
 
 // src/routes/coupons.ts
-var import_express11 = __toESM(require_express2(), 1);
-var router11 = (0, import_express11.Router)();
+var import_express12 = __toESM(require_express2(), 1);
+var router12 = (0, import_express12.Router)();
 function toCoupon(c) {
   return {
     id: c.id,
@@ -83029,7 +83351,7 @@ function toCoupon(c) {
     createdAt: c.createdAt.toISOString()
   };
 }
-router11.get("/coupons", optionalAuthenticate, async (req, res) => {
+router12.get("/coupons", optionalAuthenticate, async (req, res) => {
   const cityIdParam = req.query.cityId ? Number(req.query.cityId) : void 0;
   let cityFilter = void 0;
   if (req.user?.role === "city_admin" && req.user.cityId != null) {
@@ -83041,7 +83363,7 @@ router11.get("/coupons", optionalAuthenticate, async (req, res) => {
   const coupons = await db.select().from(couponsTable).where(where);
   res.json(coupons.map(toCoupon));
 });
-router11.post("/coupons", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router12.post("/coupons", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const body = CreateCouponBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83065,7 +83387,7 @@ router11.post("/coupons", authenticate, requireRole("admin", "city_admin"), asyn
   }).returning();
   res.status(201).json(toCoupon(coupon));
 });
-router11.patch("/coupons/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router12.patch("/coupons/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateCouponBody.safeParse(req.body);
   if (!body.success) {
@@ -83096,7 +83418,7 @@ router11.patch("/coupons/:id", authenticate, requireRole("admin", "city_admin"),
   }
   res.json(toCoupon(coupon));
 });
-router11.delete("/coupons/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router12.delete("/coupons/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [existing] = await db.select().from(couponsTable).where(eq(couponsTable.id, id));
   if (!existing) {
@@ -83112,7 +83434,7 @@ router11.delete("/coupons/:id", authenticate, requireRole("admin", "city_admin")
   await db.delete(couponsTable).where(eq(couponsTable.id, id));
   res.sendStatus(204);
 });
-router11.post("/coupons/validate", authenticate, async (req, res) => {
+router12.post("/coupons/validate", authenticate, async (req, res) => {
   const body = ValidateCouponBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83137,11 +83459,11 @@ router11.post("/coupons/validate", authenticate, async (req, res) => {
   }
   res.json(toCoupon(coupon));
 });
-var coupons_default = router11;
+var coupons_default = router12;
 
 // src/routes/reviews.ts
-var import_express12 = __toESM(require_express2(), 1);
-var router12 = (0, import_express12.Router)();
+var import_express13 = __toESM(require_express2(), 1);
+var router13 = (0, import_express13.Router)();
 function toReview(r2, userName) {
   return {
     id: r2.id,
@@ -83155,7 +83477,7 @@ function toReview(r2, userName) {
     createdAt: r2.createdAt.toISOString()
   };
 }
-router12.get("/reviews", async (req, res) => {
+router13.get("/reviews", async (req, res) => {
   const params = ListReviewsQueryParams.safeParse(req.query);
   const conditions = [];
   if (params.data?.vendorId) conditions.push(eq(reviewsTable.vendorId, params.data.vendorId));
@@ -83163,7 +83485,7 @@ router12.get("/reviews", async (req, res) => {
   const reviews = await db.select().from(reviewsTable).where(conditions.length ? and(...conditions) : void 0);
   res.json(reviews.map((r2) => toReview(r2)));
 });
-router12.post("/reviews", authenticate, async (req, res) => {
+router13.post("/reviews", authenticate, async (req, res) => {
   const body = CreateReviewBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83172,15 +83494,15 @@ router12.post("/reviews", authenticate, async (req, res) => {
   const [review] = await db.insert(reviewsTable).values({ ...body.data, userId: req.user.id }).returning();
   res.status(201).json(toReview(review, req.user.name));
 });
-var reviews_default = router12;
+var reviews_default = router13;
 
 // src/routes/banners.ts
-var import_express13 = __toESM(require_express2(), 1);
-var router13 = (0, import_express13.Router)();
+var import_express14 = __toESM(require_express2(), 1);
+var router14 = (0, import_express14.Router)();
 function toBanner(b) {
   return { id: b.id, cityId: b.cityId ?? null, title: b.title, imageUrl: b.imageUrl, linkUrl: b.linkUrl, position: b.position, isActive: b.isActive, createdAt: b.createdAt.toISOString() };
 }
-router13.get("/banners", optionalAuthenticate, async (req, res) => {
+router14.get("/banners", optionalAuthenticate, async (req, res) => {
   const cityIdParam = req.query.cityId ? Number(req.query.cityId) : void 0;
   let cityFilter = void 0;
   if (req.user?.role === "city_admin" && req.user.cityId != null) {
@@ -83192,7 +83514,7 @@ router13.get("/banners", optionalAuthenticate, async (req, res) => {
   const banners = await db.select().from(bannersTable).where(where).orderBy(sql`position asc`);
   res.json(banners.map(toBanner));
 });
-router13.post("/banners", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router14.post("/banners", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const body = CreateBannerBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83209,7 +83531,7 @@ router13.post("/banners", authenticate, requireRole("admin", "city_admin"), asyn
   const [banner] = await db.insert(bannersTable).values({ ...body.data, cityId }).returning();
   res.status(201).json(toBanner(banner));
 });
-router13.patch("/banners/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router14.patch("/banners/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateBannerBody.safeParse(req.body);
   if (!body.success) {
@@ -83232,7 +83554,7 @@ router13.patch("/banners/:id", authenticate, requireRole("admin", "city_admin"),
   const [banner] = await db.update(bannersTable).set(data).where(eq(bannersTable.id, id)).returning();
   res.json(toBanner(banner));
 });
-router13.delete("/banners/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router14.delete("/banners/:id", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [existing] = await db.select().from(bannersTable).where(eq(bannersTable.id, id));
   if (!existing) {
@@ -83248,21 +83570,21 @@ router13.delete("/banners/:id", authenticate, requireRole("admin", "city_admin")
   await db.delete(bannersTable).where(eq(bannersTable.id, id));
   res.sendStatus(204);
 });
-var banners_default = router13;
+var banners_default = router14;
 
 // src/routes/cities.ts
-var import_express14 = __toESM(require_express2(), 1);
-var router14 = (0, import_express14.Router)();
+var import_express15 = __toESM(require_express2(), 1);
+var router15 = (0, import_express15.Router)();
 function toCity(c) {
   return { id: c.id, name: c.name, state: c.state, isActive: c.isActive };
 }
-router14.get("/cities", optionalAuthenticate, async (req, res) => {
+router15.get("/cities", optionalAuthenticate, async (req, res) => {
   const role = req.user?.role;
   const isAdmin = role === "admin" || role === "super_admin" || role === "city_admin";
   const rows = isAdmin ? await db.select().from(citiesTable) : await db.select().from(citiesTable).where(eq(citiesTable.isActive, true));
   res.json(rows.map(toCity));
 });
-router14.post("/cities", authenticate, requireRole("admin"), async (req, res) => {
+router15.post("/cities", authenticate, requireRole("admin"), async (req, res) => {
   const body = CreateCityBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83271,7 +83593,7 @@ router14.post("/cities", authenticate, requireRole("admin"), async (req, res) =>
   const [city] = await db.insert(citiesTable).values(body.data).returning();
   res.status(201).json(toCity(city));
 });
-router14.patch("/cities/:id", authenticate, requireRole("admin"), async (req, res) => {
+router15.patch("/cities/:id", authenticate, requireRole("admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateCityBody.safeParse(req.body);
   if (!body.success) {
@@ -83285,23 +83607,23 @@ router14.patch("/cities/:id", authenticate, requireRole("admin"), async (req, re
   }
   res.json(toCity(city));
 });
-router14.delete("/cities/:id", authenticate, requireRole("admin"), async (req, res) => {
+router15.delete("/cities/:id", authenticate, requireRole("admin"), async (req, res) => {
   await db.delete(citiesTable).where(eq(citiesTable.id, parseInt(String(req.params.id), 10)));
   res.sendStatus(204);
 });
-var cities_default = router14;
+var cities_default = router15;
 
 // src/routes/notifications.ts
-var import_express15 = __toESM(require_express2(), 1);
-var router15 = (0, import_express15.Router)();
+var import_express16 = __toESM(require_express2(), 1);
+var router16 = (0, import_express16.Router)();
 function toNotif(n) {
   return { id: n.id, userId: n.userId, title: n.title, message: n.message, type: n.type, isRead: n.isRead, createdAt: n.createdAt.toISOString() };
 }
-router15.get("/notifications", authenticate, async (req, res) => {
+router16.get("/notifications", authenticate, async (req, res) => {
   const notifs = await db.select().from(notificationsTable).where(eq(notificationsTable.userId, req.user.id));
   res.json(notifs.map(toNotif));
 });
-router15.patch("/notifications/:id/read", authenticate, async (req, res) => {
+router16.patch("/notifications/:id/read", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [notif] = await db.update(notificationsTable).set({ isRead: true }).where(and(eq(notificationsTable.id, id), eq(notificationsTable.userId, req.user.id))).returning();
   if (!notif) {
@@ -83310,7 +83632,7 @@ router15.patch("/notifications/:id/read", authenticate, async (req, res) => {
   }
   res.json(toNotif(notif));
 });
-router15.post("/admin/notifications/broadcast", authenticate, requireRole("admin"), async (req, res) => {
+router16.post("/admin/notifications/broadcast", authenticate, requireRole("admin"), async (req, res) => {
   const body = BroadcastNotificationBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83335,11 +83657,11 @@ router15.post("/admin/notifications/broadcast", authenticate, requireRole("admin
   }
   res.json({ sent: users.length });
 });
-var notifications_default = router15;
+var notifications_default = router16;
 
 // src/routes/admin.ts
-var import_express16 = __toESM(require_express2(), 1);
-var router16 = (0, import_express16.Router)();
+var import_express17 = __toESM(require_express2(), 1);
+var router17 = (0, import_express17.Router)();
 function toSettings(s2) {
   return {
     id: s2.id,
@@ -83359,7 +83681,7 @@ function toSettings(s2) {
     upiQrImage: s2.upiQrImage
   };
 }
-router16.get("/admin/dashboard", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+router17.get("/admin/dashboard", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
   const isCityAdmin = req.user.role === "city_admin";
   const cityId = isCityAdmin ? req.user.cityId : null;
   if (isCityAdmin && cityId == null) {
@@ -83441,7 +83763,7 @@ router16.get("/admin/dashboard", authenticate, requireRole("admin", "city_admin"
     }))
   });
 });
-router16.get("/admin/revenue", authenticate, requireRole("admin"), async (req, res) => {
+router17.get("/admin/revenue", authenticate, requireRole("admin"), async (req, res) => {
   const params = GetRevenueAnalyticsQueryParams.safeParse(req.query);
   const period = params.data?.period || "daily";
   const groupBy = period === "monthly" ? "to_char(created_at, 'YYYY-MM')" : period === "weekly" ? "to_char(created_at, 'IYYY-IW')" : "to_char(created_at, 'YYYY-MM-DD')";
@@ -83455,11 +83777,11 @@ router16.get("/admin/revenue", authenticate, requireRole("admin"), async (req, r
     orders: Number(r2.orders)
   })));
 });
-router16.get("/admin/orders-by-status", authenticate, requireRole("admin"), async (_req, res) => {
+router17.get("/admin/orders-by-status", authenticate, requireRole("admin"), async (_req, res) => {
   const result = await db.execute(sql`SELECT status, count(*) as count FROM orders GROUP BY status`);
   res.json(result.rows.map((r2) => ({ status: r2.status, count: Number(r2.count) })));
 });
-router16.get("/admin/top-vendors", authenticate, requireRole("admin"), async (_req, res) => {
+router17.get("/admin/top-vendors", authenticate, requireRole("admin"), async (_req, res) => {
   const result = await db.execute(sql`
     SELECT v.id as vendor_id, v.shop_name, count(o.id) as total_orders, coalesce(sum(o.total), 0) as total_revenue, v.rating
     FROM vendors v LEFT JOIN orders o ON o.vendor_id = v.id
@@ -83473,7 +83795,7 @@ router16.get("/admin/top-vendors", authenticate, requireRole("admin"), async (_r
     rating: Number(r2.rating)
   })));
 });
-router16.get("/admin/reports/sales", authenticate, requireRole("admin"), async (req, res) => {
+router17.get("/admin/reports/sales", authenticate, requireRole("admin"), async (req, res) => {
   const params = GetSalesReportQueryParams.safeParse(req.query);
   const period = params.data?.period || "daily";
   const groupBy = period === "monthly" ? "to_char(created_at, 'YYYY-MM')" : period === "weekly" ? "to_char(created_at, 'IYYY-IW')" : "to_char(created_at, 'YYYY-MM-DD')";
@@ -83504,7 +83826,7 @@ router16.get("/admin/reports/sales", authenticate, requireRole("admin"), async (
     }))
   });
 });
-router16.get("/admin/reports/vendor-earnings", authenticate, requireRole("admin"), async (_req, res) => {
+router17.get("/admin/reports/vendor-earnings", authenticate, requireRole("admin"), async (_req, res) => {
   const [settings] = await db.select().from(adminSettingsTable);
   const commissionRate = settings ? Number(settings.commissionRate) / 100 : 0.1;
   const result = await db.execute(sql`
@@ -83527,14 +83849,14 @@ router16.get("/admin/reports/vendor-earnings", authenticate, requireRole("admin"
     };
   }));
 });
-router16.get("/admin/settings", authenticate, requireRole("admin"), async (_req, res) => {
+router17.get("/admin/settings", authenticate, requireRole("admin"), async (_req, res) => {
   let [settings] = await db.select().from(adminSettingsTable);
   if (!settings) {
     [settings] = await db.insert(adminSettingsTable).values({}).returning();
   }
   res.json(toSettings(settings));
 });
-router16.patch("/admin/settings", authenticate, requireRole("admin"), async (req, res) => {
+router17.patch("/admin/settings", authenticate, requireRole("admin"), async (req, res) => {
   const body = UpdateAdminSettingsBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83554,11 +83876,11 @@ router16.patch("/admin/settings", authenticate, requireRole("admin"), async (req
   }
   res.json(toSettings(settings));
 });
-var admin_default = router16;
+var admin_default = router17;
 
 // src/routes/subscriptions.ts
-var import_express17 = __toESM(require_express2(), 1);
-var router17 = (0, import_express17.Router)();
+var import_express18 = __toESM(require_express2(), 1);
+var router18 = (0, import_express18.Router)();
 function toPlan(p) {
   return {
     id: p.id,
@@ -83571,11 +83893,11 @@ function toPlan(p) {
     createdAt: p.createdAt.toISOString()
   };
 }
-router17.get("/subscription-plans", async (_req, res) => {
+router18.get("/subscription-plans", async (_req, res) => {
   const plans = await db.select().from(subscriptionPlansTable).where(eq(subscriptionPlansTable.isActive, true));
   res.json(plans.map(toPlan));
 });
-router17.post("/subscription-plans", authenticate, requireRole("admin"), async (req, res) => {
+router18.post("/subscription-plans", authenticate, requireRole("admin"), async (req, res) => {
   const body = CreateSubscriptionPlanBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
@@ -83588,7 +83910,7 @@ router17.post("/subscription-plans", authenticate, requireRole("admin"), async (
   }).returning();
   res.status(201).json(toPlan(plan));
 });
-router17.patch("/subscription-plans/:id", authenticate, requireRole("admin"), async (req, res) => {
+router18.patch("/subscription-plans/:id", authenticate, requireRole("admin"), async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateSubscriptionPlanBody.safeParse(req.body);
   if (!body.success) {
@@ -83604,15 +83926,15 @@ router17.patch("/subscription-plans/:id", authenticate, requireRole("admin"), as
   }
   res.json(toPlan(plan));
 });
-router17.delete("/subscription-plans/:id", authenticate, requireRole("admin"), async (req, res) => {
+router18.delete("/subscription-plans/:id", authenticate, requireRole("admin"), async (req, res) => {
   await db.delete(subscriptionPlansTable).where(eq(subscriptionPlansTable.id, parseInt(String(req.params.id), 10)));
   res.sendStatus(204);
 });
-var subscriptions_default = router17;
+var subscriptions_default = router18;
 
 // src/routes/withdrawals.ts
-var import_express18 = __toESM(require_express2(), 1);
-var router18 = (0, import_express18.Router)();
+var import_express19 = __toESM(require_express2(), 1);
+var router19 = (0, import_express19.Router)();
 function toWithdrawal(w, userName) {
   return {
     id: w.id,
@@ -83627,7 +83949,7 @@ function toWithdrawal(w, userName) {
     createdAt: w.createdAt.toISOString()
   };
 }
-router18.get("/withdrawal-requests", authenticate, async (req, res) => {
+router19.get("/withdrawal-requests", authenticate, async (req, res) => {
   const params = ListWithdrawalRequestsQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
@@ -83647,7 +83969,7 @@ router18.get("/withdrawal-requests", authenticate, async (req, res) => {
     limit
   });
 });
-router18.post("/withdrawal-requests", authenticate, async (req, res) => {
+router19.post("/withdrawal-requests", authenticate, async (req, res) => {
   const userRole = req.user.role;
   if (userRole !== "vendor" && userRole !== "delivery_partner") {
     res.status(403).json({ error: "Only vendors and delivery partners can request withdrawals" });
@@ -83666,7 +83988,7 @@ router18.post("/withdrawal-requests", authenticate, async (req, res) => {
   }).returning();
   res.status(201).json(toWithdrawal(w));
 });
-router18.patch("/withdrawal-requests/:id", authenticate, requireRole("admin"), async (req, res) => {
+router19.patch("/withdrawal-requests/:id", authenticate, requireRole("admin"), async (req, res) => {
   const params = UpdateWithdrawalRequestParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -83688,11 +84010,11 @@ router18.patch("/withdrawal-requests/:id", authenticate, requireRole("admin"), a
   }
   res.json(toWithdrawal(w));
 });
-var withdrawals_default = router18;
+var withdrawals_default = router19;
 
 // src/routes/city-admins.ts
-var import_express19 = __toESM(require_express2(), 1);
-var router19 = (0, import_express19.Router)();
+var import_express20 = __toESM(require_express2(), 1);
+var router20 = (0, import_express20.Router)();
 var CreateCityAdminBody = external_exports.object({
   name: external_exports.string().min(1),
   email: external_exports.string().email(),
@@ -83731,13 +84053,13 @@ function toAdmin(u, cityName) {
     createdAt: u.createdAt.toISOString()
   };
 }
-router19.get("/city-admins", authenticate, requireSuperAdmin, async (_req, res) => {
+router20.get("/city-admins", authenticate, requireSuperAdmin, async (_req, res) => {
   const rows = await db.select().from(usersTable).where(eq(usersTable.role, "city_admin"));
   const cityIds = Array.from(new Set(rows.map((r2) => r2.cityId).filter((x2) => x2 != null)));
   const cities = cityIds.length ? await db.select().from(citiesTable).where(inArray(citiesTable.id, cityIds)) : [];
   res.json(rows.map((u) => toAdmin(u, cities.find((c) => c.id === u.cityId)?.name)));
 });
-router19.post("/city-admins", authenticate, requireSuperAdmin, async (req, res) => {
+router20.post("/city-admins", authenticate, requireSuperAdmin, async (req, res) => {
   const parsed = CreateCityAdminBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -83766,7 +84088,7 @@ router19.post("/city-admins", authenticate, requireSuperAdmin, async (req, res) 
   }).returning();
   res.status(201).json(toAdmin(u, city.name));
 });
-router19.patch("/city-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
+router20.patch("/city-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const parsed = UpdateCityAdminBody.safeParse(req.body);
   if (!parsed.success) {
@@ -83797,7 +84119,7 @@ router19.patch("/city-admins/:id", authenticate, requireSuperAdmin, async (req, 
   const [city] = u.cityId ? await db.select().from(citiesTable).where(eq(citiesTable.id, u.cityId)) : [];
   res.json(toAdmin(u, city?.name));
 });
-router19.post("/city-admins/:id/reset-password", authenticate, requireSuperAdmin, async (req, res) => {
+router20.post("/city-admins/:id/reset-password", authenticate, requireSuperAdmin, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const parsed = ResetPasswordBody.safeParse(req.body);
   if (!parsed.success) {
@@ -83813,7 +84135,7 @@ router19.post("/city-admins/:id/reset-password", authenticate, requireSuperAdmin
   await db.update(usersTable).set({ password: hashed }).where(eq(usersTable.id, id));
   res.sendStatus(204);
 });
-router19.delete("/city-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
+router20.delete("/city-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const [target] = await db.select().from(usersTable).where(eq(usersTable.id, id));
   if (!target || target.role !== "city_admin") {
@@ -83823,12 +84145,12 @@ router19.delete("/city-admins/:id", authenticate, requireSuperAdmin, async (req,
   await db.update(usersTable).set({ isActive: false }).where(eq(usersTable.id, id));
   res.sendStatus(204);
 });
-var city_admins_default = router19;
+var city_admins_default = router20;
 
 // src/routes/payments.ts
-var import_express20 = __toESM(require_express2(), 1);
+var import_express21 = __toESM(require_express2(), 1);
 import crypto3 from "node:crypto";
-var router20 = (0, import_express20.Router)();
+var router21 = (0, import_express21.Router)();
 async function markOrderPaid(orderId, paymentId) {
   const [updated] = await db.update(ordersTable).set({ paymentStatus: "paid", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
   return updated ? "paid" : "noop";
@@ -83853,7 +84175,7 @@ async function resolveOrderId(rzpOrderId, notes) {
 function rawBodyOf(req) {
   return req.rawBody;
 }
-router20.get("/payments/config", authenticate, async (_req, res) => {
+router21.get("/payments/config", authenticate, async (_req, res) => {
   const [settings] = await db.select().from(adminSettingsTable);
   const upiId = settings?.upiId?.trim() || null;
   const upiName = settings?.upiName?.trim() || null;
@@ -83861,7 +84183,7 @@ router20.get("/payments/config", authenticate, async (_req, res) => {
   const razorpayEnabled = Boolean(settings?.razorpayKeyId?.trim() && settings?.razorpayKeySecret?.trim());
   res.json({ upiEnabled: Boolean(upiId || upiQrImage), upiId, upiName, upiQrImage, razorpayEnabled });
 });
-router20.post("/payments/razorpay/order", authenticate, async (req, res) => {
+router21.post("/payments/razorpay/order", authenticate, async (req, res) => {
   const parsed = CreateRazorpayOrderBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -83916,7 +84238,7 @@ router20.post("/payments/razorpay/order", authenticate, async (req, res) => {
   await db.update(ordersTable).set({ razorpayOrderId: rzpData.id }).where(eq(ordersTable.id, order.id));
   res.json({ razorpayOrderId: rzpData.id, amount: rzpData.amount, currency: rzpData.currency, keyId });
 });
-router20.post("/payments/razorpay/verify", authenticate, async (req, res) => {
+router21.post("/payments/razorpay/verify", authenticate, async (req, res) => {
   const parsed = VerifyRazorpayPaymentBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -83965,7 +84287,7 @@ router20.post("/payments/razorpay/verify", authenticate, async (req, res) => {
   const [finalOrder] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
   res.json({ success: finalOrder?.paymentStatus === "paid", paymentStatus: finalOrder?.paymentStatus ?? "paid" });
 });
-router20.post("/payments/webhook", async (req, res) => {
+router21.post("/payments/webhook", async (req, res) => {
   const signature = req.header("x-razorpay-signature");
   const raw = rawBodyOf(req);
   if (!raw || !signature) {
@@ -84037,34 +84359,35 @@ router20.post("/payments/webhook", async (req, res) => {
     res.status(500).json({ error: "Webhook processing failed" });
   }
 });
-var payments_default = router20;
+var payments_default = router21;
 
 // src/routes/index.ts
-var router21 = (0, import_express21.Router)();
-router21.use(health_default);
-router21.use(auth_default);
-router21.use(users_default);
-router21.use(categories_default);
-router21.use(vendors_default);
-router21.use(products_default);
-router21.use(cart_default);
-router21.use(orders_default);
-router21.use(delivery_default);
-router21.use(wallet_default);
-router21.use(coupons_default);
-router21.use(reviews_default);
-router21.use(banners_default);
-router21.use(cities_default);
-router21.use(notifications_default);
-router21.use(admin_default);
-router21.use(subscriptions_default);
-router21.use(withdrawals_default);
-router21.use(city_admins_default);
-router21.use(payments_default);
-var routes_default = router21;
+var router22 = (0, import_express22.Router)();
+router22.use(health_default);
+router22.use(auth_default);
+router22.use(users_default);
+router22.use(categories_default);
+router22.use(subcategories_default);
+router22.use(vendors_default);
+router22.use(products_default);
+router22.use(cart_default);
+router22.use(orders_default);
+router22.use(delivery_default);
+router22.use(wallet_default);
+router22.use(coupons_default);
+router22.use(reviews_default);
+router22.use(banners_default);
+router22.use(cities_default);
+router22.use(notifications_default);
+router22.use(admin_default);
+router22.use(subscriptions_default);
+router22.use(withdrawals_default);
+router22.use(city_admins_default);
+router22.use(payments_default);
+var routes_default = router22;
 
 // src/app.ts
-var app = (0, import_express22.default)();
+var app = (0, import_express23.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -84086,13 +84409,13 @@ app.use(
 );
 app.use((0, import_cors.default)());
 app.use(
-  import_express22.default.json({
+  import_express23.default.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     }
   })
 );
-app.use(import_express22.default.urlencoded({ extended: true }));
+app.use(import_express23.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 app.get("/", (_req, res) => {
   res.type("html").send(`<!doctype html>
