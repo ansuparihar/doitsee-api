@@ -20488,27 +20488,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router23;
+    module.exports = Router24;
     module.exports.Route = Route;
-    function Router23(options) {
-      if (!(this instanceof Router23)) {
-        return new Router23(options);
+    function Router24(options) {
+      if (!(this instanceof Router24)) {
+        return new Router24(options);
       }
       const opts = options || {};
-      function router23(req, res, next) {
-        router23.handle(req, res, next);
+      function router24(req, res, next) {
+        router24.handle(req, res, next);
       }
-      Object.setPrototypeOf(router23, this);
-      router23.caseSensitive = opts.caseSensitive;
-      router23.mergeParams = opts.mergeParams;
-      router23.params = {};
-      router23.strict = opts.strict;
-      router23.stack = [];
-      return router23;
+      Object.setPrototypeOf(router24, this);
+      router24.caseSensitive = opts.caseSensitive;
+      router24.mergeParams = opts.mergeParams;
+      router24.params = {};
+      router24.strict = opts.strict;
+      router24.stack = [];
+      return router24;
     }
-    Router23.prototype = function() {
+    Router24.prototype = function() {
     };
-    Router23.prototype.param = function param(name, fn) {
+    Router24.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -20528,7 +20528,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router23.prototype.handle = function handle(req, res, callback) {
+    Router24.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -20655,7 +20655,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router23.prototype.use = function use(handler) {
+    Router24.prototype.use = function use(handler) {
       let offset = 0;
       let path = "/";
       if (typeof handler !== "function") {
@@ -20688,7 +20688,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router23.prototype.route = function route(path) {
+    Router24.prototype.route = function route(path) {
       const route2 = new Route(path);
       const layer = new Layer(path, {
         sensitive: this.caseSensitive,
@@ -20703,7 +20703,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router23.prototype[method] = function(path) {
+      Router24.prototype[method] = function(path) {
         const route = this.route(path);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -20886,13 +20886,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router23 = require_router();
+    var Router24 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router23 = null;
+      var router24 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -20901,13 +20901,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router23 === null) {
-            router23 = new Router23({
+          if (router24 === null) {
+            router24 = new Router24({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router23;
+          return router24;
         }
       });
     };
@@ -20978,15 +20978,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router23 = this.router;
+      var router24 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router23.use(path, fn2);
+          return router24.use(path, fn2);
         }
         debug(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router23.use(path, function mounted_app(req, res, next) {
+        router24.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -23513,7 +23513,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router23 = require_router();
+    var Router24 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23535,8 +23535,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router23.Route;
-    exports.Router = Router23;
+    exports.Route = Router24.Route;
+    exports.Router = Router24;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -53944,12 +53944,12 @@ var require_src5 = __commonJS({
 });
 
 // src/app.ts
-var import_express23 = __toESM(require_express2(), 1);
+var import_express24 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express22 = __toESM(require_express2(), 1);
+var import_express23 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -58029,6 +58029,12 @@ var LoginResponse = objectType({
     walletBalance: numberType().optional(),
     isActive: booleanType().optional(),
     cityId: numberType().nullish(),
+    lat: numberType().nullish(),
+    lng: numberType().nullish(),
+    city: stringType().nullish(),
+    state: stringType().nullish(),
+    pincode: stringType().nullish(),
+    area: stringType().nullish(),
     permissions: arrayType(stringType()).nullish(),
     createdAt: stringType()
   })
@@ -58057,6 +58063,12 @@ var GoogleAuthResponse = objectType({
     walletBalance: numberType().optional(),
     isActive: booleanType().optional(),
     cityId: numberType().nullish(),
+    lat: numberType().nullish(),
+    lng: numberType().nullish(),
+    city: stringType().nullish(),
+    state: stringType().nullish(),
+    pincode: stringType().nullish(),
+    area: stringType().nullish(),
     permissions: arrayType(stringType()).nullish(),
     createdAt: stringType()
   })
@@ -58078,6 +58090,12 @@ var GetMeResponse = objectType({
   walletBalance: numberType().optional(),
   isActive: booleanType().optional(),
   cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
   permissions: arrayType(stringType()).nullish(),
   createdAt: stringType()
 });
@@ -58105,6 +58123,12 @@ var ListUsersResponse = objectType({
       walletBalance: numberType().optional(),
       isActive: booleanType().optional(),
       cityId: numberType().nullish(),
+      lat: numberType().nullish(),
+      lng: numberType().nullish(),
+      city: stringType().nullish(),
+      state: stringType().nullish(),
+      pincode: stringType().nullish(),
+      area: stringType().nullish(),
       permissions: arrayType(stringType()).nullish(),
       createdAt: stringType()
     })
@@ -58112,6 +58136,40 @@ var ListUsersResponse = objectType({
   total: numberType(),
   page: numberType(),
   limit: numberType()
+});
+var UpdateMyLocationBody = objectType({
+  lat: numberType(),
+  lng: numberType(),
+  city: stringType().optional(),
+  state: stringType().optional(),
+  pincode: stringType().optional(),
+  area: stringType().optional()
+});
+var UpdateMyLocationResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
 });
 var GetUserParams = objectType({
   id: coerce.number()
@@ -58133,6 +58191,12 @@ var GetUserResponse = objectType({
   walletBalance: numberType().optional(),
   isActive: booleanType().optional(),
   cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
   permissions: arrayType(stringType()).nullish(),
   createdAt: stringType()
 });
@@ -58162,6 +58226,12 @@ var UpdateUserResponse = objectType({
   walletBalance: numberType().optional(),
   isActive: booleanType().optional(),
   cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
   permissions: arrayType(stringType()).nullish(),
   createdAt: stringType()
 });
@@ -58272,6 +58342,8 @@ var ListVendorsResponse = objectType({
       city: stringType().nullish(),
       lat: numberType().nullish(),
       lng: numberType().nullish(),
+      deliveryRadiusKm: numberType().optional(),
+      distanceKm: numberType().nullish(),
       phone: stringType().nullish(),
       status: enumType(["pending", "approved", "rejected", "suspended"]),
       commissionRate: numberType().optional(),
@@ -58302,6 +58374,7 @@ var CreateVendorBody = objectType({
   city: stringType(),
   lat: numberType().optional(),
   lng: numberType().optional(),
+  deliveryRadiusKm: numberType().optional(),
   phone: stringType(),
   openTime: stringType().optional(),
   closeTime: stringType().optional(),
@@ -58332,6 +58405,8 @@ var ListNearbyVendorsResponseItem = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -58367,6 +58442,8 @@ var GetVendorResponse = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -58399,6 +58476,7 @@ var UpdateVendorBody = objectType({
   city: stringType().optional(),
   lat: numberType().optional(),
   lng: numberType().optional(),
+  deliveryRadiusKm: numberType().optional(),
   phone: stringType().optional(),
   isOpen: booleanType().optional(),
   openTime: stringType().optional(),
@@ -58418,6 +58496,8 @@ var UpdateVendorResponse = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -58450,6 +58530,8 @@ var ApproveVendorResponse = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -58482,6 +58564,8 @@ var RejectVendorResponse = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -58863,6 +58947,12 @@ var CreateOrderBody = objectType({
     })
   ),
   deliveryAddress: stringType(),
+  customerName: stringType().optional().describe(
+    "Recipient name for this delivery. Snapshotted on the order and saved to the customer's profile for future orders."
+  ),
+  customerPhone: stringType().optional().describe(
+    "Recipient contact number the rider can call. Snapshotted on the order and saved to the customer's profile for future orders."
+  ),
   deliveryLat: numberType().optional(),
   deliveryLng: numberType().optional(),
   paymentMethod: enumType(["cod", "wallet", "online"]),
@@ -59709,6 +59799,8 @@ var GetAdminDashboardResponse = objectType({
       city: stringType().nullish(),
       lat: numberType().nullish(),
       lng: numberType().nullish(),
+      deliveryRadiusKm: numberType().optional(),
+      distanceKm: numberType().nullish(),
       phone: stringType().nullish(),
       status: enumType(["pending", "approved", "rejected", "suspended"]),
       commissionRate: numberType().optional(),
@@ -59873,6 +59965,8 @@ var SuspendVendorResponse = objectType({
   city: stringType().nullish(),
   lat: numberType().nullish(),
   lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
   phone: stringType().nullish(),
   status: enumType(["pending", "approved", "rejected", "suspended"]),
   commissionRate: numberType().optional(),
@@ -59976,6 +60070,12 @@ var BlockUserResponse = objectType({
   walletBalance: numberType().optional(),
   isActive: booleanType().optional(),
   cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
   permissions: arrayType(stringType()).nullish(),
   createdAt: stringType()
 });
@@ -59999,6 +60099,12 @@ var UnblockUserResponse = objectType({
   walletBalance: numberType().optional(),
   isActive: booleanType().optional(),
   cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
   permissions: arrayType(stringType()).nullish(),
   createdAt: stringType()
 });
@@ -80379,6 +80485,12 @@ var usersTable = pgTable("users", {
   role: userRoleEnum("role").notNull().default("customer"),
   avatar: text("avatar"),
   cityId: integer("city_id"),
+  lat: numeric("lat", { precision: 10, scale: 6 }),
+  lng: numeric("lng", { precision: 10, scale: 6 }),
+  city: text("city"),
+  state: text("state"),
+  pincode: text("pincode"),
+  area: text("area"),
   permissions: text("permissions"),
   walletBalance: numeric("wallet_balance", { precision: 10, scale: 2 }).notNull().default("0"),
   isActive: boolean("is_active").notNull().default(true),
@@ -80431,6 +80543,7 @@ var vendorsTable = pgTable("vendors", {
   cityId: integer("city_id"),
   lat: numeric("lat", { precision: 10, scale: 6 }),
   lng: numeric("lng", { precision: 10, scale: 6 }),
+  deliveryRadiusKm: numeric("delivery_radius_km", { precision: 5, scale: 2 }).notNull().default("10"),
   phone: text("phone"),
   status: vendorStatusEnum("status").notNull().default("pending"),
   commissionRate: numeric("commission_rate", { precision: 5, scale: 2 }).notNull().default("10"),
@@ -80501,6 +80614,8 @@ var ordersTable = pgTable("orders", {
   paymentStatus: paymentStatusEnum("payment_status").notNull().default("pending"),
   couponCode: text("coupon_code"),
   notes: text("notes"),
+  customerName: text("customer_name"),
+  customerPhone: text("customer_phone"),
   razorpayOrderId: text("razorpay_order_id"),
   razorpayPaymentId: text("razorpay_payment_id"),
   clientOrderId: text("client_order_id"),
@@ -80539,6 +80654,7 @@ var deliveryPartnersTable = pgTable("delivery_partners", {
   isOnline: boolean("is_online").notNull().default(false),
   currentLat: numeric("current_lat", { precision: 10, scale: 6 }),
   currentLng: numeric("current_lng", { precision: 10, scale: 6 }),
+  lastLocationAt: timestamp("last_location_at"),
   rating: numeric("rating", { precision: 3, scale: 2 }).notNull().default("0"),
   totalDeliveries: integer("total_deliveries").notNull().default(0),
   totalEarnings: numeric("total_earnings", { precision: 10, scale: 2 }).notNull().default("0"),
@@ -81500,9 +81616,38 @@ function toUser(u) {
     avatar: u.avatar,
     walletBalance: Number(u.walletBalance),
     isActive: u.isActive,
+    cityId: u.cityId ?? null,
+    lat: u.lat != null ? Number(u.lat) : null,
+    lng: u.lng != null ? Number(u.lng) : null,
+    city: u.city ?? null,
+    state: u.state ?? null,
+    pincode: u.pincode ?? null,
+    area: u.area ?? null,
     createdAt: u.createdAt.toISOString()
   };
 }
+router3.patch("/users/me/location", authenticate, async (req, res) => {
+  const body = UpdateMyLocationBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const { lat, lng, city, state, pincode, area } = body.data;
+  req.log.info({ userId: req.user.id, lat, lng, city, state, pincode }, "users.me.location.update");
+  const [user] = await db.update(usersTable).set({
+    lat: String(lat),
+    lng: String(lng),
+    city: city ?? null,
+    state: state ?? null,
+    pincode: pincode ?? null,
+    area: area ?? null
+  }).where(eq(usersTable.id, req.user.id)).returning();
+  if (!user) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  res.json(toUser(user));
+});
 router3.get("/users", authenticate, requireRole("admin"), async (req, res) => {
   const params = ListUsersQueryParams.safeParse(req.query);
   const page = Number(params.data?.page ?? 1);
@@ -81530,6 +81675,10 @@ router3.patch("/users/:id", authenticate, async (req, res) => {
   const params = UpdateUserParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
+    return;
+  }
+  if (req.user.role !== "admin" && req.user.id !== params.data.id) {
+    res.status(403).json({ error: "Forbidden" });
     return;
   }
   const body = UpdateUserBody.safeParse(req.body);
@@ -81672,7 +81821,7 @@ var subcategories_default = router5;
 // src/routes/vendors.ts
 var import_express6 = __toESM(require_express2(), 1);
 var router6 = (0, import_express6.Router)();
-function toVendor(v, categoryName, includePayout = false) {
+function toVendor(v, categoryName, includePayout = false, distanceKm) {
   return {
     id: v.id,
     userId: v.userId,
@@ -81687,6 +81836,8 @@ function toVendor(v, categoryName, includePayout = false) {
     city: v.city,
     lat: v.lat ? Number(v.lat) : null,
     lng: v.lng ? Number(v.lng) : null,
+    deliveryRadiusKm: v.deliveryRadiusKm != null ? Number(v.deliveryRadiusKm) : 10,
+    distanceKm: distanceKm ?? null,
     phone: v.phone,
     status: v.status,
     commissionRate: Number(v.commissionRate),
@@ -81706,18 +81857,40 @@ function toVendor(v, categoryName, includePayout = false) {
 function isAdminRole(role) {
   return role === "admin" || role === "super_admin" || role === "city_admin";
 }
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const toRad = (d) => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 router6.get("/vendors/nearby", async (req, res) => {
   const params = ListNearbyVendorsQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const { city, category } = params.data;
+  const { city, category, lat, lng, radius } = params.data;
   const conditions = [eq(vendorsTable.status, "approved")];
   if (city) conditions.push(sql`lower(${vendorsTable.city}) = lower(${city})`);
   if (category) conditions.push(sql`(lower(${categoriesTable.slug}) = lower(${category}) OR lower(${categoriesTable.name}) = lower(${category}))`);
-  const vendors = await db.select({ v: vendorsTable, catName: categoriesTable.name }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(and(...conditions)).orderBy(desc(vendorsTable.rating)).limit(20);
-  res.json(vendors.map(({ v, catName }) => toVendor(v, catName)));
+  const rows = await db.select({ v: vendorsTable, catName: categoriesTable.name }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(and(...conditions)).orderBy(desc(vendorsTable.rating)).limit(200);
+  const hasCoords = lat != null && lng != null;
+  req.log.info({ city, category, lat, lng, radius, hasCoords, candidates: rows.length }, "vendors.nearby.request");
+  if (!hasCoords) {
+    res.json(rows.slice(0, 20).map(({ v, catName }) => toVendor(v, catName)));
+    return;
+  }
+  const userLat = Number(lat);
+  const userLng = Number(lng);
+  const withDistance = rows.filter(({ v }) => v.lat != null && v.lng != null).map(({ v, catName }) => {
+    const distanceKm = haversineKm(userLat, userLng, Number(v.lat), Number(v.lng));
+    const effectiveRadius = radius != null ? Number(radius) : v.deliveryRadiusKm != null ? Number(v.deliveryRadiusKm) : 10;
+    return { v, catName, distanceKm, effectiveRadius };
+  }).filter((r2) => r2.distanceKm <= r2.effectiveRadius).sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 20);
+  req.log.info({ matched: withDistance.length }, "vendors.nearby.result");
+  res.json(withDistance.map(({ v, catName, distanceKm }) => toVendor(v, catName, false, Math.round(distanceKm * 100) / 100)));
 });
 router6.get("/vendors", optionalAuthenticate, async (req, res) => {
   const params = ListVendorsQueryParams.safeParse(req.query);
@@ -81753,7 +81926,8 @@ router6.post("/vendors", authenticate, async (req, res) => {
     ...body.data,
     userId: req.user.id,
     lat: body.data.lat != null ? String(body.data.lat) : null,
-    lng: body.data.lng != null ? String(body.data.lng) : null
+    lng: body.data.lng != null ? String(body.data.lng) : null,
+    deliveryRadiusKm: body.data.deliveryRadiusKm != null ? String(body.data.deliveryRadiusKm) : void 0
   }).returning();
   res.status(201).json(toVendor(vendor, void 0, true));
 });
@@ -81798,6 +81972,7 @@ router6.patch("/vendors/:id", authenticate, async (req, res) => {
   if (!isSuperAdmin2) delete updateData.cityId;
   if (body.data.lat != null) updateData.lat = String(body.data.lat);
   if (body.data.lng != null) updateData.lng = String(body.data.lng);
+  if (body.data.deliveryRadiusKm != null) updateData.deliveryRadiusKm = String(body.data.deliveryRadiusKm);
   const [vendor] = await db.update(vendorsTable).set(updateData).where(eq(vendorsTable.id, id)).returning();
   res.json(toVendor(vendor, void 0, isAdmin || isOwner));
 });
@@ -82402,7 +82577,7 @@ async function autoAssignNearestRider(order) {
     let bestDist = Infinity;
     for (const p of available) {
       if (p.currentLat == null || p.currentLng == null) continue;
-      const d = haversineKm(vLat, vLng, Number(p.currentLat), Number(p.currentLng));
+      const d = haversineKm2(vLat, vLng, Number(p.currentLat), Number(p.currentLng));
       if (d < bestDist) {
         bestDist = d;
         chosen = p;
@@ -82510,8 +82685,8 @@ router9.get("/orders", authenticate, async (req, res) => {
     data: orders.map((o) => {
       const p = pInfo(o.deliveryPartnerId);
       return toOrder(o, {
-        customerName: cName(o.customerId),
-        customerPhone: cPhone(o.customerId),
+        customerName: o.customerName ?? cName(o.customerId),
+        customerPhone: o.customerPhone ?? cPhone(o.customerId),
         vendorName: vName(o.vendorId),
         vendorPhone: vPhone(o.vendorId),
         deliveryPartnerName: p.name,
@@ -82533,15 +82708,15 @@ router9.post("/orders", authenticate, async (req, res) => {
     res.status(400).json({ error: body.error.message });
     return;
   }
-  const { vendorId, items, deliveryAddress, paymentMethod, couponCode, notes, deliveryLat, deliveryLng, clientOrderId } = body.data;
+  const { vendorId, items, deliveryAddress, paymentMethod, couponCode, notes, deliveryLat, deliveryLng, clientOrderId, customerName, customerPhone } = body.data;
   const respondExisting = async (key) => {
     const [existing] = await db.select().from(ordersTable).where(and(eq(ordersTable.clientOrderId, key), eq(ordersTable.customerId, req.user.id)));
     if (!existing) return false;
     const [v] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, existing.vendorId));
     const [vUser] = v?.userId ? await db.select().from(usersTable).where(eq(usersTable.id, v.userId)) : [];
     res.status(200).json(toOrder(existing, {
-      customerName: req.user.name,
-      customerPhone: null,
+      customerName: existing.customerName ?? req.user.name,
+      customerPhone: existing.customerPhone ?? null,
       vendorName: v?.shopName,
       vendorPhone: vUser?.phone ?? null,
       viewerRole: "customer",
@@ -82586,6 +82761,8 @@ router9.post("/orders", authenticate, async (req, res) => {
       paymentStatus: "pending",
       couponCode: couponCode ?? null,
       notes: notes ?? null,
+      customerName: customerName?.trim() || req.user.name,
+      customerPhone: customerPhone?.trim() || null,
       clientOrderId: clientOrderId ?? null,
       estimatedDeliveryTime: "30-45 minutes",
       deliveryOtp
@@ -82594,6 +82771,16 @@ router9.post("/orders", authenticate, async (req, res) => {
     const code = err?.code ?? err?.cause?.code;
     if (code === "23505" && clientOrderId && await respondExisting(clientOrderId)) return;
     throw err;
+  }
+  try {
+    const profileUpdate = {};
+    if (customerName?.trim()) profileUpdate.name = customerName.trim();
+    if (customerPhone?.trim()) profileUpdate.phone = customerPhone.trim();
+    if (Object.keys(profileUpdate).length) {
+      await db.update(usersTable).set(profileUpdate).where(eq(usersTable.id, req.user.id));
+    }
+  } catch (err) {
+    req.log.warn({ err, orderId: order.id }, "Failed to save customer contact to profile");
   }
   if (paymentMethod === "wallet") {
     await db.insert(walletTransactionsTable).values({
@@ -82608,7 +82795,7 @@ router9.post("/orders", authenticate, async (req, res) => {
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, vendorId));
   await db.update(vendorsTable).set({ totalOrders: sql`total_orders + 1` }).where(eq(vendorsTable.id, vendorId));
   try {
-    const customerName = req.user.name ?? "A customer";
+    const orderedByName = order.customerName ?? req.user.name ?? "A customer";
     const shopName = vendor?.shopName ?? `Vendor #${vendorId}`;
     const itemSummary = orderItems.length === 1 ? `${orderItems[0].name} x ${orderItems[0].quantity}` : `${orderItems[0].name} +${orderItems.length - 1} more`;
     const rows = [];
@@ -82616,7 +82803,7 @@ router9.post("/orders", authenticate, async (req, res) => {
       rows.push({
         userId: vendor.userId,
         title: "New order received",
-        message: `Order #${order.id} from ${customerName} \u2014 ${itemSummary}. Total \u20B9${total}. Please confirm.`,
+        message: `Order #${order.id} from ${orderedByName} \u2014 ${itemSummary}. Total \u20B9${total}. Please confirm.`,
         data: { orderId: order.id, vendorId, total }
       });
     }
@@ -82625,7 +82812,7 @@ router9.post("/orders", authenticate, async (req, res) => {
       rows.push({
         userId: aid,
         title: "New order placed",
-        message: `Order #${order.id}: ${customerName} ordered ${itemSummary} from ${shopName}. Total \u20B9${total}.`,
+        message: `Order #${order.id}: ${orderedByName} ordered ${itemSummary} from ${shopName}. Total \u20B9${total}.`,
         data: { orderId: order.id, vendorId, total }
       });
     }
@@ -82635,8 +82822,8 @@ router9.post("/orders", authenticate, async (req, res) => {
   }
   const [vendorUser] = vendor?.userId ? await db.select().from(usersTable).where(eq(usersTable.id, vendor.userId)) : [];
   res.status(201).json(toOrder(order, {
-    customerName: req.user.name,
-    customerPhone: null,
+    customerName: order.customerName ?? req.user.name,
+    customerPhone: order.customerPhone ?? null,
     vendorName: vendor?.shopName,
     vendorPhone: vendorUser?.phone ?? null,
     viewerRole: "customer",
@@ -82699,8 +82886,8 @@ router9.get("/orders/:id", authenticate, async (req, res) => {
     }
   }
   res.json(toOrder(order, {
-    customerName: customer?.name,
-    customerPhone: customer?.phone ?? null,
+    customerName: order.customerName ?? customer?.name,
+    customerPhone: order.customerPhone ?? customer?.phone ?? null,
     vendorName: vendor?.shopName,
     vendorPhone: vendorUser?.phone ?? null,
     deliveryPartnerName: partnerName,
@@ -82925,7 +83112,7 @@ router9.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
   }
   res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
 });
-function haversineKm(aLat, aLng, bLat, bLng) {
+function haversineKm2(aLat, aLng, bLat, bLng) {
   const R = 6371;
   const toRad = (d) => d * Math.PI / 180;
   const dLat = toRad(bLat - aLat);
@@ -83199,6 +83386,10 @@ router10.patch("/delivery-partners/:id", authenticate, async (req, res) => {
   }
   if (updateData.currentLat != null) updateData.currentLat = String(updateData.currentLat);
   if (updateData.currentLng != null) updateData.currentLng = String(updateData.currentLng);
+  if (updateData.currentLat != null || updateData.currentLng != null) {
+    updateData.lastLocationAt = /* @__PURE__ */ new Date();
+    req.log.info({ partnerId: id, lat: updateData.currentLat, lng: updateData.currentLng }, "delivery.location.update");
+  }
   if (Object.keys(updateData).length === 0) {
     const [user2] = await db.select().from(usersTable).where(eq(usersTable.id, existing.userId));
     res.json(toPartner(existing, user2));
@@ -84147,10 +84338,144 @@ router20.delete("/city-admins/:id", authenticate, requireSuperAdmin, async (req,
 });
 var city_admins_default = router20;
 
-// src/routes/payments.ts
+// src/routes/super-admins.ts
 var import_express21 = __toESM(require_express2(), 1);
-import crypto3 from "node:crypto";
 var router21 = (0, import_express21.Router)();
+var SUPER_ROLES = ["admin", "super_admin"];
+var CreateSuperAdminBody = external_exports.object({
+  name: external_exports.string().min(1),
+  email: external_exports.string().email(),
+  password: external_exports.string().min(6),
+  phone: external_exports.string().optional().nullable()
+});
+var UpdateSuperAdminBody = external_exports.object({
+  name: external_exports.string().min(1).optional(),
+  phone: external_exports.string().nullable().optional()
+});
+var ResetPasswordBody2 = external_exports.object({ password: external_exports.string().min(6) });
+function toAdmin2(u) {
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    phone: u.phone,
+    role: u.role,
+    isActive: u.isActive,
+    createdAt: u.createdAt.toISOString()
+  };
+}
+async function countActiveSuperAdmins(excludeId) {
+  const rows = await db.select().from(usersTable).where(inArray(usersTable.role, SUPER_ROLES));
+  return rows.filter((r2) => r2.isActive && (excludeId == null || r2.id !== excludeId)).length;
+}
+router21.get("/super-admins", authenticate, requireSuperAdmin, async (_req, res) => {
+  const rows = await db.select().from(usersTable).where(inArray(usersTable.role, SUPER_ROLES));
+  rows.sort((a, b) => a.id - b.id);
+  res.json(rows.map(toAdmin2));
+});
+router21.post("/super-admins", authenticate, requireSuperAdmin, async (req, res) => {
+  const parsed = CreateSuperAdminBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const { name, email: email3, password, phone } = parsed.data;
+  const normEmail = email3.trim().toLowerCase();
+  const [existing] = await db.select().from(usersTable).where(eq(usersTable.email, normEmail));
+  if (existing) {
+    res.status(400).json({ error: "Email already registered" });
+    return;
+  }
+  const hashed = await bcryptjs_default.hash(password, 10);
+  const [u] = await db.insert(usersTable).values({
+    name,
+    email: normEmail,
+    password: hashed,
+    phone: phone ?? null,
+    role: "super_admin",
+    cityId: null,
+    permissions: null
+  }).returning();
+  req.log?.info({ createdId: u.id, by: req.user.id }, "super admin created");
+  res.status(201).json(toAdmin2(u));
+});
+router21.patch("/super-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const parsed = UpdateSuperAdminBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const [target] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+  if (!target || !SUPER_ROLES.includes(target.role)) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const data = {};
+  if (parsed.data.name !== void 0) data.name = parsed.data.name;
+  if (parsed.data.phone !== void 0) data.phone = parsed.data.phone;
+  if (Object.keys(data).length === 0) {
+    res.json(toAdmin2(target));
+    return;
+  }
+  const [u] = await db.update(usersTable).set(data).where(eq(usersTable.id, id)).returning();
+  res.json(toAdmin2(u));
+});
+router21.post("/super-admins/:id/reset-password", authenticate, requireSuperAdmin, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const parsed = ResetPasswordBody2.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const [target] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+  if (!target || !SUPER_ROLES.includes(target.role)) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const hashed = await bcryptjs_default.hash(parsed.data.password, 10);
+  await db.update(usersTable).set({ password: hashed }).where(eq(usersTable.id, id));
+  req.log?.info({ targetId: id, by: req.user.id }, "super admin password reset");
+  res.sendStatus(204);
+});
+router21.delete("/super-admins/:id", authenticate, requireSuperAdmin, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const [target] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+  if (!target || !SUPER_ROLES.includes(target.role)) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  if (id === req.user.id) {
+    res.status(400).json({ error: "You cannot deactivate your own account." });
+    return;
+  }
+  if (target.isActive) {
+    const remaining = await countActiveSuperAdmins(id);
+    if (remaining < 1) {
+      res.status(400).json({ error: "Cannot deactivate the last active super admin." });
+      return;
+    }
+  }
+  await db.update(usersTable).set({ isActive: false }).where(eq(usersTable.id, id));
+  req.log?.info({ targetId: id, by: req.user.id }, "super admin deactivated");
+  res.sendStatus(204);
+});
+router21.post("/super-admins/:id/activate", authenticate, requireSuperAdmin, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const [target] = await db.select().from(usersTable).where(and(eq(usersTable.id, id), ne(usersTable.isActive, true)));
+  if (!target || !SUPER_ROLES.includes(target.role)) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  await db.update(usersTable).set({ isActive: true }).where(eq(usersTable.id, id));
+  res.sendStatus(204);
+});
+var super_admins_default = router21;
+
+// src/routes/payments.ts
+var import_express22 = __toESM(require_express2(), 1);
+import crypto3 from "node:crypto";
+var router22 = (0, import_express22.Router)();
 async function markOrderPaid(orderId, paymentId) {
   const [updated] = await db.update(ordersTable).set({ paymentStatus: "paid", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
   return updated ? "paid" : "noop";
@@ -84175,7 +84500,7 @@ async function resolveOrderId(rzpOrderId, notes) {
 function rawBodyOf(req) {
   return req.rawBody;
 }
-router21.get("/payments/config", authenticate, async (_req, res) => {
+router22.get("/payments/config", authenticate, async (_req, res) => {
   const [settings] = await db.select().from(adminSettingsTable);
   const upiId = settings?.upiId?.trim() || null;
   const upiName = settings?.upiName?.trim() || null;
@@ -84183,7 +84508,7 @@ router21.get("/payments/config", authenticate, async (_req, res) => {
   const razorpayEnabled = Boolean(settings?.razorpayKeyId?.trim() && settings?.razorpayKeySecret?.trim());
   res.json({ upiEnabled: Boolean(upiId || upiQrImage), upiId, upiName, upiQrImage, razorpayEnabled });
 });
-router21.post("/payments/razorpay/order", authenticate, async (req, res) => {
+router22.post("/payments/razorpay/order", authenticate, async (req, res) => {
   const parsed = CreateRazorpayOrderBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -84238,7 +84563,7 @@ router21.post("/payments/razorpay/order", authenticate, async (req, res) => {
   await db.update(ordersTable).set({ razorpayOrderId: rzpData.id }).where(eq(ordersTable.id, order.id));
   res.json({ razorpayOrderId: rzpData.id, amount: rzpData.amount, currency: rzpData.currency, keyId });
 });
-router21.post("/payments/razorpay/verify", authenticate, async (req, res) => {
+router22.post("/payments/razorpay/verify", authenticate, async (req, res) => {
   const parsed = VerifyRazorpayPaymentBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -84287,7 +84612,7 @@ router21.post("/payments/razorpay/verify", authenticate, async (req, res) => {
   const [finalOrder] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
   res.json({ success: finalOrder?.paymentStatus === "paid", paymentStatus: finalOrder?.paymentStatus ?? "paid" });
 });
-router21.post("/payments/webhook", async (req, res) => {
+router22.post("/payments/webhook", async (req, res) => {
   const signature = req.header("x-razorpay-signature");
   const raw = rawBodyOf(req);
   if (!raw || !signature) {
@@ -84359,35 +84684,36 @@ router21.post("/payments/webhook", async (req, res) => {
     res.status(500).json({ error: "Webhook processing failed" });
   }
 });
-var payments_default = router21;
+var payments_default = router22;
 
 // src/routes/index.ts
-var router22 = (0, import_express22.Router)();
-router22.use(health_default);
-router22.use(auth_default);
-router22.use(users_default);
-router22.use(categories_default);
-router22.use(subcategories_default);
-router22.use(vendors_default);
-router22.use(products_default);
-router22.use(cart_default);
-router22.use(orders_default);
-router22.use(delivery_default);
-router22.use(wallet_default);
-router22.use(coupons_default);
-router22.use(reviews_default);
-router22.use(banners_default);
-router22.use(cities_default);
-router22.use(notifications_default);
-router22.use(admin_default);
-router22.use(subscriptions_default);
-router22.use(withdrawals_default);
-router22.use(city_admins_default);
-router22.use(payments_default);
-var routes_default = router22;
+var router23 = (0, import_express23.Router)();
+router23.use(health_default);
+router23.use(auth_default);
+router23.use(users_default);
+router23.use(categories_default);
+router23.use(subcategories_default);
+router23.use(vendors_default);
+router23.use(products_default);
+router23.use(cart_default);
+router23.use(orders_default);
+router23.use(delivery_default);
+router23.use(wallet_default);
+router23.use(coupons_default);
+router23.use(reviews_default);
+router23.use(banners_default);
+router23.use(cities_default);
+router23.use(notifications_default);
+router23.use(admin_default);
+router23.use(subscriptions_default);
+router23.use(withdrawals_default);
+router23.use(city_admins_default);
+router23.use(super_admins_default);
+router23.use(payments_default);
+var routes_default = router23;
 
 // src/app.ts
-var app = (0, import_express23.default)();
+var app = (0, import_express24.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -84409,13 +84735,13 @@ app.use(
 );
 app.use((0, import_cors.default)());
 app.use(
-  import_express23.default.json({
+  import_express24.default.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     }
   })
 );
-app.use(import_express23.default.urlencoded({ extended: true }));
+app.use(import_express24.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 app.get("/", (_req, res) => {
   res.type("html").send(`<!doctype html>
