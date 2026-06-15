@@ -20488,27 +20488,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router24;
+    module.exports = Router25;
     module.exports.Route = Route;
-    function Router24(options) {
-      if (!(this instanceof Router24)) {
-        return new Router24(options);
+    function Router25(options) {
+      if (!(this instanceof Router25)) {
+        return new Router25(options);
       }
       const opts = options || {};
-      function router24(req, res, next) {
-        router24.handle(req, res, next);
+      function router25(req, res, next) {
+        router25.handle(req, res, next);
       }
-      Object.setPrototypeOf(router24, this);
-      router24.caseSensitive = opts.caseSensitive;
-      router24.mergeParams = opts.mergeParams;
-      router24.params = {};
-      router24.strict = opts.strict;
-      router24.stack = [];
-      return router24;
+      Object.setPrototypeOf(router25, this);
+      router25.caseSensitive = opts.caseSensitive;
+      router25.mergeParams = opts.mergeParams;
+      router25.params = {};
+      router25.strict = opts.strict;
+      router25.stack = [];
+      return router25;
     }
-    Router24.prototype = function() {
+    Router25.prototype = function() {
     };
-    Router24.prototype.param = function param(name, fn) {
+    Router25.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -20528,7 +20528,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router24.prototype.handle = function handle(req, res, callback) {
+    Router25.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -20655,7 +20655,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router24.prototype.use = function use(handler) {
+    Router25.prototype.use = function use(handler) {
       let offset = 0;
       let path = "/";
       if (typeof handler !== "function") {
@@ -20688,7 +20688,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router24.prototype.route = function route(path) {
+    Router25.prototype.route = function route(path) {
       const route2 = new Route(path);
       const layer = new Layer(path, {
         sensitive: this.caseSensitive,
@@ -20703,7 +20703,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router24.prototype[method] = function(path) {
+      Router25.prototype[method] = function(path) {
         const route = this.route(path);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -20886,13 +20886,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router24 = require_router();
+    var Router25 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router24 = null;
+      var router25 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -20901,13 +20901,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router24 === null) {
-            router24 = new Router24({
+          if (router25 === null) {
+            router25 = new Router25({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router24;
+          return router25;
         }
       });
     };
@@ -20978,15 +20978,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router24 = this.router;
+      var router25 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router24.use(path, fn2);
+          return router25.use(path, fn2);
         }
         debug(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router24.use(path, function mounted_app(req, res, next) {
+        router25.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -23513,7 +23513,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router24 = require_router();
+    var Router25 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23535,8 +23535,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router24.Route;
-    exports.Router = Router24;
+    exports.Route = Router25.Route;
+    exports.Router = Router25;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -53944,12 +53944,12 @@ var require_src5 = __commonJS({
 });
 
 // src/app.ts
-var import_express24 = __toESM(require_express2(), 1);
+var import_express25 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express23 = __toESM(require_express2(), 1);
+var import_express24 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -58323,6 +58323,7 @@ var ListVendorsQueryParams = objectType({
   category: coerce.string().optional(),
   city: coerce.string().optional(),
   userId: coerce.number().optional(),
+  featured: coerce.boolean().optional(),
   page: coerce.number().optional(),
   limit: coerce.number().optional()
 });
@@ -58350,6 +58351,7 @@ var ListVendorsResponse = objectType({
       rating: numberType().optional(),
       totalOrders: numberType().optional(),
       isOpen: booleanType().optional(),
+      isFeatured: booleanType().optional(),
       openTime: stringType().nullish(),
       closeTime: stringType().nullish(),
       payoutMethod: stringType().nullish(),
@@ -58413,6 +58415,7 @@ var ListNearbyVendorsResponseItem = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -58450,6 +58453,7 @@ var GetVendorResponse = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -58479,6 +58483,7 @@ var UpdateVendorBody = objectType({
   deliveryRadiusKm: numberType().optional(),
   phone: stringType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().optional(),
   closeTime: stringType().optional()
 });
@@ -58504,6 +58509,7 @@ var UpdateVendorResponse = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -58538,6 +58544,7 @@ var ApproveVendorResponse = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -58572,6 +58579,7 @@ var RejectVendorResponse = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -58969,6 +58977,17 @@ var GetPaymentConfigResponse = objectType({
   upiName: stringType().nullish(),
   upiQrImage: stringType().nullish()
 });
+var GetPublicSettingsResponse = objectType({
+  currency: stringType(),
+  supportEmail: stringType().nullish(),
+  supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
+  upiId: stringType().nullish(),
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish()
+});
 var CreateRazorpayOrderBody = objectType({
   orderId: numberType()
 });
@@ -59333,6 +59352,7 @@ var ListDeliveryPartnersResponse = objectType({
       totalDeliveries: numberType().optional(),
       totalEarnings: numberType().optional(),
       walletBalance: numberType().optional(),
+      cashInHand: numberType().optional(),
       payoutMethod: stringType().nullish(),
       bankAccountNumber: stringType().nullish(),
       bankIfsc: stringType().nullish(),
@@ -59386,6 +59406,7 @@ var GetDeliveryPartnerResponse = objectType({
   totalDeliveries: numberType().optional(),
   totalEarnings: numberType().optional(),
   walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
   payoutMethod: stringType().nullish(),
   bankAccountNumber: stringType().nullish(),
   bankIfsc: stringType().nullish(),
@@ -59439,6 +59460,7 @@ var UpdateDeliveryPartnerResponse = objectType({
   totalDeliveries: numberType().optional(),
   totalEarnings: numberType().optional(),
   walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
   payoutMethod: stringType().nullish(),
   bankAccountNumber: stringType().nullish(),
   bankIfsc: stringType().nullish(),
@@ -59473,6 +59495,7 @@ var ApproveDeliveryPartnerResponse = objectType({
   totalDeliveries: numberType().optional(),
   totalEarnings: numberType().optional(),
   walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
   payoutMethod: stringType().nullish(),
   bankAccountNumber: stringType().nullish(),
   bankIfsc: stringType().nullish(),
@@ -59807,6 +59830,7 @@ var GetAdminDashboardResponse = objectType({
       rating: numberType().optional(),
       totalOrders: numberType().optional(),
       isOpen: booleanType().optional(),
+      isFeatured: booleanType().optional(),
       openTime: stringType().nullish(),
       closeTime: stringType().nullish(),
       payoutMethod: stringType().nullish(),
@@ -59854,6 +59878,9 @@ var GetAdminSettingsResponse = objectType({
   currency: stringType().optional(),
   supportEmail: stringType().nullish(),
   supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
   razorpayKeyId: stringType().nullish(),
   razorpayKeySecret: stringType().nullish(),
   razorpayWebhookSecret: stringType().nullish().describe(
@@ -59874,6 +59901,9 @@ var UpdateAdminSettingsBody = objectType({
   currency: stringType().optional(),
   supportEmail: stringType().optional(),
   supportPhone: stringType().optional(),
+  orderPhone: stringType().optional(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
   razorpayKeyId: stringType().optional(),
   razorpayKeySecret: stringType().optional(),
   razorpayWebhookSecret: stringType().optional().describe("Razorpay webhook signing secret. Send empty string to clear."),
@@ -59893,6 +59923,9 @@ var UpdateAdminSettingsResponse = objectType({
   currency: stringType().optional(),
   supportEmail: stringType().nullish(),
   supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
   razorpayKeyId: stringType().nullish(),
   razorpayKeySecret: stringType().nullish(),
   razorpayWebhookSecret: stringType().nullish().describe(
@@ -59903,6 +59936,45 @@ var UpdateAdminSettingsResponse = objectType({
   upiQrImage: stringType().nullish().describe(
     "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
   )
+});
+var ListDeliverySettlementsQueryParams = objectType({
+  status: coerce.string().optional(),
+  deliveryPartnerId: coerce.number().optional()
+});
+var ListDeliverySettlementsResponseItem = objectType({
+  id: numberType(),
+  deliveryPartnerId: numberType(),
+  partnerName: stringType().nullish(),
+  amount: numberType(),
+  status: enumType(["pending", "confirmed"]),
+  note: stringType().nullish(),
+  confirmedBy: numberType().nullish(),
+  createdAt: stringType(),
+  confirmedAt: stringType().nullish()
+});
+var ListDeliverySettlementsResponse = arrayType(
+  ListDeliverySettlementsResponseItem
+);
+var CreateDeliverySettlementBody = objectType({
+  amount: numberType(),
+  note: stringType().optional()
+});
+var ConfirmDeliverySettlementParams = objectType({
+  id: coerce.number()
+});
+var ConfirmDeliverySettlementBody = objectType({
+  note: stringType().optional()
+});
+var ConfirmDeliverySettlementResponse = objectType({
+  id: numberType(),
+  deliveryPartnerId: numberType(),
+  partnerName: stringType().nullish(),
+  amount: numberType(),
+  status: enumType(["pending", "confirmed"]),
+  note: stringType().nullish(),
+  confirmedBy: numberType().nullish(),
+  createdAt: stringType(),
+  confirmedAt: stringType().nullish()
 });
 var ListSubscriptionPlansResponseItem = objectType({
   id: numberType(),
@@ -59973,6 +60045,7 @@ var SuspendVendorResponse = objectType({
   rating: numberType().optional(),
   totalOrders: numberType().optional(),
   isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
   openTime: stringType().nullish(),
   closeTime: stringType().nullish(),
   payoutMethod: stringType().nullish(),
@@ -60002,6 +60075,7 @@ var SuspendDeliveryPartnerResponse = objectType({
   totalDeliveries: numberType().optional(),
   totalEarnings: numberType().optional(),
   walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
   payoutMethod: stringType().nullish(),
   bankAccountNumber: stringType().nullish(),
   bankIfsc: stringType().nullish(),
@@ -60036,6 +60110,7 @@ var RejectDeliveryPartnerResponse = objectType({
   totalDeliveries: numberType().optional(),
   totalEarnings: numberType().optional(),
   walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
   payoutMethod: stringType().nullish(),
   bankAccountNumber: stringType().nullish(),
   bankIfsc: stringType().nullish(),
@@ -69049,6 +69124,8 @@ __export(schema_exports, {
   deliveryKycStatusEnum: () => deliveryKycStatusEnum,
   deliveryPartnerStatusEnum: () => deliveryPartnerStatusEnum,
   deliveryPartnersTable: () => deliveryPartnersTable,
+  deliverySettlementStatusEnum: () => deliverySettlementStatusEnum,
+  deliverySettlementsTable: () => deliverySettlementsTable,
   discountTypeEnum: () => discountTypeEnum,
   insertAdminSettingsSchema: () => insertAdminSettingsSchema,
   insertBannerSchema: () => insertBannerSchema,
@@ -69056,6 +69133,7 @@ __export(schema_exports, {
   insertCitySchema: () => insertCitySchema,
   insertCouponSchema: () => insertCouponSchema,
   insertDeliveryPartnerSchema: () => insertDeliveryPartnerSchema,
+  insertDeliverySettlementSchema: () => insertDeliverySettlementSchema,
   insertNotificationSchema: () => insertNotificationSchema,
   insertOrderSchema: () => insertOrderSchema,
   insertProductSchema: () => insertProductSchema,
@@ -80550,6 +80628,7 @@ var vendorsTable = pgTable("vendors", {
   rating: numeric("rating", { precision: 3, scale: 2 }).notNull().default("0"),
   totalOrders: integer("total_orders").notNull().default(0),
   isOpen: boolean("is_open").notNull().default(true),
+  isFeatured: boolean("is_featured").notNull().default(false),
   openTime: text("open_time"),
   closeTime: text("close_time"),
   payoutMethod: text("payout_method"),
@@ -80659,6 +80738,7 @@ var deliveryPartnersTable = pgTable("delivery_partners", {
   totalDeliveries: integer("total_deliveries").notNull().default(0),
   totalEarnings: numeric("total_earnings", { precision: 10, scale: 2 }).notNull().default("0"),
   walletBalance: numeric("wallet_balance", { precision: 10, scale: 2 }).notNull().default("0"),
+  cashInHand: numeric("cash_in_hand", { precision: 10, scale: 2 }).notNull().default("0"),
   payoutMethod: text("payout_method"),
   bankAccountNumber: text("bank_account_number"),
   bankIfsc: text("bank_ifsc"),
@@ -80679,6 +80759,21 @@ var deliveryPartnersTable = pgTable("delivery_partners", {
   index("delivery_partners_status_idx").on(t2.status)
 ]);
 var insertDeliveryPartnerSchema = createInsertSchema(deliveryPartnersTable).omit({ id: true, createdAt: true });
+var deliverySettlementStatusEnum = pgEnum("delivery_settlement_status", ["pending", "confirmed"]);
+var deliverySettlementsTable = pgTable("delivery_settlements", {
+  id: serial("id").primaryKey(),
+  deliveryPartnerId: integer("delivery_partner_id").notNull().references(() => deliveryPartnersTable.id),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  status: deliverySettlementStatusEnum("status").notNull().default("pending"),
+  note: text("note"),
+  confirmedBy: integer("confirmed_by").references(() => usersTable.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  confirmedAt: timestamp("confirmed_at")
+}, (t2) => [
+  index("delivery_settlements_partner_id_idx").on(t2.deliveryPartnerId),
+  index("delivery_settlements_status_idx").on(t2.status)
+]);
+var insertDeliverySettlementSchema = createInsertSchema(deliverySettlementsTable).omit({ id: true, createdAt: true, confirmedAt: true });
 
 // ../../lib/db/src/schema/wallet.ts
 var txTypeEnum = pgEnum("tx_type", ["credit", "debit"]);
@@ -80779,6 +80874,9 @@ var adminSettingsTable = pgTable("admin_settings", {
   currency: text("currency").notNull().default("INR"),
   supportEmail: text("support_email"),
   supportPhone: text("support_phone"),
+  orderPhone: text("order_phone"),
+  callToOrderEnabled: boolean("call_to_order_enabled").notNull().default(false),
+  riderCashLimit: numeric("rider_cash_limit", { precision: 10, scale: 2 }).notNull().default("2000"),
   razorpayKeyId: text("razorpay_key_id"),
   razorpayKeySecret: text("razorpay_key_secret"),
   razorpayWebhookSecret: text("razorpay_webhook_secret"),
@@ -81844,6 +81942,7 @@ function toVendor(v, categoryName, includePayout = false, distanceKm) {
     rating: Number(v.rating),
     totalOrders: v.totalOrders,
     isOpen: v.isOpen,
+    isFeatured: v.isFeatured,
     openTime: v.openTime,
     closeTime: v.closeTime,
     payoutMethod: includePayout ? v.payoutMethod : null,
@@ -81897,18 +81996,23 @@ router6.get("/vendors", optionalAuthenticate, async (req, res) => {
   const page = Number(params.data?.page ?? 1);
   const limit = Number(params.data?.limit ?? 20);
   const offset = (page - 1) * limit;
+  const adminViewer = isAdminRole(req.user?.role);
+  const wantsOwn = params.data?.userId != null && params.data.userId === req.user?.id;
   const conditions = [];
   if (params.data?.userId) conditions.push(eq(vendorsTable.userId, params.data.userId));
   if (params.data?.status) conditions.push(eq(vendorsTable.status, params.data.status));
+  if (params.data?.featured != null) conditions.push(eq(vendorsTable.isFeatured, params.data.featured));
   if (params.data?.city) conditions.push(sql`lower(${vendorsTable.city}) = lower(${params.data.city})`);
   if (params.data?.category) conditions.push(sql`(lower(${categoriesTable.slug}) = lower(${params.data.category}) OR lower(${categoriesTable.name}) = lower(${params.data.category}))`);
   if (req.user?.role === "city_admin" && req.user.cityId != null) {
     conditions.push(eq(vendorsTable.cityId, req.user.cityId));
   }
+  if (!params.data?.status && !adminViewer && !wantsOwn) {
+    conditions.push(eq(vendorsTable.status, "approved"));
+  }
   const whereClause = conditions.length ? and(...conditions) : void 0;
-  const rows = await db.select({ v: vendorsTable, catName: categoriesTable.name }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(whereClause).orderBy(desc(vendorsTable.rating)).limit(limit).offset(offset);
+  const rows = await db.select({ v: vendorsTable, catName: categoriesTable.name }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(whereClause).orderBy(desc(vendorsTable.isFeatured), desc(vendorsTable.rating)).limit(limit).offset(offset);
   const [{ count }] = await db.select({ count: sql`count(*)` }).from(vendorsTable).leftJoin(categoriesTable, eq(vendorsTable.categoryId, categoriesTable.id)).where(whereClause);
-  const adminViewer = isAdminRole(req.user?.role);
   res.json({
     data: rows.map(({ v, catName }) => toVendor(v, catName, adminViewer || v.userId === req.user?.id)),
     total: Number(count),
@@ -81968,6 +82072,7 @@ router6.patch("/vendors/:id", authenticate, async (req, res) => {
     delete updateData.status;
     delete updateData.commissionRate;
     delete updateData.userId;
+    delete updateData.isFeatured;
   }
   if (!isSuperAdmin2) delete updateData.cityId;
   if (body.data.lat != null) updateData.lat = String(body.data.lat);
@@ -82176,6 +82281,10 @@ router7.post("/products", authenticate, async (req, res) => {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
+    if (vendor.status !== "approved") {
+      res.status(403).json({ error: "Your shop is pending admin approval. You can add products once your shop is approved." });
+      return;
+    }
   }
   const taxErr = await validateTaxonomy(body.data.categoryId, body.data.subcategoryId);
   if (taxErr) {
@@ -82187,7 +82296,7 @@ router7.post("/products", authenticate, async (req, res) => {
     price: String(body.data.price),
     mrp: body.data.mrp != null ? String(body.data.mrp) : null,
     images: body.data.images || [],
-    isApproved: true
+    isApproved: false
   }).returning();
   res.status(201).json(toProduct(product));
 });
@@ -82259,10 +82368,15 @@ router7.patch("/products/:id", authenticate, async (req, res) => {
     res.status(404).json({ error: "Not found" });
     return;
   }
-  if (!isSuperAdmin(req.user.role)) {
+  const isAdminEditor = isSuperAdmin(req.user.role);
+  if (!isAdminEditor) {
     const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, existing.vendorId));
     if (!vendor || vendor.userId !== req.user.id) {
       res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+    if (vendor.status !== "approved") {
+      res.status(403).json({ error: "Your shop is pending admin approval. You can manage products once your shop is approved." });
       return;
     }
   }
@@ -82278,6 +82392,14 @@ router7.patch("/products/:id", authenticate, async (req, res) => {
   const updateData = { ...body.data };
   if (body.data.price != null) updateData.price = String(body.data.price);
   if (body.data.mrp != null) updateData.mrp = String(body.data.mrp);
+  if (!isAdminEditor) {
+    const contentFields = ["name", "description", "price", "mrp", "images", "unit", "categoryId", "subcategoryId"];
+    const contentChanged = contentFields.some((k) => body.data[k] !== void 0);
+    if (contentChanged) {
+      updateData.isApproved = false;
+      updateData.rejectionReason = null;
+    }
+  }
   const [product] = await db.update(productsTable).set(updateData).where(eq(productsTable.id, id)).returning();
   if (!product) {
     res.status(404).json({ error: "Not found" });
@@ -82296,6 +82418,10 @@ router7.delete("/products/:id", authenticate, async (req, res) => {
     const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, existing.vendorId));
     if (!vendor || vendor.userId !== req.user.id) {
       res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+    if (vendor.status !== "approved") {
+      res.status(403).json({ error: "Your shop is pending admin approval." });
       return;
     }
   }
@@ -82425,6 +82551,18 @@ var RIDER_TRANSITIONS = {
 };
 function genOtp() {
   return String(Math.floor(1e3 + Math.random() * 9e3));
+}
+async function getRiderCashLimit() {
+  const [s2] = await db.select().from(adminSettingsTable);
+  return s2 ? Number(s2.riderCashLimit) : 2e3;
+}
+async function applyCodCashOnDelivery(order) {
+  if (!order.deliveryPartnerId || order.paymentMethod !== "cod") return;
+  const limit = await getRiderCashLimit();
+  const [p] = await db.update(deliveryPartnersTable).set({ cashInHand: sql`cash_in_hand + ${order.total}::numeric` }).where(eq(deliveryPartnersTable.id, order.deliveryPartnerId)).returning();
+  if (p && Number(p.cashInHand) >= limit) {
+    await db.update(deliveryPartnersTable).set({ isOnline: false }).where(eq(deliveryPartnersTable.id, p.id));
+  }
 }
 function toOrder(o, ctx = {}) {
   let otp = null;
@@ -82567,7 +82705,8 @@ async function autoAssignNearestRider(order) {
   const partnerIds = partners.map((p) => p.id);
   const busy = partnerIds.length ? await db.select({ id: ordersTable.deliveryPartnerId }).from(ordersTable).where(and(eq(ordersTable.status, "picked_up"), inArray(ordersTable.deliveryPartnerId, partnerIds))) : [];
   const busyIds = new Set(busy.map((b) => b.id).filter((id) => id != null));
-  const available = partners.filter((p) => p.id !== order.deliveryPartnerId && !busyIds.has(p.id));
+  const cashLimit = await getRiderCashLimit();
+  const available = partners.filter((p) => p.id !== order.deliveryPartnerId && !busyIds.has(p.id) && Number(p.cashInHand) < cashLimit);
   if (available.length === 0) return null;
   const vLat = vendor?.lat ? Number(vendor.lat) : null;
   const vLng = vendor?.lng ? Number(vendor.lng) : null;
@@ -82941,9 +83080,14 @@ router9.patch("/orders/:id/status", authenticate, async (req, res) => {
   const updateData = { status: next };
   if (next === "delivered") updateData.deliveredAt = /* @__PURE__ */ new Date();
   const prev = order.status;
-  const [updated] = await db.update(ordersTable).set(updateData).where(eq(ordersTable.id, id)).returning();
-  if (next === "delivered" && updated.deliveryPartnerId) {
+  const [updated] = await db.update(ordersTable).set(updateData).where(and(eq(ordersTable.id, id), eq(ordersTable.status, prev))).returning();
+  if (!updated) {
+    res.status(409).json({ error: "Order status changed, please refresh and retry" });
+    return;
+  }
+  if (next === "delivered" && prev !== "delivered" && updated.deliveryPartnerId) {
     await db.update(deliveryPartnersTable).set({ totalDeliveries: sql`total_deliveries + 1` }).where(eq(deliveryPartnersTable.id, updated.deliveryPartnerId));
+    await applyCodCashOnDelivery(updated);
   }
   await notifyStatusChange(updated, prev);
   let finalOrder = updated;
@@ -82992,10 +83136,15 @@ router9.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
     return;
   }
   const prev = order.status;
-  const [updated] = await db.update(ordersTable).set({ status: "delivered", deliveredAt: /* @__PURE__ */ new Date() }).where(eq(ordersTable.id, id)).returning();
+  const [updated] = await db.update(ordersTable).set({ status: "delivered", deliveredAt: /* @__PURE__ */ new Date() }).where(and(eq(ordersTable.id, id), eq(ordersTable.status, "picked_up"))).returning();
+  if (!updated) {
+    res.status(409).json({ error: "Order is not in picked_up state" });
+    return;
+  }
   if (updated.deliveryPartnerId) {
     await db.update(deliveryPartnersTable).set({ totalDeliveries: sql`total_deliveries + 1` }).where(eq(deliveryPartnersTable.id, updated.deliveryPartnerId));
   }
+  await applyCodCashOnDelivery(updated);
   await notifyStatusChange(updated, prev);
   res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
 });
@@ -83066,6 +83215,10 @@ router9.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
       res.status(409).json({ error: "Order already assigned" });
       return;
     }
+    if (Number(partner.cashInHand) >= await getRiderCashLimit()) {
+      res.status(403).json({ error: "Cash limit reached. Settle before claiming new orders.", code: "CASH_LIMIT_EXCEEDED" });
+      return;
+    }
     if (partner.cityId != null) {
       const [v] = await db.select({ cityId: vendorsTable.cityId }).from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
       const resolvedCity = order.cityId ?? v?.cityId ?? null;
@@ -83096,6 +83249,10 @@ router9.post("/orders/:id/assign-delivery", authenticate, async (req, res) => {
     }
     if (role === "vendor" && !target.isOnline) {
       res.status(409).json({ error: "Rider is offline" });
+      return;
+    }
+    if (Number(target.cashInHand) >= await getRiderCashLimit()) {
+      res.status(409).json({ error: "Rider has reached the cash limit and must settle first" });
       return;
     }
   }
@@ -83185,6 +83342,7 @@ function toPartner(p, user, opts) {
     totalDeliveries: p.totalDeliveries,
     totalEarnings: includePII ? Number(p.totalEarnings) : 0,
     walletBalance: includePII ? Number(p.walletBalance) : 0,
+    cashInHand: includePII ? Number(p.cashInHand) : 0,
     payoutMethod: includePII ? p.payoutMethod : null,
     bankAccountNumber: includePII ? p.bankAccountNumber : null,
     bankIfsc: includePII ? p.bankIfsc : null,
@@ -83199,6 +83357,10 @@ function toPartner(p, user, opts) {
     kycNote: includePII ? p.kycNote : null,
     createdAt: p.createdAt.toISOString()
   };
+}
+async function getRiderCashLimit2() {
+  const [s2] = await db.select().from(adminSettingsTable);
+  return s2 ? Number(s2.riderCashLimit) : 2e3;
 }
 router10.get("/delivery-partners", authenticate, async (req, res) => {
   const params = ListDeliveryPartnersQueryParams.safeParse(req.query);
@@ -83390,6 +83552,13 @@ router10.patch("/delivery-partners/:id", authenticate, async (req, res) => {
     updateData.lastLocationAt = /* @__PURE__ */ new Date();
     req.log.info({ partnerId: id, lat: updateData.currentLat, lng: updateData.currentLng }, "delivery.location.update");
   }
+  if (updateData.isOnline === true) {
+    const limit = await getRiderCashLimit2();
+    if (Number(existing.cashInHand) >= limit) {
+      res.status(403).json({ error: "Cash limit reached. Settle your collected cash before going online.", code: "CASH_LIMIT_EXCEEDED" });
+      return;
+    }
+  }
   if (Object.keys(updateData).length === 0) {
     const [user2] = await db.select().from(usersTable).where(eq(usersTable.id, existing.userId));
     res.json(toPartner(existing, user2));
@@ -83478,6 +83647,109 @@ router10.get("/delivery-partners/:id/stats", authenticate, async (req, res) => {
     thisMonthDeliveries: thisMonth.length,
     averageRating: Number(partner.rating)
   });
+});
+function toSettlement(s2, partnerName) {
+  return {
+    id: s2.id,
+    deliveryPartnerId: s2.deliveryPartnerId,
+    partnerName: partnerName ?? null,
+    amount: Number(s2.amount),
+    status: s2.status,
+    note: s2.note ?? null,
+    confirmedBy: s2.confirmedBy ?? null,
+    createdAt: s2.createdAt.toISOString(),
+    confirmedAt: s2.confirmedAt?.toISOString() ?? null
+  };
+}
+router10.get("/delivery-settlements", authenticate, async (req, res) => {
+  const params = ListDeliverySettlementsQueryParams.safeParse(req.query);
+  const role = req.user.role;
+  const isAdmin = role === "admin" || role === "super_admin" || role === "city_admin";
+  const conditions = [];
+  if (isAdmin) {
+    if (role === "city_admin" && req.user.cityId == null) {
+      res.json([]);
+      return;
+    }
+    if (params.data?.deliveryPartnerId != null) conditions.push(eq(deliverySettlementsTable.deliveryPartnerId, params.data.deliveryPartnerId));
+  } else if (role === "delivery_partner") {
+    const [partner] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.userId, req.user.id));
+    if (!partner) {
+      res.json([]);
+      return;
+    }
+    conditions.push(eq(deliverySettlementsTable.deliveryPartnerId, partner.id));
+  } else {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  if (params.data?.status === "pending" || params.data?.status === "confirmed") {
+    conditions.push(eq(deliverySettlementsTable.status, params.data.status));
+  }
+  const rows = await db.select({ s: deliverySettlementsTable, partnerName: usersTable.name, partnerCityId: deliveryPartnersTable.cityId }).from(deliverySettlementsTable).leftJoin(deliveryPartnersTable, eq(deliverySettlementsTable.deliveryPartnerId, deliveryPartnersTable.id)).leftJoin(usersTable, eq(deliveryPartnersTable.userId, usersTable.id)).where(conditions.length ? and(...conditions) : void 0).orderBy(desc(deliverySettlementsTable.createdAt)).limit(200);
+  const filtered = role === "city_admin" && req.user.cityId != null ? rows.filter((r2) => r2.partnerCityId === req.user.cityId) : rows;
+  res.json(filtered.map((r2) => toSettlement(r2.s, r2.partnerName)));
+});
+router10.post("/delivery-settlements", authenticate, async (req, res) => {
+  const body = CreateDeliverySettlementBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  if (req.user.role !== "delivery_partner") {
+    res.status(403).json({ error: "Only delivery partners can record settlements" });
+    return;
+  }
+  const [partner] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.userId, req.user.id));
+  if (!partner) {
+    res.status(404).json({ error: "Delivery partner profile not found" });
+    return;
+  }
+  const owed = Number(partner.cashInHand);
+  if (owed <= 0) {
+    res.status(400).json({ error: "No outstanding cash to settle." });
+    return;
+  }
+  const [pending] = await db.select().from(deliverySettlementsTable).where(and(eq(deliverySettlementsTable.deliveryPartnerId, partner.id), eq(deliverySettlementsTable.status, "pending")));
+  if (pending) {
+    res.status(409).json({ error: "You already have a pending settlement awaiting confirmation." });
+    return;
+  }
+  const [settlement] = await db.insert(deliverySettlementsTable).values({
+    deliveryPartnerId: partner.id,
+    amount: String(partner.cashInHand),
+    note: body.data.note ?? null,
+    status: "pending"
+  }).returning();
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, partner.userId));
+  res.status(201).json(toSettlement(settlement, user?.name));
+});
+router10.post("/delivery-settlements/:id/confirm", authenticate, requireRole("admin", "city_admin"), async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const body = ConfirmDeliverySettlementBody.safeParse(req.body ?? {});
+  const [settlement] = await db.select().from(deliverySettlementsTable).where(eq(deliverySettlementsTable.id, id));
+  if (!settlement) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const [partner] = await db.select().from(deliveryPartnersTable).where(eq(deliveryPartnersTable.id, settlement.deliveryPartnerId));
+  if (req.user.role === "city_admin") {
+    if (req.user.cityId == null || partner?.cityId !== req.user.cityId) {
+      res.status(403).json({ error: "Forbidden: rider not in your city" });
+      return;
+    }
+  }
+  const note = body.success ? body.data.note : void 0;
+  const updated = await db.transaction(async (tx) => {
+    const [u] = await tx.update(deliverySettlementsTable).set({ status: "confirmed", confirmedBy: req.user.id, confirmedAt: /* @__PURE__ */ new Date(), ...note != null ? { note } : {} }).where(and(eq(deliverySettlementsTable.id, id), eq(deliverySettlementsTable.status, "pending"))).returning();
+    if (u) {
+      await tx.update(deliveryPartnersTable).set({ cashInHand: "0" }).where(eq(deliveryPartnersTable.id, settlement.deliveryPartnerId));
+    }
+    return u;
+  });
+  const final = updated ?? (await db.select().from(deliverySettlementsTable).where(eq(deliverySettlementsTable.id, id)))[0];
+  const [user] = partner ? await db.select().from(usersTable).where(eq(usersTable.id, partner.userId)) : [];
+  res.json(toSettlement(final, user?.name));
 });
 var delivery_default = router10;
 
@@ -83864,6 +84136,9 @@ function toSettings(s2) {
     currency: s2.currency,
     supportEmail: s2.supportEmail,
     supportPhone: s2.supportPhone,
+    orderPhone: s2.orderPhone,
+    callToOrderEnabled: s2.callToOrderEnabled,
+    riderCashLimit: Number(s2.riderCashLimit),
     razorpayKeyId: s2.razorpayKeyId,
     razorpayKeySecret: s2.razorpayKeySecret,
     razorpayWebhookSecret: s2.razorpayWebhookSecret,
@@ -84060,6 +84335,7 @@ router17.patch("/admin/settings", authenticate, requireRole("admin"), async (req
   if (body.data.deliveryPerKmFee != null) updateData.deliveryPerKmFee = String(body.data.deliveryPerKmFee);
   if (body.data.minOrderAmount != null) updateData.minOrderAmount = String(body.data.minOrderAmount);
   if (body.data.maxDeliveryRadius != null) updateData.maxDeliveryRadius = String(body.data.maxDeliveryRadius);
+  if (body.data.riderCashLimit != null) updateData.riderCashLimit = String(body.data.riderCashLimit);
   if (!settings) {
     [settings] = await db.insert(adminSettingsTable).values({ ...updateData }).returning();
   } else {
@@ -84686,34 +84962,54 @@ router22.post("/payments/webhook", async (req, res) => {
 });
 var payments_default = router22;
 
-// src/routes/index.ts
+// src/routes/public.ts
+var import_express23 = __toESM(require_express2(), 1);
 var router23 = (0, import_express23.Router)();
-router23.use(health_default);
-router23.use(auth_default);
-router23.use(users_default);
-router23.use(categories_default);
-router23.use(subcategories_default);
-router23.use(vendors_default);
-router23.use(products_default);
-router23.use(cart_default);
-router23.use(orders_default);
-router23.use(delivery_default);
-router23.use(wallet_default);
-router23.use(coupons_default);
-router23.use(reviews_default);
-router23.use(banners_default);
-router23.use(cities_default);
-router23.use(notifications_default);
-router23.use(admin_default);
-router23.use(subscriptions_default);
-router23.use(withdrawals_default);
-router23.use(city_admins_default);
-router23.use(super_admins_default);
-router23.use(payments_default);
-var routes_default = router23;
+router23.get("/public/settings", async (_req, res) => {
+  const [s2] = await db.select().from(adminSettingsTable);
+  res.json({
+    currency: s2?.currency ?? "INR",
+    supportEmail: s2?.supportEmail ?? null,
+    supportPhone: s2?.supportPhone ?? null,
+    orderPhone: s2?.orderPhone ?? null,
+    callToOrderEnabled: s2?.callToOrderEnabled ?? false,
+    riderCashLimit: s2 ? Number(s2.riderCashLimit) : 2e3,
+    upiId: s2?.upiId ?? null,
+    upiName: s2?.upiName ?? null,
+    upiQrImage: s2?.upiQrImage ?? null
+  });
+});
+var public_default = router23;
+
+// src/routes/index.ts
+var router24 = (0, import_express24.Router)();
+router24.use(health_default);
+router24.use(auth_default);
+router24.use(users_default);
+router24.use(categories_default);
+router24.use(subcategories_default);
+router24.use(vendors_default);
+router24.use(products_default);
+router24.use(cart_default);
+router24.use(orders_default);
+router24.use(delivery_default);
+router24.use(wallet_default);
+router24.use(coupons_default);
+router24.use(reviews_default);
+router24.use(banners_default);
+router24.use(cities_default);
+router24.use(notifications_default);
+router24.use(admin_default);
+router24.use(subscriptions_default);
+router24.use(withdrawals_default);
+router24.use(city_admins_default);
+router24.use(super_admins_default);
+router24.use(payments_default);
+router24.use(public_default);
+var routes_default = router24;
 
 // src/app.ts
-var app = (0, import_express24.default)();
+var app = (0, import_express25.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -84735,13 +85031,13 @@ app.use(
 );
 app.use((0, import_cors.default)());
 app.use(
-  import_express24.default.json({
+  import_express25.default.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     }
   })
 );
-app.use(import_express24.default.urlencoded({ extended: true }));
+app.use(import_express25.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 app.get("/", (_req, res) => {
   res.type("html").send(`<!doctype html>
