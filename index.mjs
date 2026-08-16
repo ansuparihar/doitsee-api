@@ -18772,14 +18772,14 @@ var require_etag = __commonJS({
   "../../node_modules/.pnpm/etag@1.8.1/node_modules/etag/index.js"(exports, module) {
     "use strict";
     module.exports = etag;
-    var crypto4 = __require("crypto");
+    var crypto3 = __require("crypto");
     var Stats = __require("fs").Stats;
     var toString = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash2 = crypto4.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash2 = crypto3.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash2 + '"';
     }
@@ -22194,17 +22194,17 @@ var require_content_disposition = __commonJS({
 // ../../node_modules/.pnpm/cookie-signature@1.2.2/node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "../../node_modules/.pnpm/cookie-signature@1.2.2/node_modules/cookie-signature/index.js"(exports) {
-    var crypto4 = __require("crypto");
+    var crypto3 = __require("crypto");
     exports.sign = function(val, secret) {
       if ("string" != typeof val) throw new TypeError("Cookie value must be provided as a string.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
-      return val + "." + crypto4.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto3.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports.unsign = function(input, secret) {
       if ("string" != typeof input) throw new TypeError("Signed cookie string must be provided.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
       var tentativeValue = input.slice(0, input.lastIndexOf(".")), expectedInput = exports.sign(tentativeValue, secret), expectedBuffer = Buffer.from(expectedInput), inputBuffer = Buffer.from(input);
-      return expectedBuffer.length === inputBuffer.length && crypto4.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
+      return expectedBuffer.length === inputBuffer.length && crypto3.timingSafeEqual(expectedBuffer, inputBuffer) ? tentativeValue : false;
     };
   }
 });
@@ -29770,7 +29770,7 @@ var require_cert_signatures = __commonJS({
 var require_sasl = __commonJS({
   "../../node_modules/.pnpm/pg@8.20.0/node_modules/pg/lib/crypto/sasl.js"(exports, module) {
     "use strict";
-    var crypto4 = require_utils5();
+    var crypto3 = require_utils5();
     var { signatureAlgorithmHashFromCertificate } = require_cert_signatures();
     function startSession(mechanisms, stream) {
       const candidates = ["SCRAM-SHA-256"];
@@ -29782,7 +29782,7 @@ var require_sasl = __commonJS({
       if (mechanism === "SCRAM-SHA-256-PLUS" && typeof stream.getPeerCertificate !== "function") {
         throw new Error("SASL: Mechanism SCRAM-SHA-256-PLUS requires a certificate");
       }
-      const clientNonce = crypto4.randomBytes(18).toString("base64");
+      const clientNonce = crypto3.randomBytes(18).toString("base64");
       const gs2Header = mechanism === "SCRAM-SHA-256-PLUS" ? "p=tls-server-end-point" : stream ? "y" : "n";
       return {
         mechanism,
@@ -29817,20 +29817,20 @@ var require_sasl = __commonJS({
         const peerCert = stream.getPeerCertificate().raw;
         let hashName = signatureAlgorithmHashFromCertificate(peerCert);
         if (hashName === "MD5" || hashName === "SHA-1") hashName = "SHA-256";
-        const certHash = await crypto4.hashByName(hashName, peerCert);
+        const certHash = await crypto3.hashByName(hashName, peerCert);
         const bindingData = Buffer.concat([Buffer.from("p=tls-server-end-point,,"), Buffer.from(certHash)]);
         channelBinding = bindingData.toString("base64");
       }
       const clientFinalMessageWithoutProof = "c=" + channelBinding + ",r=" + sv.nonce;
       const authMessage = clientFirstMessageBare + "," + serverFirstMessage + "," + clientFinalMessageWithoutProof;
       const saltBytes = Buffer.from(sv.salt, "base64");
-      const saltedPassword = await crypto4.deriveKey(password, saltBytes, sv.iteration);
-      const clientKey = await crypto4.hmacSha256(saltedPassword, "Client Key");
-      const storedKey = await crypto4.sha256(clientKey);
-      const clientSignature = await crypto4.hmacSha256(storedKey, authMessage);
+      const saltedPassword = await crypto3.deriveKey(password, saltBytes, sv.iteration);
+      const clientKey = await crypto3.hmacSha256(saltedPassword, "Client Key");
+      const storedKey = await crypto3.sha256(clientKey);
+      const clientSignature = await crypto3.hmacSha256(storedKey, authMessage);
       const clientProof = xorBuffers(Buffer.from(clientKey), Buffer.from(clientSignature)).toString("base64");
-      const serverKey = await crypto4.hmacSha256(saltedPassword, "Server Key");
-      const serverSignatureBytes = await crypto4.hmacSha256(serverKey, authMessage);
+      const serverKey = await crypto3.hmacSha256(saltedPassword, "Server Key");
+      const serverSignatureBytes = await crypto3.hmacSha256(serverKey, authMessage);
       session.message = "SASLResponse";
       session.serverSignature = Buffer.from(serverSignatureBytes).toString("base64");
       session.response = clientFinalMessageWithoutProof + ",p=" + clientProof;
@@ -31998,7 +31998,7 @@ var require_client = __commonJS({
     var Query2 = require_query();
     var defaults2 = require_defaults();
     var Connection2 = require_connection();
-    var crypto4 = require_utils5();
+    var crypto3 = require_utils5();
     var activeQueryDeprecationNotice = nodeUtils.deprecate(
       () => {
       },
@@ -32233,7 +32233,7 @@ var require_client = __commonJS({
       _handleAuthMD5Password(msg) {
         this._getPassword(async () => {
           try {
-            const hashedPassword = await crypto4.postgresMd5PasswordHash(this.user, this.password, msg.salt);
+            const hashedPassword = await crypto3.postgresMd5PasswordHash(this.user, this.password, msg.salt);
             this.connection.password(hashedPassword);
           } catch (e2) {
             this.emit("error", e2);
@@ -33806,14 +33806,14 @@ var require_buffer_equal_constant_time = __commonJS({
 var require_jwa = __commonJS({
   "../../node_modules/.pnpm/jwa@2.0.1/node_modules/jwa/index.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
-    var crypto4 = __require("crypto");
+    var crypto3 = __require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
     var util2 = __require("util");
     var MSG_INVALID_ALGORITHM = '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".';
     var MSG_INVALID_SECRET = "secret must be a string or buffer";
     var MSG_INVALID_VERIFIER_KEY = "key must be a string or a buffer";
     var MSG_INVALID_SIGNER_KEY = "key must be a string, a buffer or an object";
-    var supportsKeyObjects = typeof crypto4.createPublicKey === "function";
+    var supportsKeyObjects = typeof crypto3.createPublicKey === "function";
     if (supportsKeyObjects) {
       MSG_INVALID_VERIFIER_KEY += " or a KeyObject";
       MSG_INVALID_SECRET += "or a KeyObject";
@@ -33903,17 +33903,17 @@ var require_jwa = __commonJS({
       return function sign(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
-        var hmac = crypto4.createHmac("sha" + bits, secret);
+        var hmac = crypto3.createHmac("sha" + bits, secret);
         var sig = (hmac.update(thing), hmac.digest("base64"));
         return fromBase64(sig);
       };
     }
     var bufferEqual;
-    var timingSafeEqual = "timingSafeEqual" in crypto4 ? function timingSafeEqual2(a, b) {
+    var timingSafeEqual = "timingSafeEqual" in crypto3 ? function timingSafeEqual2(a, b) {
       if (a.byteLength !== b.byteLength) {
         return false;
       }
-      return crypto4.timingSafeEqual(a, b);
+      return crypto3.timingSafeEqual(a, b);
     } : function timingSafeEqual2(a, b) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
@@ -33930,7 +33930,7 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto4.createSign("RSA-SHA" + bits);
+        var signer = crypto3.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign(privateKey, "base64"));
         return fromBase64(sig);
       };
@@ -33940,7 +33940,7 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto4.createVerify("RSA-SHA" + bits);
+        var verifier = crypto3.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify(publicKey, signature, "base64");
       };
@@ -33949,11 +33949,11 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto4.createSign("RSA-SHA" + bits);
+        var signer = crypto3.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign({
           key: privateKey,
-          padding: crypto4.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto4.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto3.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto3.constants.RSA_PSS_SALTLEN_DIGEST
         }, "base64"));
         return fromBase64(sig);
       };
@@ -33963,12 +33963,12 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
-        var verifier = crypto4.createVerify("RSA-SHA" + bits);
+        var verifier = crypto3.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify({
           key: publicKey,
-          padding: crypto4.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto4.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto3.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto3.constants.RSA_PSS_SALTLEN_DIGEST
         }, signature, "base64");
       };
     }
@@ -47998,22 +47998,22 @@ var require_crypto2 = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.NodeCrypto = void 0;
-    var crypto4 = __require("crypto");
+    var crypto3 = __require("crypto");
     var NodeCrypto = class {
       async sha256DigestBase64(str) {
-        return crypto4.createHash("sha256").update(str).digest("base64");
+        return crypto3.createHash("sha256").update(str).digest("base64");
       }
       randomBytesBase64(count) {
-        return crypto4.randomBytes(count).toString("base64");
+        return crypto3.randomBytes(count).toString("base64");
       }
       async verify(pubkey, data, signature) {
-        const verifier = crypto4.createVerify("RSA-SHA256");
+        const verifier = crypto3.createVerify("RSA-SHA256");
         verifier.update(data);
         verifier.end();
         return verifier.verify(pubkey, signature, "base64");
       }
       async sign(privateKey, data) {
-        const signer = crypto4.createSign("RSA-SHA256");
+        const signer = crypto3.createSign("RSA-SHA256");
         signer.update(data);
         signer.end();
         return signer.sign(privateKey, "base64");
@@ -48031,7 +48031,7 @@ var require_crypto2 = __commonJS({
        *   string in hexadecimal encoding.
        */
       async sha256DigestHex(str) {
-        return crypto4.createHash("sha256").update(str).digest("hex");
+        return crypto3.createHash("sha256").update(str).digest("hex");
       }
       /**
        * Computes the HMAC hash of a message using the provided crypto key and the
@@ -48043,7 +48043,7 @@ var require_crypto2 = __commonJS({
        */
       async signWithHmacSha256(key, msg) {
         const cryptoKey = typeof key === "string" ? key : toBuffer(key);
-        return toArrayBuffer(crypto4.createHmac("sha256", cryptoKey).update(msg).digest());
+        return toArrayBuffer(crypto3.createHmac("sha256", cryptoKey).update(msg).digest());
       }
     };
     exports.NodeCrypto = NodeCrypto;
@@ -48736,10 +48736,10 @@ var require_oauth2client = __commonJS({
        * https://github.com/googleapis/google-auth-library-nodejs/blob/main/samples/oauth2-codeVerifier.js
        */
       async generateCodeVerifierAsync() {
-        const crypto4 = (0, crypto_1.createCrypto)();
-        const randomString2 = crypto4.randomBytesBase64(96);
+        const crypto3 = (0, crypto_1.createCrypto)();
+        const randomString2 = crypto3.randomBytesBase64(96);
         const codeVerifier = randomString2.replace(/\+/g, "~").replace(/=/g, "_").replace(/\//g, "-");
-        const unencodedCodeChallenge = await crypto4.sha256DigestBase64(codeVerifier);
+        const unencodedCodeChallenge = await crypto3.sha256DigestBase64(codeVerifier);
         const codeChallenge = unencodedCodeChallenge.split("=")[0].replace(/\+/g, "-").replace(/\//g, "_");
         return { codeVerifier, codeChallenge };
       }
@@ -49180,7 +49180,7 @@ var require_oauth2client = __commonJS({
        * @return Returns a promise resolving to LoginTicket on verification.
        */
       async verifySignedJwtWithCertsAsync(jwt3, certs, requiredAudience, issuers, maxExpiry) {
-        const crypto4 = (0, crypto_1.createCrypto)();
+        const crypto3 = (0, crypto_1.createCrypto)();
         if (!maxExpiry) {
           maxExpiry = _OAuth2Client.DEFAULT_MAX_TOKEN_LIFETIME_SECS_;
         }
@@ -49193,7 +49193,7 @@ var require_oauth2client = __commonJS({
         let envelope;
         let payload;
         try {
-          envelope = JSON.parse(crypto4.decodeBase64StringUtf8(segments[0]));
+          envelope = JSON.parse(crypto3.decodeBase64StringUtf8(segments[0]));
         } catch (err) {
           if (err instanceof Error) {
             err.message = `Can't parse token envelope: ${segments[0]}': ${err.message}`;
@@ -49204,7 +49204,7 @@ var require_oauth2client = __commonJS({
           throw new Error("Can't parse token envelope: " + segments[0]);
         }
         try {
-          payload = JSON.parse(crypto4.decodeBase64StringUtf8(segments[1]));
+          payload = JSON.parse(crypto3.decodeBase64StringUtf8(segments[1]));
         } catch (err) {
           if (err instanceof Error) {
             err.message = `Can't parse token payload '${segments[0]}`;
@@ -49221,7 +49221,7 @@ var require_oauth2client = __commonJS({
         if (envelope.alg === "ES256") {
           signature = formatEcdsa.joseToDer(signature, "ES256").toString("base64");
         }
-        const verified = await crypto4.verify(cert, signed, signature);
+        const verified = await crypto3.verify(cert, signed, signature);
         if (!verified) {
           throw new Error("Invalid token signature: " + jwt3);
         }
@@ -51791,14 +51791,14 @@ var require_awsrequestsigner = __commonJS({
       }
     };
     exports.AwsRequestSigner = AwsRequestSigner;
-    async function sign(crypto4, key, msg) {
-      return await crypto4.signWithHmacSha256(key, msg);
+    async function sign(crypto3, key, msg) {
+      return await crypto3.signWithHmacSha256(key, msg);
     }
-    async function getSigningKey(crypto4, key, dateStamp, region, serviceName) {
-      const kDate = await sign(crypto4, `AWS4${key}`, dateStamp);
-      const kRegion = await sign(crypto4, kDate, region);
-      const kService = await sign(crypto4, kRegion, serviceName);
-      const kSigning = await sign(crypto4, kService, "aws4_request");
+    async function getSigningKey(crypto3, key, dateStamp, region, serviceName) {
+      const kDate = await sign(crypto3, `AWS4${key}`, dateStamp);
+      const kRegion = await sign(crypto3, kDate, region);
+      const kService = await sign(crypto3, kRegion, serviceName);
+      const kSigning = await sign(crypto3, kService, "aws4_request");
       return kSigning;
     }
     async function generateAuthenticationHeaderMap(options) {
@@ -53517,24 +53517,24 @@ var require_googleauth = __commonJS({
           const signed = await client.sign(data);
           return signed.signedBlob;
         }
-        const crypto4 = (0, crypto_1.createCrypto)();
+        const crypto3 = (0, crypto_1.createCrypto)();
         if (client instanceof jwtclient_1.JWT && client.key) {
-          const sign = await crypto4.sign(client.key, data);
+          const sign = await crypto3.sign(client.key, data);
           return sign;
         }
         const creds = await this.getCredentials();
         if (!creds.client_email) {
           throw new Error("Cannot sign data without `client_email`.");
         }
-        return this.signBlob(crypto4, creds.client_email, data, endpoint);
+        return this.signBlob(crypto3, creds.client_email, data, endpoint);
       }
-      async signBlob(crypto4, emailOrUniqueId, data, endpoint) {
+      async signBlob(crypto3, emailOrUniqueId, data, endpoint) {
         const url3 = new URL(endpoint + `${emailOrUniqueId}:signBlob`);
         const res = await this.request({
           method: "POST",
           url: url3.href,
           data: {
-            payload: crypto4.encodeBase64StringUtf8(data)
+            payload: crypto3.encodeBase64StringUtf8(data)
           },
           retry: true,
           retryConfig: {
@@ -53953,8058 +53953,6 @@ var import_express24 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
-var external_exports = {};
-__export(external_exports, {
-  BRAND: () => BRAND,
-  DIRTY: () => DIRTY,
-  EMPTY_PATH: () => EMPTY_PATH,
-  INVALID: () => INVALID,
-  NEVER: () => NEVER,
-  OK: () => OK,
-  ParseStatus: () => ParseStatus,
-  Schema: () => ZodType,
-  ZodAny: () => ZodAny,
-  ZodArray: () => ZodArray,
-  ZodBigInt: () => ZodBigInt,
-  ZodBoolean: () => ZodBoolean,
-  ZodBranded: () => ZodBranded,
-  ZodCatch: () => ZodCatch,
-  ZodDate: () => ZodDate,
-  ZodDefault: () => ZodDefault,
-  ZodDiscriminatedUnion: () => ZodDiscriminatedUnion,
-  ZodEffects: () => ZodEffects,
-  ZodEnum: () => ZodEnum,
-  ZodError: () => ZodError,
-  ZodFirstPartyTypeKind: () => ZodFirstPartyTypeKind,
-  ZodFunction: () => ZodFunction,
-  ZodIntersection: () => ZodIntersection,
-  ZodIssueCode: () => ZodIssueCode,
-  ZodLazy: () => ZodLazy,
-  ZodLiteral: () => ZodLiteral,
-  ZodMap: () => ZodMap,
-  ZodNaN: () => ZodNaN,
-  ZodNativeEnum: () => ZodNativeEnum,
-  ZodNever: () => ZodNever,
-  ZodNull: () => ZodNull,
-  ZodNullable: () => ZodNullable,
-  ZodNumber: () => ZodNumber,
-  ZodObject: () => ZodObject,
-  ZodOptional: () => ZodOptional,
-  ZodParsedType: () => ZodParsedType,
-  ZodPipeline: () => ZodPipeline,
-  ZodPromise: () => ZodPromise,
-  ZodReadonly: () => ZodReadonly,
-  ZodRecord: () => ZodRecord,
-  ZodSchema: () => ZodType,
-  ZodSet: () => ZodSet,
-  ZodString: () => ZodString,
-  ZodSymbol: () => ZodSymbol,
-  ZodTransformer: () => ZodEffects,
-  ZodTuple: () => ZodTuple,
-  ZodType: () => ZodType,
-  ZodUndefined: () => ZodUndefined,
-  ZodUnion: () => ZodUnion,
-  ZodUnknown: () => ZodUnknown,
-  ZodVoid: () => ZodVoid,
-  addIssueToContext: () => addIssueToContext,
-  any: () => anyType,
-  array: () => arrayType,
-  bigint: () => bigIntType,
-  boolean: () => booleanType,
-  coerce: () => coerce,
-  custom: () => custom,
-  date: () => dateType,
-  datetimeRegex: () => datetimeRegex,
-  defaultErrorMap: () => en_default,
-  discriminatedUnion: () => discriminatedUnionType,
-  effect: () => effectsType,
-  enum: () => enumType,
-  function: () => functionType,
-  getErrorMap: () => getErrorMap,
-  getParsedType: () => getParsedType,
-  instanceof: () => instanceOfType,
-  intersection: () => intersectionType,
-  isAborted: () => isAborted,
-  isAsync: () => isAsync,
-  isDirty: () => isDirty,
-  isValid: () => isValid,
-  late: () => late,
-  lazy: () => lazyType,
-  literal: () => literalType,
-  makeIssue: () => makeIssue,
-  map: () => mapType,
-  nan: () => nanType,
-  nativeEnum: () => nativeEnumType,
-  never: () => neverType,
-  null: () => nullType,
-  nullable: () => nullableType,
-  number: () => numberType,
-  object: () => objectType,
-  objectUtil: () => objectUtil,
-  oboolean: () => oboolean,
-  onumber: () => onumber,
-  optional: () => optionalType,
-  ostring: () => ostring,
-  pipeline: () => pipelineType,
-  preprocess: () => preprocessType,
-  promise: () => promiseType,
-  quotelessJson: () => quotelessJson,
-  record: () => recordType,
-  set: () => setType,
-  setErrorMap: () => setErrorMap,
-  strictObject: () => strictObjectType,
-  string: () => stringType,
-  symbol: () => symbolType,
-  transformer: () => effectsType,
-  tuple: () => tupleType,
-  undefined: () => undefinedType,
-  union: () => unionType,
-  unknown: () => unknownType,
-  util: () => util,
-  void: () => voidType
-});
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
-var util;
-(function(util2) {
-  util2.assertEqual = (_) => {
-  };
-  function assertIs2(_arg) {
-  }
-  util2.assertIs = assertIs2;
-  function assertNever2(_x) {
-    throw new Error();
-  }
-  util2.assertNever = assertNever2;
-  util2.arrayToEnum = (items) => {
-    const obj = {};
-    for (const item of items) {
-      obj[item] = item;
-    }
-    return obj;
-  };
-  util2.getValidEnumValues = (obj) => {
-    const validKeys = util2.objectKeys(obj).filter((k) => typeof obj[obj[k]] !== "number");
-    const filtered = {};
-    for (const k of validKeys) {
-      filtered[k] = obj[k];
-    }
-    return util2.objectValues(filtered);
-  };
-  util2.objectValues = (obj) => {
-    return util2.objectKeys(obj).map(function(e2) {
-      return obj[e2];
-    });
-  };
-  util2.objectKeys = typeof Object.keys === "function" ? (obj) => Object.keys(obj) : (object2) => {
-    const keys = [];
-    for (const key in object2) {
-      if (Object.prototype.hasOwnProperty.call(object2, key)) {
-        keys.push(key);
-      }
-    }
-    return keys;
-  };
-  util2.find = (arr, checker) => {
-    for (const item of arr) {
-      if (checker(item))
-        return item;
-    }
-    return void 0;
-  };
-  util2.isInteger = typeof Number.isInteger === "function" ? (val) => Number.isInteger(val) : (val) => typeof val === "number" && Number.isFinite(val) && Math.floor(val) === val;
-  function joinValues2(array2, separator = " | ") {
-    return array2.map((val) => typeof val === "string" ? `'${val}'` : val).join(separator);
-  }
-  util2.joinValues = joinValues2;
-  util2.jsonStringifyReplacer = (_, value) => {
-    if (typeof value === "bigint") {
-      return value.toString();
-    }
-    return value;
-  };
-})(util || (util = {}));
-var objectUtil;
-(function(objectUtil2) {
-  objectUtil2.mergeShapes = (first, second) => {
-    return {
-      ...first,
-      ...second
-      // second overwrites first
-    };
-  };
-})(objectUtil || (objectUtil = {}));
-var ZodParsedType = util.arrayToEnum([
-  "string",
-  "nan",
-  "number",
-  "integer",
-  "float",
-  "boolean",
-  "date",
-  "bigint",
-  "symbol",
-  "function",
-  "undefined",
-  "null",
-  "array",
-  "object",
-  "unknown",
-  "promise",
-  "void",
-  "never",
-  "map",
-  "set"
-]);
-var getParsedType = (data) => {
-  const t2 = typeof data;
-  switch (t2) {
-    case "undefined":
-      return ZodParsedType.undefined;
-    case "string":
-      return ZodParsedType.string;
-    case "number":
-      return Number.isNaN(data) ? ZodParsedType.nan : ZodParsedType.number;
-    case "boolean":
-      return ZodParsedType.boolean;
-    case "function":
-      return ZodParsedType.function;
-    case "bigint":
-      return ZodParsedType.bigint;
-    case "symbol":
-      return ZodParsedType.symbol;
-    case "object":
-      if (Array.isArray(data)) {
-        return ZodParsedType.array;
-      }
-      if (data === null) {
-        return ZodParsedType.null;
-      }
-      if (data.then && typeof data.then === "function" && data.catch && typeof data.catch === "function") {
-        return ZodParsedType.promise;
-      }
-      if (typeof Map !== "undefined" && data instanceof Map) {
-        return ZodParsedType.map;
-      }
-      if (typeof Set !== "undefined" && data instanceof Set) {
-        return ZodParsedType.set;
-      }
-      if (typeof Date !== "undefined" && data instanceof Date) {
-        return ZodParsedType.date;
-      }
-      return ZodParsedType.object;
-    default:
-      return ZodParsedType.unknown;
-  }
-};
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
-var ZodIssueCode = util.arrayToEnum([
-  "invalid_type",
-  "invalid_literal",
-  "custom",
-  "invalid_union",
-  "invalid_union_discriminator",
-  "invalid_enum_value",
-  "unrecognized_keys",
-  "invalid_arguments",
-  "invalid_return_type",
-  "invalid_date",
-  "invalid_string",
-  "too_small",
-  "too_big",
-  "invalid_intersection_types",
-  "not_multiple_of",
-  "not_finite"
-]);
-var quotelessJson = (obj) => {
-  const json3 = JSON.stringify(obj, null, 2);
-  return json3.replace(/"([^"]+)":/g, "$1:");
-};
-var ZodError = class _ZodError extends Error {
-  get errors() {
-    return this.issues;
-  }
-  constructor(issues) {
-    super();
-    this.issues = [];
-    this.addIssue = (sub) => {
-      this.issues = [...this.issues, sub];
-    };
-    this.addIssues = (subs = []) => {
-      this.issues = [...this.issues, ...subs];
-    };
-    const actualProto = new.target.prototype;
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(this, actualProto);
-    } else {
-      this.__proto__ = actualProto;
-    }
-    this.name = "ZodError";
-    this.issues = issues;
-  }
-  format(_mapper) {
-    const mapper = _mapper || function(issue2) {
-      return issue2.message;
-    };
-    const fieldErrors = { _errors: [] };
-    const processError = (error40) => {
-      for (const issue2 of error40.issues) {
-        if (issue2.code === "invalid_union") {
-          issue2.unionErrors.map(processError);
-        } else if (issue2.code === "invalid_return_type") {
-          processError(issue2.returnTypeError);
-        } else if (issue2.code === "invalid_arguments") {
-          processError(issue2.argumentsError);
-        } else if (issue2.path.length === 0) {
-          fieldErrors._errors.push(mapper(issue2));
-        } else {
-          let curr = fieldErrors;
-          let i2 = 0;
-          while (i2 < issue2.path.length) {
-            const el = issue2.path[i2];
-            const terminal = i2 === issue2.path.length - 1;
-            if (!terminal) {
-              curr[el] = curr[el] || { _errors: [] };
-            } else {
-              curr[el] = curr[el] || { _errors: [] };
-              curr[el]._errors.push(mapper(issue2));
-            }
-            curr = curr[el];
-            i2++;
-          }
-        }
-      }
-    };
-    processError(this);
-    return fieldErrors;
-  }
-  static assert(value) {
-    if (!(value instanceof _ZodError)) {
-      throw new Error(`Not a ZodError: ${value}`);
-    }
-  }
-  toString() {
-    return this.message;
-  }
-  get message() {
-    return JSON.stringify(this.issues, util.jsonStringifyReplacer, 2);
-  }
-  get isEmpty() {
-    return this.issues.length === 0;
-  }
-  flatten(mapper = (issue2) => issue2.message) {
-    const fieldErrors = {};
-    const formErrors = [];
-    for (const sub of this.issues) {
-      if (sub.path.length > 0) {
-        const firstEl = sub.path[0];
-        fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub));
-      } else {
-        formErrors.push(mapper(sub));
-      }
-    }
-    return { formErrors, fieldErrors };
-  }
-  get formErrors() {
-    return this.flatten();
-  }
-};
-ZodError.create = (issues) => {
-  const error40 = new ZodError(issues);
-  return error40;
-};
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
-var errorMap = (issue2, _ctx) => {
-  let message;
-  switch (issue2.code) {
-    case ZodIssueCode.invalid_type:
-      if (issue2.received === ZodParsedType.undefined) {
-        message = "Required";
-      } else {
-        message = `Expected ${issue2.expected}, received ${issue2.received}`;
-      }
-      break;
-    case ZodIssueCode.invalid_literal:
-      message = `Invalid literal value, expected ${JSON.stringify(issue2.expected, util.jsonStringifyReplacer)}`;
-      break;
-    case ZodIssueCode.unrecognized_keys:
-      message = `Unrecognized key(s) in object: ${util.joinValues(issue2.keys, ", ")}`;
-      break;
-    case ZodIssueCode.invalid_union:
-      message = `Invalid input`;
-      break;
-    case ZodIssueCode.invalid_union_discriminator:
-      message = `Invalid discriminator value. Expected ${util.joinValues(issue2.options)}`;
-      break;
-    case ZodIssueCode.invalid_enum_value:
-      message = `Invalid enum value. Expected ${util.joinValues(issue2.options)}, received '${issue2.received}'`;
-      break;
-    case ZodIssueCode.invalid_arguments:
-      message = `Invalid function arguments`;
-      break;
-    case ZodIssueCode.invalid_return_type:
-      message = `Invalid function return type`;
-      break;
-    case ZodIssueCode.invalid_date:
-      message = `Invalid date`;
-      break;
-    case ZodIssueCode.invalid_string:
-      if (typeof issue2.validation === "object") {
-        if ("includes" in issue2.validation) {
-          message = `Invalid input: must include "${issue2.validation.includes}"`;
-          if (typeof issue2.validation.position === "number") {
-            message = `${message} at one or more positions greater than or equal to ${issue2.validation.position}`;
-          }
-        } else if ("startsWith" in issue2.validation) {
-          message = `Invalid input: must start with "${issue2.validation.startsWith}"`;
-        } else if ("endsWith" in issue2.validation) {
-          message = `Invalid input: must end with "${issue2.validation.endsWith}"`;
-        } else {
-          util.assertNever(issue2.validation);
-        }
-      } else if (issue2.validation !== "regex") {
-        message = `Invalid ${issue2.validation}`;
-      } else {
-        message = "Invalid";
-      }
-      break;
-    case ZodIssueCode.too_small:
-      if (issue2.type === "array")
-        message = `Array must contain ${issue2.exact ? "exactly" : issue2.inclusive ? `at least` : `more than`} ${issue2.minimum} element(s)`;
-      else if (issue2.type === "string")
-        message = `String must contain ${issue2.exact ? "exactly" : issue2.inclusive ? `at least` : `over`} ${issue2.minimum} character(s)`;
-      else if (issue2.type === "number")
-        message = `Number must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${issue2.minimum}`;
-      else if (issue2.type === "bigint")
-        message = `Number must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${issue2.minimum}`;
-      else if (issue2.type === "date")
-        message = `Date must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${new Date(Number(issue2.minimum))}`;
-      else
-        message = "Invalid input";
-      break;
-    case ZodIssueCode.too_big:
-      if (issue2.type === "array")
-        message = `Array must contain ${issue2.exact ? `exactly` : issue2.inclusive ? `at most` : `less than`} ${issue2.maximum} element(s)`;
-      else if (issue2.type === "string")
-        message = `String must contain ${issue2.exact ? `exactly` : issue2.inclusive ? `at most` : `under`} ${issue2.maximum} character(s)`;
-      else if (issue2.type === "number")
-        message = `Number must be ${issue2.exact ? `exactly` : issue2.inclusive ? `less than or equal to` : `less than`} ${issue2.maximum}`;
-      else if (issue2.type === "bigint")
-        message = `BigInt must be ${issue2.exact ? `exactly` : issue2.inclusive ? `less than or equal to` : `less than`} ${issue2.maximum}`;
-      else if (issue2.type === "date")
-        message = `Date must be ${issue2.exact ? `exactly` : issue2.inclusive ? `smaller than or equal to` : `smaller than`} ${new Date(Number(issue2.maximum))}`;
-      else
-        message = "Invalid input";
-      break;
-    case ZodIssueCode.custom:
-      message = `Invalid input`;
-      break;
-    case ZodIssueCode.invalid_intersection_types:
-      message = `Intersection results could not be merged`;
-      break;
-    case ZodIssueCode.not_multiple_of:
-      message = `Number must be a multiple of ${issue2.multipleOf}`;
-      break;
-    case ZodIssueCode.not_finite:
-      message = "Number must be finite";
-      break;
-    default:
-      message = _ctx.defaultError;
-      util.assertNever(issue2);
-  }
-  return { message };
-};
-var en_default = errorMap;
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
-var overrideErrorMap = en_default;
-function setErrorMap(map2) {
-  overrideErrorMap = map2;
-}
-function getErrorMap() {
-  return overrideErrorMap;
-}
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
-var makeIssue = (params) => {
-  const { data, path, errorMaps, issueData } = params;
-  const fullPath = [...path, ...issueData.path || []];
-  const fullIssue = {
-    ...issueData,
-    path: fullPath
-  };
-  if (issueData.message !== void 0) {
-    return {
-      ...issueData,
-      path: fullPath,
-      message: issueData.message
-    };
-  }
-  let errorMessage = "";
-  const maps = errorMaps.filter((m2) => !!m2).slice().reverse();
-  for (const map2 of maps) {
-    errorMessage = map2(fullIssue, { data, defaultError: errorMessage }).message;
-  }
-  return {
-    ...issueData,
-    path: fullPath,
-    message: errorMessage
-  };
-};
-var EMPTY_PATH = [];
-function addIssueToContext(ctx, issueData) {
-  const overrideMap = getErrorMap();
-  const issue2 = makeIssue({
-    issueData,
-    data: ctx.data,
-    path: ctx.path,
-    errorMaps: [
-      ctx.common.contextualErrorMap,
-      // contextual error map is first priority
-      ctx.schemaErrorMap,
-      // then schema-bound map if available
-      overrideMap,
-      // then global override map
-      overrideMap === en_default ? void 0 : en_default
-      // then global default map
-    ].filter((x2) => !!x2)
-  });
-  ctx.common.issues.push(issue2);
-}
-var ParseStatus = class _ParseStatus {
-  constructor() {
-    this.value = "valid";
-  }
-  dirty() {
-    if (this.value === "valid")
-      this.value = "dirty";
-  }
-  abort() {
-    if (this.value !== "aborted")
-      this.value = "aborted";
-  }
-  static mergeArray(status, results) {
-    const arrayValue = [];
-    for (const s2 of results) {
-      if (s2.status === "aborted")
-        return INVALID;
-      if (s2.status === "dirty")
-        status.dirty();
-      arrayValue.push(s2.value);
-    }
-    return { status: status.value, value: arrayValue };
-  }
-  static async mergeObjectAsync(status, pairs) {
-    const syncPairs = [];
-    for (const pair of pairs) {
-      const key = await pair.key;
-      const value = await pair.value;
-      syncPairs.push({
-        key,
-        value
-      });
-    }
-    return _ParseStatus.mergeObjectSync(status, syncPairs);
-  }
-  static mergeObjectSync(status, pairs) {
-    const finalObject = {};
-    for (const pair of pairs) {
-      const { key, value } = pair;
-      if (key.status === "aborted")
-        return INVALID;
-      if (value.status === "aborted")
-        return INVALID;
-      if (key.status === "dirty")
-        status.dirty();
-      if (value.status === "dirty")
-        status.dirty();
-      if (key.value !== "__proto__" && (typeof value.value !== "undefined" || pair.alwaysSet)) {
-        finalObject[key.value] = value.value;
-      }
-    }
-    return { status: status.value, value: finalObject };
-  }
-};
-var INVALID = Object.freeze({
-  status: "aborted"
-});
-var DIRTY = (value) => ({ status: "dirty", value });
-var OK = (value) => ({ status: "valid", value });
-var isAborted = (x2) => x2.status === "aborted";
-var isDirty = (x2) => x2.status === "dirty";
-var isValid = (x2) => x2.status === "valid";
-var isAsync = (x2) => typeof Promise !== "undefined" && x2 instanceof Promise;
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
-var errorUtil;
-(function(errorUtil2) {
-  errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
-  errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
-})(errorUtil || (errorUtil = {}));
-
-// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
-var ParseInputLazyPath = class {
-  constructor(parent, value, path, key) {
-    this._cachedPath = [];
-    this.parent = parent;
-    this.data = value;
-    this._path = path;
-    this._key = key;
-  }
-  get path() {
-    if (!this._cachedPath.length) {
-      if (Array.isArray(this._key)) {
-        this._cachedPath.push(...this._path, ...this._key);
-      } else {
-        this._cachedPath.push(...this._path, this._key);
-      }
-    }
-    return this._cachedPath;
-  }
-};
-var handleResult = (ctx, result) => {
-  if (isValid(result)) {
-    return { success: true, data: result.value };
-  } else {
-    if (!ctx.common.issues.length) {
-      throw new Error("Validation failed but no issues detected.");
-    }
-    return {
-      success: false,
-      get error() {
-        if (this._error)
-          return this._error;
-        const error40 = new ZodError(ctx.common.issues);
-        this._error = error40;
-        return this._error;
-      }
-    };
-  }
-};
-function processCreateParams(params) {
-  if (!params)
-    return {};
-  const { errorMap: errorMap2, invalid_type_error, required_error, description } = params;
-  if (errorMap2 && (invalid_type_error || required_error)) {
-    throw new Error(`Can't use "invalid_type_error" or "required_error" in conjunction with custom error map.`);
-  }
-  if (errorMap2)
-    return { errorMap: errorMap2, description };
-  const customMap = (iss, ctx) => {
-    const { message } = params;
-    if (iss.code === "invalid_enum_value") {
-      return { message: message ?? ctx.defaultError };
-    }
-    if (typeof ctx.data === "undefined") {
-      return { message: message ?? required_error ?? ctx.defaultError };
-    }
-    if (iss.code !== "invalid_type")
-      return { message: ctx.defaultError };
-    return { message: message ?? invalid_type_error ?? ctx.defaultError };
-  };
-  return { errorMap: customMap, description };
-}
-var ZodType = class {
-  get description() {
-    return this._def.description;
-  }
-  _getType(input) {
-    return getParsedType(input.data);
-  }
-  _getOrReturnCtx(input, ctx) {
-    return ctx || {
-      common: input.parent.common,
-      data: input.data,
-      parsedType: getParsedType(input.data),
-      schemaErrorMap: this._def.errorMap,
-      path: input.path,
-      parent: input.parent
-    };
-  }
-  _processInputParams(input) {
-    return {
-      status: new ParseStatus(),
-      ctx: {
-        common: input.parent.common,
-        data: input.data,
-        parsedType: getParsedType(input.data),
-        schemaErrorMap: this._def.errorMap,
-        path: input.path,
-        parent: input.parent
-      }
-    };
-  }
-  _parseSync(input) {
-    const result = this._parse(input);
-    if (isAsync(result)) {
-      throw new Error("Synchronous parse encountered promise.");
-    }
-    return result;
-  }
-  _parseAsync(input) {
-    const result = this._parse(input);
-    return Promise.resolve(result);
-  }
-  parse(data, params) {
-    const result = this.safeParse(data, params);
-    if (result.success)
-      return result.data;
-    throw result.error;
-  }
-  safeParse(data, params) {
-    const ctx = {
-      common: {
-        issues: [],
-        async: params?.async ?? false,
-        contextualErrorMap: params?.errorMap
-      },
-      path: params?.path || [],
-      schemaErrorMap: this._def.errorMap,
-      parent: null,
-      data,
-      parsedType: getParsedType(data)
-    };
-    const result = this._parseSync({ data, path: ctx.path, parent: ctx });
-    return handleResult(ctx, result);
-  }
-  "~validate"(data) {
-    const ctx = {
-      common: {
-        issues: [],
-        async: !!this["~standard"].async
-      },
-      path: [],
-      schemaErrorMap: this._def.errorMap,
-      parent: null,
-      data,
-      parsedType: getParsedType(data)
-    };
-    if (!this["~standard"].async) {
-      try {
-        const result = this._parseSync({ data, path: [], parent: ctx });
-        return isValid(result) ? {
-          value: result.value
-        } : {
-          issues: ctx.common.issues
-        };
-      } catch (err) {
-        if (err?.message?.toLowerCase()?.includes("encountered")) {
-          this["~standard"].async = true;
-        }
-        ctx.common = {
-          issues: [],
-          async: true
-        };
-      }
-    }
-    return this._parseAsync({ data, path: [], parent: ctx }).then((result) => isValid(result) ? {
-      value: result.value
-    } : {
-      issues: ctx.common.issues
-    });
-  }
-  async parseAsync(data, params) {
-    const result = await this.safeParseAsync(data, params);
-    if (result.success)
-      return result.data;
-    throw result.error;
-  }
-  async safeParseAsync(data, params) {
-    const ctx = {
-      common: {
-        issues: [],
-        contextualErrorMap: params?.errorMap,
-        async: true
-      },
-      path: params?.path || [],
-      schemaErrorMap: this._def.errorMap,
-      parent: null,
-      data,
-      parsedType: getParsedType(data)
-    };
-    const maybeAsyncResult = this._parse({ data, path: ctx.path, parent: ctx });
-    const result = await (isAsync(maybeAsyncResult) ? maybeAsyncResult : Promise.resolve(maybeAsyncResult));
-    return handleResult(ctx, result);
-  }
-  refine(check2, message) {
-    const getIssueProperties = (val) => {
-      if (typeof message === "string" || typeof message === "undefined") {
-        return { message };
-      } else if (typeof message === "function") {
-        return message(val);
-      } else {
-        return message;
-      }
-    };
-    return this._refinement((val, ctx) => {
-      const result = check2(val);
-      const setError = () => ctx.addIssue({
-        code: ZodIssueCode.custom,
-        ...getIssueProperties(val)
-      });
-      if (typeof Promise !== "undefined" && result instanceof Promise) {
-        return result.then((data) => {
-          if (!data) {
-            setError();
-            return false;
-          } else {
-            return true;
-          }
-        });
-      }
-      if (!result) {
-        setError();
-        return false;
-      } else {
-        return true;
-      }
-    });
-  }
-  refinement(check2, refinementData) {
-    return this._refinement((val, ctx) => {
-      if (!check2(val)) {
-        ctx.addIssue(typeof refinementData === "function" ? refinementData(val, ctx) : refinementData);
-        return false;
-      } else {
-        return true;
-      }
-    });
-  }
-  _refinement(refinement) {
-    return new ZodEffects({
-      schema: this,
-      typeName: ZodFirstPartyTypeKind.ZodEffects,
-      effect: { type: "refinement", refinement }
-    });
-  }
-  superRefine(refinement) {
-    return this._refinement(refinement);
-  }
-  constructor(def) {
-    this.spa = this.safeParseAsync;
-    this._def = def;
-    this.parse = this.parse.bind(this);
-    this.safeParse = this.safeParse.bind(this);
-    this.parseAsync = this.parseAsync.bind(this);
-    this.safeParseAsync = this.safeParseAsync.bind(this);
-    this.spa = this.spa.bind(this);
-    this.refine = this.refine.bind(this);
-    this.refinement = this.refinement.bind(this);
-    this.superRefine = this.superRefine.bind(this);
-    this.optional = this.optional.bind(this);
-    this.nullable = this.nullable.bind(this);
-    this.nullish = this.nullish.bind(this);
-    this.array = this.array.bind(this);
-    this.promise = this.promise.bind(this);
-    this.or = this.or.bind(this);
-    this.and = this.and.bind(this);
-    this.transform = this.transform.bind(this);
-    this.brand = this.brand.bind(this);
-    this.default = this.default.bind(this);
-    this.catch = this.catch.bind(this);
-    this.describe = this.describe.bind(this);
-    this.pipe = this.pipe.bind(this);
-    this.readonly = this.readonly.bind(this);
-    this.isNullable = this.isNullable.bind(this);
-    this.isOptional = this.isOptional.bind(this);
-    this["~standard"] = {
-      version: 1,
-      vendor: "zod",
-      validate: (data) => this["~validate"](data)
-    };
-  }
-  optional() {
-    return ZodOptional.create(this, this._def);
-  }
-  nullable() {
-    return ZodNullable.create(this, this._def);
-  }
-  nullish() {
-    return this.nullable().optional();
-  }
-  array() {
-    return ZodArray.create(this);
-  }
-  promise() {
-    return ZodPromise.create(this, this._def);
-  }
-  or(option) {
-    return ZodUnion.create([this, option], this._def);
-  }
-  and(incoming) {
-    return ZodIntersection.create(this, incoming, this._def);
-  }
-  transform(transform2) {
-    return new ZodEffects({
-      ...processCreateParams(this._def),
-      schema: this,
-      typeName: ZodFirstPartyTypeKind.ZodEffects,
-      effect: { type: "transform", transform: transform2 }
-    });
-  }
-  default(def) {
-    const defaultValueFunc = typeof def === "function" ? def : () => def;
-    return new ZodDefault({
-      ...processCreateParams(this._def),
-      innerType: this,
-      defaultValue: defaultValueFunc,
-      typeName: ZodFirstPartyTypeKind.ZodDefault
-    });
-  }
-  brand() {
-    return new ZodBranded({
-      typeName: ZodFirstPartyTypeKind.ZodBranded,
-      type: this,
-      ...processCreateParams(this._def)
-    });
-  }
-  catch(def) {
-    const catchValueFunc = typeof def === "function" ? def : () => def;
-    return new ZodCatch({
-      ...processCreateParams(this._def),
-      innerType: this,
-      catchValue: catchValueFunc,
-      typeName: ZodFirstPartyTypeKind.ZodCatch
-    });
-  }
-  describe(description) {
-    const This = this.constructor;
-    return new This({
-      ...this._def,
-      description
-    });
-  }
-  pipe(target) {
-    return ZodPipeline.create(this, target);
-  }
-  readonly() {
-    return ZodReadonly.create(this);
-  }
-  isOptional() {
-    return this.safeParse(void 0).success;
-  }
-  isNullable() {
-    return this.safeParse(null).success;
-  }
-};
-var cuidRegex = /^c[^\s-]{8,}$/i;
-var cuid2Regex = /^[0-9a-z]+$/;
-var ulidRegex = /^[0-9A-HJKMNP-TV-Z]{26}$/i;
-var uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/i;
-var nanoidRegex = /^[a-z0-9_-]{21}$/i;
-var jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/;
-var durationRegex = /^[-+]?P(?!$)(?:(?:[-+]?\d+Y)|(?:[-+]?\d+[.,]\d+Y$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:(?:[-+]?\d+W)|(?:[-+]?\d+[.,]\d+W$))?(?:(?:[-+]?\d+D)|(?:[-+]?\d+[.,]\d+D$))?(?:T(?=[\d+-])(?:(?:[-+]?\d+H)|(?:[-+]?\d+[.,]\d+H$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:[-+]?\d+(?:[.,]\d+)?S)?)??$/;
-var emailRegex = /^(?!\.)(?!.*\.\.)([A-Z0-9_'+\-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
-var _emojiRegex = `^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$`;
-var emojiRegex;
-var ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
-var ipv4CidrRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/(3[0-2]|[12]?[0-9])$/;
-var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
-var ipv6CidrRegex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/;
-var base64Regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-var base64urlRegex = /^([0-9a-zA-Z-_]{4})*(([0-9a-zA-Z-_]{2}(==)?)|([0-9a-zA-Z-_]{3}(=)?))?$/;
-var dateRegexSource = `((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))`;
-var dateRegex = new RegExp(`^${dateRegexSource}$`);
-function timeRegexSource(args) {
-  let secondsRegexSource = `[0-5]\\d`;
-  if (args.precision) {
-    secondsRegexSource = `${secondsRegexSource}\\.\\d{${args.precision}}`;
-  } else if (args.precision == null) {
-    secondsRegexSource = `${secondsRegexSource}(\\.\\d+)?`;
-  }
-  const secondsQuantifier = args.precision ? "+" : "?";
-  return `([01]\\d|2[0-3]):[0-5]\\d(:${secondsRegexSource})${secondsQuantifier}`;
-}
-function timeRegex(args) {
-  return new RegExp(`^${timeRegexSource(args)}$`);
-}
-function datetimeRegex(args) {
-  let regex = `${dateRegexSource}T${timeRegexSource(args)}`;
-  const opts = [];
-  opts.push(args.local ? `Z?` : `Z`);
-  if (args.offset)
-    opts.push(`([+-]\\d{2}:?\\d{2})`);
-  regex = `${regex}(${opts.join("|")})`;
-  return new RegExp(`^${regex}$`);
-}
-function isValidIP(ip, version3) {
-  if ((version3 === "v4" || !version3) && ipv4Regex.test(ip)) {
-    return true;
-  }
-  if ((version3 === "v6" || !version3) && ipv6Regex.test(ip)) {
-    return true;
-  }
-  return false;
-}
-function isValidJWT(jwt3, alg) {
-  if (!jwtRegex.test(jwt3))
-    return false;
-  try {
-    const [header] = jwt3.split(".");
-    if (!header)
-      return false;
-    const base643 = header.replace(/-/g, "+").replace(/_/g, "/").padEnd(header.length + (4 - header.length % 4) % 4, "=");
-    const decoded = JSON.parse(atob(base643));
-    if (typeof decoded !== "object" || decoded === null)
-      return false;
-    if ("typ" in decoded && decoded?.typ !== "JWT")
-      return false;
-    if (!decoded.alg)
-      return false;
-    if (alg && decoded.alg !== alg)
-      return false;
-    return true;
-  } catch {
-    return false;
-  }
-}
-function isValidCidr(ip, version3) {
-  if ((version3 === "v4" || !version3) && ipv4CidrRegex.test(ip)) {
-    return true;
-  }
-  if ((version3 === "v6" || !version3) && ipv6CidrRegex.test(ip)) {
-    return true;
-  }
-  return false;
-}
-var ZodString = class _ZodString2 extends ZodType {
-  _parse(input) {
-    if (this._def.coerce) {
-      input.data = String(input.data);
-    }
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.string) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.string,
-        received: ctx2.parsedType
-      });
-      return INVALID;
-    }
-    const status = new ParseStatus();
-    let ctx = void 0;
-    for (const check2 of this._def.checks) {
-      if (check2.kind === "min") {
-        if (input.data.length < check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_small,
-            minimum: check2.value,
-            type: "string",
-            inclusive: true,
-            exact: false,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "max") {
-        if (input.data.length > check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_big,
-            maximum: check2.value,
-            type: "string",
-            inclusive: true,
-            exact: false,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "length") {
-        const tooBig = input.data.length > check2.value;
-        const tooSmall = input.data.length < check2.value;
-        if (tooBig || tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          if (tooBig) {
-            addIssueToContext(ctx, {
-              code: ZodIssueCode.too_big,
-              maximum: check2.value,
-              type: "string",
-              inclusive: true,
-              exact: true,
-              message: check2.message
-            });
-          } else if (tooSmall) {
-            addIssueToContext(ctx, {
-              code: ZodIssueCode.too_small,
-              minimum: check2.value,
-              type: "string",
-              inclusive: true,
-              exact: true,
-              message: check2.message
-            });
-          }
-          status.dirty();
-        }
-      } else if (check2.kind === "email") {
-        if (!emailRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "email",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "emoji") {
-        if (!emojiRegex) {
-          emojiRegex = new RegExp(_emojiRegex, "u");
-        }
-        if (!emojiRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "emoji",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "uuid") {
-        if (!uuidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "uuid",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "nanoid") {
-        if (!nanoidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "nanoid",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "cuid") {
-        if (!cuidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "cuid",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "cuid2") {
-        if (!cuid2Regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "cuid2",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "ulid") {
-        if (!ulidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "ulid",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "url") {
-        try {
-          new URL(input.data);
-        } catch {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "url",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "regex") {
-        check2.regex.lastIndex = 0;
-        const testResult = check2.regex.test(input.data);
-        if (!testResult) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "regex",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "trim") {
-        input.data = input.data.trim();
-      } else if (check2.kind === "includes") {
-        if (!input.data.includes(check2.value, check2.position)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: { includes: check2.value, position: check2.position },
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "toLowerCase") {
-        input.data = input.data.toLowerCase();
-      } else if (check2.kind === "toUpperCase") {
-        input.data = input.data.toUpperCase();
-      } else if (check2.kind === "startsWith") {
-        if (!input.data.startsWith(check2.value)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: { startsWith: check2.value },
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "endsWith") {
-        if (!input.data.endsWith(check2.value)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: { endsWith: check2.value },
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "datetime") {
-        const regex = datetimeRegex(check2);
-        if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: "datetime",
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "date") {
-        const regex = dateRegex;
-        if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: "date",
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "time") {
-        const regex = timeRegex(check2);
-        if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_string,
-            validation: "time",
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "duration") {
-        if (!durationRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "duration",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "ip") {
-        if (!isValidIP(input.data, check2.version)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "ip",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "jwt") {
-        if (!isValidJWT(input.data, check2.alg)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "jwt",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "cidr") {
-        if (!isValidCidr(input.data, check2.version)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "cidr",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "base64") {
-        if (!base64Regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "base64",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "base64url") {
-        if (!base64urlRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            validation: "base64url",
-            code: ZodIssueCode.invalid_string,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else {
-        util.assertNever(check2);
-      }
-    }
-    return { status: status.value, value: input.data };
-  }
-  _regex(regex, validation, message) {
-    return this.refinement((data) => regex.test(data), {
-      validation,
-      code: ZodIssueCode.invalid_string,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  _addCheck(check2) {
-    return new _ZodString2({
-      ...this._def,
-      checks: [...this._def.checks, check2]
-    });
-  }
-  email(message) {
-    return this._addCheck({ kind: "email", ...errorUtil.errToObj(message) });
-  }
-  url(message) {
-    return this._addCheck({ kind: "url", ...errorUtil.errToObj(message) });
-  }
-  emoji(message) {
-    return this._addCheck({ kind: "emoji", ...errorUtil.errToObj(message) });
-  }
-  uuid(message) {
-    return this._addCheck({ kind: "uuid", ...errorUtil.errToObj(message) });
-  }
-  nanoid(message) {
-    return this._addCheck({ kind: "nanoid", ...errorUtil.errToObj(message) });
-  }
-  cuid(message) {
-    return this._addCheck({ kind: "cuid", ...errorUtil.errToObj(message) });
-  }
-  cuid2(message) {
-    return this._addCheck({ kind: "cuid2", ...errorUtil.errToObj(message) });
-  }
-  ulid(message) {
-    return this._addCheck({ kind: "ulid", ...errorUtil.errToObj(message) });
-  }
-  base64(message) {
-    return this._addCheck({ kind: "base64", ...errorUtil.errToObj(message) });
-  }
-  base64url(message) {
-    return this._addCheck({
-      kind: "base64url",
-      ...errorUtil.errToObj(message)
-    });
-  }
-  jwt(options) {
-    return this._addCheck({ kind: "jwt", ...errorUtil.errToObj(options) });
-  }
-  ip(options) {
-    return this._addCheck({ kind: "ip", ...errorUtil.errToObj(options) });
-  }
-  cidr(options) {
-    return this._addCheck({ kind: "cidr", ...errorUtil.errToObj(options) });
-  }
-  datetime(options) {
-    if (typeof options === "string") {
-      return this._addCheck({
-        kind: "datetime",
-        precision: null,
-        offset: false,
-        local: false,
-        message: options
-      });
-    }
-    return this._addCheck({
-      kind: "datetime",
-      precision: typeof options?.precision === "undefined" ? null : options?.precision,
-      offset: options?.offset ?? false,
-      local: options?.local ?? false,
-      ...errorUtil.errToObj(options?.message)
-    });
-  }
-  date(message) {
-    return this._addCheck({ kind: "date", message });
-  }
-  time(options) {
-    if (typeof options === "string") {
-      return this._addCheck({
-        kind: "time",
-        precision: null,
-        message: options
-      });
-    }
-    return this._addCheck({
-      kind: "time",
-      precision: typeof options?.precision === "undefined" ? null : options?.precision,
-      ...errorUtil.errToObj(options?.message)
-    });
-  }
-  duration(message) {
-    return this._addCheck({ kind: "duration", ...errorUtil.errToObj(message) });
-  }
-  regex(regex, message) {
-    return this._addCheck({
-      kind: "regex",
-      regex,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  includes(value, options) {
-    return this._addCheck({
-      kind: "includes",
-      value,
-      position: options?.position,
-      ...errorUtil.errToObj(options?.message)
-    });
-  }
-  startsWith(value, message) {
-    return this._addCheck({
-      kind: "startsWith",
-      value,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  endsWith(value, message) {
-    return this._addCheck({
-      kind: "endsWith",
-      value,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  min(minLength, message) {
-    return this._addCheck({
-      kind: "min",
-      value: minLength,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  max(maxLength, message) {
-    return this._addCheck({
-      kind: "max",
-      value: maxLength,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  length(len, message) {
-    return this._addCheck({
-      kind: "length",
-      value: len,
-      ...errorUtil.errToObj(message)
-    });
-  }
-  /**
-   * Equivalent to `.min(1)`
-   */
-  nonempty(message) {
-    return this.min(1, errorUtil.errToObj(message));
-  }
-  trim() {
-    return new _ZodString2({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "trim" }]
-    });
-  }
-  toLowerCase() {
-    return new _ZodString2({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "toLowerCase" }]
-    });
-  }
-  toUpperCase() {
-    return new _ZodString2({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "toUpperCase" }]
-    });
-  }
-  get isDatetime() {
-    return !!this._def.checks.find((ch) => ch.kind === "datetime");
-  }
-  get isDate() {
-    return !!this._def.checks.find((ch) => ch.kind === "date");
-  }
-  get isTime() {
-    return !!this._def.checks.find((ch) => ch.kind === "time");
-  }
-  get isDuration() {
-    return !!this._def.checks.find((ch) => ch.kind === "duration");
-  }
-  get isEmail() {
-    return !!this._def.checks.find((ch) => ch.kind === "email");
-  }
-  get isURL() {
-    return !!this._def.checks.find((ch) => ch.kind === "url");
-  }
-  get isEmoji() {
-    return !!this._def.checks.find((ch) => ch.kind === "emoji");
-  }
-  get isUUID() {
-    return !!this._def.checks.find((ch) => ch.kind === "uuid");
-  }
-  get isNANOID() {
-    return !!this._def.checks.find((ch) => ch.kind === "nanoid");
-  }
-  get isCUID() {
-    return !!this._def.checks.find((ch) => ch.kind === "cuid");
-  }
-  get isCUID2() {
-    return !!this._def.checks.find((ch) => ch.kind === "cuid2");
-  }
-  get isULID() {
-    return !!this._def.checks.find((ch) => ch.kind === "ulid");
-  }
-  get isIP() {
-    return !!this._def.checks.find((ch) => ch.kind === "ip");
-  }
-  get isCIDR() {
-    return !!this._def.checks.find((ch) => ch.kind === "cidr");
-  }
-  get isBase64() {
-    return !!this._def.checks.find((ch) => ch.kind === "base64");
-  }
-  get isBase64url() {
-    return !!this._def.checks.find((ch) => ch.kind === "base64url");
-  }
-  get minLength() {
-    let min = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
-      }
-    }
-    return min;
-  }
-  get maxLength() {
-    let max = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
-      }
-    }
-    return max;
-  }
-};
-ZodString.create = (params) => {
-  return new ZodString({
-    checks: [],
-    typeName: ZodFirstPartyTypeKind.ZodString,
-    coerce: params?.coerce ?? false,
-    ...processCreateParams(params)
-  });
-};
-function floatSafeRemainder(val, step) {
-  const valDecCount = (val.toString().split(".")[1] || "").length;
-  const stepDecCount = (step.toString().split(".")[1] || "").length;
-  const decCount = valDecCount > stepDecCount ? valDecCount : stepDecCount;
-  const valInt = Number.parseInt(val.toFixed(decCount).replace(".", ""));
-  const stepInt = Number.parseInt(step.toFixed(decCount).replace(".", ""));
-  return valInt % stepInt / 10 ** decCount;
-}
-var ZodNumber = class _ZodNumber extends ZodType {
-  constructor() {
-    super(...arguments);
-    this.min = this.gte;
-    this.max = this.lte;
-    this.step = this.multipleOf;
-  }
-  _parse(input) {
-    if (this._def.coerce) {
-      input.data = Number(input.data);
-    }
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.number) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.number,
-        received: ctx2.parsedType
-      });
-      return INVALID;
-    }
-    let ctx = void 0;
-    const status = new ParseStatus();
-    for (const check2 of this._def.checks) {
-      if (check2.kind === "int") {
-        if (!util.isInteger(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.invalid_type,
-            expected: "integer",
-            received: "float",
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "min") {
-        const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
-        if (tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_small,
-            minimum: check2.value,
-            type: "number",
-            inclusive: check2.inclusive,
-            exact: false,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "max") {
-        const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
-        if (tooBig) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_big,
-            maximum: check2.value,
-            type: "number",
-            inclusive: check2.inclusive,
-            exact: false,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "multipleOf") {
-        if (floatSafeRemainder(input.data, check2.value) !== 0) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.not_multiple_of,
-            multipleOf: check2.value,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "finite") {
-        if (!Number.isFinite(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.not_finite,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else {
-        util.assertNever(check2);
-      }
-    }
-    return { status: status.value, value: input.data };
-  }
-  gte(value, message) {
-    return this.setLimit("min", value, true, errorUtil.toString(message));
-  }
-  gt(value, message) {
-    return this.setLimit("min", value, false, errorUtil.toString(message));
-  }
-  lte(value, message) {
-    return this.setLimit("max", value, true, errorUtil.toString(message));
-  }
-  lt(value, message) {
-    return this.setLimit("max", value, false, errorUtil.toString(message));
-  }
-  setLimit(kind, value, inclusive, message) {
-    return new _ZodNumber({
-      ...this._def,
-      checks: [
-        ...this._def.checks,
-        {
-          kind,
-          value,
-          inclusive,
-          message: errorUtil.toString(message)
-        }
-      ]
-    });
-  }
-  _addCheck(check2) {
-    return new _ZodNumber({
-      ...this._def,
-      checks: [...this._def.checks, check2]
-    });
-  }
-  int(message) {
-    return this._addCheck({
-      kind: "int",
-      message: errorUtil.toString(message)
-    });
-  }
-  positive(message) {
-    return this._addCheck({
-      kind: "min",
-      value: 0,
-      inclusive: false,
-      message: errorUtil.toString(message)
-    });
-  }
-  negative(message) {
-    return this._addCheck({
-      kind: "max",
-      value: 0,
-      inclusive: false,
-      message: errorUtil.toString(message)
-    });
-  }
-  nonpositive(message) {
-    return this._addCheck({
-      kind: "max",
-      value: 0,
-      inclusive: true,
-      message: errorUtil.toString(message)
-    });
-  }
-  nonnegative(message) {
-    return this._addCheck({
-      kind: "min",
-      value: 0,
-      inclusive: true,
-      message: errorUtil.toString(message)
-    });
-  }
-  multipleOf(value, message) {
-    return this._addCheck({
-      kind: "multipleOf",
-      value,
-      message: errorUtil.toString(message)
-    });
-  }
-  finite(message) {
-    return this._addCheck({
-      kind: "finite",
-      message: errorUtil.toString(message)
-    });
-  }
-  safe(message) {
-    return this._addCheck({
-      kind: "min",
-      inclusive: true,
-      value: Number.MIN_SAFE_INTEGER,
-      message: errorUtil.toString(message)
-    })._addCheck({
-      kind: "max",
-      inclusive: true,
-      value: Number.MAX_SAFE_INTEGER,
-      message: errorUtil.toString(message)
-    });
-  }
-  get minValue() {
-    let min = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
-      }
-    }
-    return min;
-  }
-  get maxValue() {
-    let max = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
-      }
-    }
-    return max;
-  }
-  get isInt() {
-    return !!this._def.checks.find((ch) => ch.kind === "int" || ch.kind === "multipleOf" && util.isInteger(ch.value));
-  }
-  get isFinite() {
-    let max = null;
-    let min = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "finite" || ch.kind === "int" || ch.kind === "multipleOf") {
-        return true;
-      } else if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
-      } else if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
-      }
-    }
-    return Number.isFinite(min) && Number.isFinite(max);
-  }
-};
-ZodNumber.create = (params) => {
-  return new ZodNumber({
-    checks: [],
-    typeName: ZodFirstPartyTypeKind.ZodNumber,
-    coerce: params?.coerce || false,
-    ...processCreateParams(params)
-  });
-};
-var ZodBigInt = class _ZodBigInt extends ZodType {
-  constructor() {
-    super(...arguments);
-    this.min = this.gte;
-    this.max = this.lte;
-  }
-  _parse(input) {
-    if (this._def.coerce) {
-      try {
-        input.data = BigInt(input.data);
-      } catch {
-        return this._getInvalidInput(input);
-      }
-    }
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.bigint) {
-      return this._getInvalidInput(input);
-    }
-    let ctx = void 0;
-    const status = new ParseStatus();
-    for (const check2 of this._def.checks) {
-      if (check2.kind === "min") {
-        const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
-        if (tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_small,
-            type: "bigint",
-            minimum: check2.value,
-            inclusive: check2.inclusive,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "max") {
-        const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
-        if (tooBig) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_big,
-            type: "bigint",
-            maximum: check2.value,
-            inclusive: check2.inclusive,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "multipleOf") {
-        if (input.data % check2.value !== BigInt(0)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.not_multiple_of,
-            multipleOf: check2.value,
-            message: check2.message
-          });
-          status.dirty();
-        }
-      } else {
-        util.assertNever(check2);
-      }
-    }
-    return { status: status.value, value: input.data };
-  }
-  _getInvalidInput(input) {
-    const ctx = this._getOrReturnCtx(input);
-    addIssueToContext(ctx, {
-      code: ZodIssueCode.invalid_type,
-      expected: ZodParsedType.bigint,
-      received: ctx.parsedType
-    });
-    return INVALID;
-  }
-  gte(value, message) {
-    return this.setLimit("min", value, true, errorUtil.toString(message));
-  }
-  gt(value, message) {
-    return this.setLimit("min", value, false, errorUtil.toString(message));
-  }
-  lte(value, message) {
-    return this.setLimit("max", value, true, errorUtil.toString(message));
-  }
-  lt(value, message) {
-    return this.setLimit("max", value, false, errorUtil.toString(message));
-  }
-  setLimit(kind, value, inclusive, message) {
-    return new _ZodBigInt({
-      ...this._def,
-      checks: [
-        ...this._def.checks,
-        {
-          kind,
-          value,
-          inclusive,
-          message: errorUtil.toString(message)
-        }
-      ]
-    });
-  }
-  _addCheck(check2) {
-    return new _ZodBigInt({
-      ...this._def,
-      checks: [...this._def.checks, check2]
-    });
-  }
-  positive(message) {
-    return this._addCheck({
-      kind: "min",
-      value: BigInt(0),
-      inclusive: false,
-      message: errorUtil.toString(message)
-    });
-  }
-  negative(message) {
-    return this._addCheck({
-      kind: "max",
-      value: BigInt(0),
-      inclusive: false,
-      message: errorUtil.toString(message)
-    });
-  }
-  nonpositive(message) {
-    return this._addCheck({
-      kind: "max",
-      value: BigInt(0),
-      inclusive: true,
-      message: errorUtil.toString(message)
-    });
-  }
-  nonnegative(message) {
-    return this._addCheck({
-      kind: "min",
-      value: BigInt(0),
-      inclusive: true,
-      message: errorUtil.toString(message)
-    });
-  }
-  multipleOf(value, message) {
-    return this._addCheck({
-      kind: "multipleOf",
-      value,
-      message: errorUtil.toString(message)
-    });
-  }
-  get minValue() {
-    let min = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
-      }
-    }
-    return min;
-  }
-  get maxValue() {
-    let max = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
-      }
-    }
-    return max;
-  }
-};
-ZodBigInt.create = (params) => {
-  return new ZodBigInt({
-    checks: [],
-    typeName: ZodFirstPartyTypeKind.ZodBigInt,
-    coerce: params?.coerce ?? false,
-    ...processCreateParams(params)
-  });
-};
-var ZodBoolean = class extends ZodType {
-  _parse(input) {
-    if (this._def.coerce) {
-      input.data = Boolean(input.data);
-    }
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.boolean) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.boolean,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-};
-ZodBoolean.create = (params) => {
-  return new ZodBoolean({
-    typeName: ZodFirstPartyTypeKind.ZodBoolean,
-    coerce: params?.coerce || false,
-    ...processCreateParams(params)
-  });
-};
-var ZodDate = class _ZodDate extends ZodType {
-  _parse(input) {
-    if (this._def.coerce) {
-      input.data = new Date(input.data);
-    }
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.date) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.date,
-        received: ctx2.parsedType
-      });
-      return INVALID;
-    }
-    if (Number.isNaN(input.data.getTime())) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
-        code: ZodIssueCode.invalid_date
-      });
-      return INVALID;
-    }
-    const status = new ParseStatus();
-    let ctx = void 0;
-    for (const check2 of this._def.checks) {
-      if (check2.kind === "min") {
-        if (input.data.getTime() < check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_small,
-            message: check2.message,
-            inclusive: true,
-            exact: false,
-            minimum: check2.value,
-            type: "date"
-          });
-          status.dirty();
-        }
-      } else if (check2.kind === "max") {
-        if (input.data.getTime() > check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.too_big,
-            message: check2.message,
-            inclusive: true,
-            exact: false,
-            maximum: check2.value,
-            type: "date"
-          });
-          status.dirty();
-        }
-      } else {
-        util.assertNever(check2);
-      }
-    }
-    return {
-      status: status.value,
-      value: new Date(input.data.getTime())
-    };
-  }
-  _addCheck(check2) {
-    return new _ZodDate({
-      ...this._def,
-      checks: [...this._def.checks, check2]
-    });
-  }
-  min(minDate, message) {
-    return this._addCheck({
-      kind: "min",
-      value: minDate.getTime(),
-      message: errorUtil.toString(message)
-    });
-  }
-  max(maxDate, message) {
-    return this._addCheck({
-      kind: "max",
-      value: maxDate.getTime(),
-      message: errorUtil.toString(message)
-    });
-  }
-  get minDate() {
-    let min = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
-      }
-    }
-    return min != null ? new Date(min) : null;
-  }
-  get maxDate() {
-    let max = null;
-    for (const ch of this._def.checks) {
-      if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
-      }
-    }
-    return max != null ? new Date(max) : null;
-  }
-};
-ZodDate.create = (params) => {
-  return new ZodDate({
-    checks: [],
-    coerce: params?.coerce || false,
-    typeName: ZodFirstPartyTypeKind.ZodDate,
-    ...processCreateParams(params)
-  });
-};
-var ZodSymbol = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.symbol) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.symbol,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-};
-ZodSymbol.create = (params) => {
-  return new ZodSymbol({
-    typeName: ZodFirstPartyTypeKind.ZodSymbol,
-    ...processCreateParams(params)
-  });
-};
-var ZodUndefined = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.undefined) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.undefined,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-};
-ZodUndefined.create = (params) => {
-  return new ZodUndefined({
-    typeName: ZodFirstPartyTypeKind.ZodUndefined,
-    ...processCreateParams(params)
-  });
-};
-var ZodNull = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.null) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.null,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-};
-ZodNull.create = (params) => {
-  return new ZodNull({
-    typeName: ZodFirstPartyTypeKind.ZodNull,
-    ...processCreateParams(params)
-  });
-};
-var ZodAny = class extends ZodType {
-  constructor() {
-    super(...arguments);
-    this._any = true;
-  }
-  _parse(input) {
-    return OK(input.data);
-  }
-};
-ZodAny.create = (params) => {
-  return new ZodAny({
-    typeName: ZodFirstPartyTypeKind.ZodAny,
-    ...processCreateParams(params)
-  });
-};
-var ZodUnknown = class extends ZodType {
-  constructor() {
-    super(...arguments);
-    this._unknown = true;
-  }
-  _parse(input) {
-    return OK(input.data);
-  }
-};
-ZodUnknown.create = (params) => {
-  return new ZodUnknown({
-    typeName: ZodFirstPartyTypeKind.ZodUnknown,
-    ...processCreateParams(params)
-  });
-};
-var ZodNever = class extends ZodType {
-  _parse(input) {
-    const ctx = this._getOrReturnCtx(input);
-    addIssueToContext(ctx, {
-      code: ZodIssueCode.invalid_type,
-      expected: ZodParsedType.never,
-      received: ctx.parsedType
-    });
-    return INVALID;
-  }
-};
-ZodNever.create = (params) => {
-  return new ZodNever({
-    typeName: ZodFirstPartyTypeKind.ZodNever,
-    ...processCreateParams(params)
-  });
-};
-var ZodVoid = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.undefined) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.void,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-};
-ZodVoid.create = (params) => {
-  return new ZodVoid({
-    typeName: ZodFirstPartyTypeKind.ZodVoid,
-    ...processCreateParams(params)
-  });
-};
-var ZodArray = class _ZodArray extends ZodType {
-  _parse(input) {
-    const { ctx, status } = this._processInputParams(input);
-    const def = this._def;
-    if (ctx.parsedType !== ZodParsedType.array) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.array,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    if (def.exactLength !== null) {
-      const tooBig = ctx.data.length > def.exactLength.value;
-      const tooSmall = ctx.data.length < def.exactLength.value;
-      if (tooBig || tooSmall) {
-        addIssueToContext(ctx, {
-          code: tooBig ? ZodIssueCode.too_big : ZodIssueCode.too_small,
-          minimum: tooSmall ? def.exactLength.value : void 0,
-          maximum: tooBig ? def.exactLength.value : void 0,
-          type: "array",
-          inclusive: true,
-          exact: true,
-          message: def.exactLength.message
-        });
-        status.dirty();
-      }
-    }
-    if (def.minLength !== null) {
-      if (ctx.data.length < def.minLength.value) {
-        addIssueToContext(ctx, {
-          code: ZodIssueCode.too_small,
-          minimum: def.minLength.value,
-          type: "array",
-          inclusive: true,
-          exact: false,
-          message: def.minLength.message
-        });
-        status.dirty();
-      }
-    }
-    if (def.maxLength !== null) {
-      if (ctx.data.length > def.maxLength.value) {
-        addIssueToContext(ctx, {
-          code: ZodIssueCode.too_big,
-          maximum: def.maxLength.value,
-          type: "array",
-          inclusive: true,
-          exact: false,
-          message: def.maxLength.message
-        });
-        status.dirty();
-      }
-    }
-    if (ctx.common.async) {
-      return Promise.all([...ctx.data].map((item, i2) => {
-        return def.type._parseAsync(new ParseInputLazyPath(ctx, item, ctx.path, i2));
-      })).then((result2) => {
-        return ParseStatus.mergeArray(status, result2);
-      });
-    }
-    const result = [...ctx.data].map((item, i2) => {
-      return def.type._parseSync(new ParseInputLazyPath(ctx, item, ctx.path, i2));
-    });
-    return ParseStatus.mergeArray(status, result);
-  }
-  get element() {
-    return this._def.type;
-  }
-  min(minLength, message) {
-    return new _ZodArray({
-      ...this._def,
-      minLength: { value: minLength, message: errorUtil.toString(message) }
-    });
-  }
-  max(maxLength, message) {
-    return new _ZodArray({
-      ...this._def,
-      maxLength: { value: maxLength, message: errorUtil.toString(message) }
-    });
-  }
-  length(len, message) {
-    return new _ZodArray({
-      ...this._def,
-      exactLength: { value: len, message: errorUtil.toString(message) }
-    });
-  }
-  nonempty(message) {
-    return this.min(1, message);
-  }
-};
-ZodArray.create = (schema, params) => {
-  return new ZodArray({
-    type: schema,
-    minLength: null,
-    maxLength: null,
-    exactLength: null,
-    typeName: ZodFirstPartyTypeKind.ZodArray,
-    ...processCreateParams(params)
-  });
-};
-function deepPartialify(schema) {
-  if (schema instanceof ZodObject) {
-    const newShape = {};
-    for (const key in schema.shape) {
-      const fieldSchema = schema.shape[key];
-      newShape[key] = ZodOptional.create(deepPartialify(fieldSchema));
-    }
-    return new ZodObject({
-      ...schema._def,
-      shape: () => newShape
-    });
-  } else if (schema instanceof ZodArray) {
-    return new ZodArray({
-      ...schema._def,
-      type: deepPartialify(schema.element)
-    });
-  } else if (schema instanceof ZodOptional) {
-    return ZodOptional.create(deepPartialify(schema.unwrap()));
-  } else if (schema instanceof ZodNullable) {
-    return ZodNullable.create(deepPartialify(schema.unwrap()));
-  } else if (schema instanceof ZodTuple) {
-    return ZodTuple.create(schema.items.map((item) => deepPartialify(item)));
-  } else {
-    return schema;
-  }
-}
-var ZodObject = class _ZodObject extends ZodType {
-  constructor() {
-    super(...arguments);
-    this._cached = null;
-    this.nonstrict = this.passthrough;
-    this.augment = this.extend;
-  }
-  _getCached() {
-    if (this._cached !== null)
-      return this._cached;
-    const shape = this._def.shape();
-    const keys = util.objectKeys(shape);
-    this._cached = { shape, keys };
-    return this._cached;
-  }
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.object) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.object,
-        received: ctx2.parsedType
-      });
-      return INVALID;
-    }
-    const { status, ctx } = this._processInputParams(input);
-    const { shape, keys: shapeKeys } = this._getCached();
-    const extraKeys = [];
-    if (!(this._def.catchall instanceof ZodNever && this._def.unknownKeys === "strip")) {
-      for (const key in ctx.data) {
-        if (!shapeKeys.includes(key)) {
-          extraKeys.push(key);
-        }
-      }
-    }
-    const pairs = [];
-    for (const key of shapeKeys) {
-      const keyValidator = shape[key];
-      const value = ctx.data[key];
-      pairs.push({
-        key: { status: "valid", value: key },
-        value: keyValidator._parse(new ParseInputLazyPath(ctx, value, ctx.path, key)),
-        alwaysSet: key in ctx.data
-      });
-    }
-    if (this._def.catchall instanceof ZodNever) {
-      const unknownKeys = this._def.unknownKeys;
-      if (unknownKeys === "passthrough") {
-        for (const key of extraKeys) {
-          pairs.push({
-            key: { status: "valid", value: key },
-            value: { status: "valid", value: ctx.data[key] }
-          });
-        }
-      } else if (unknownKeys === "strict") {
-        if (extraKeys.length > 0) {
-          addIssueToContext(ctx, {
-            code: ZodIssueCode.unrecognized_keys,
-            keys: extraKeys
-          });
-          status.dirty();
-        }
-      } else if (unknownKeys === "strip") {
-      } else {
-        throw new Error(`Internal ZodObject error: invalid unknownKeys value.`);
-      }
-    } else {
-      const catchall = this._def.catchall;
-      for (const key of extraKeys) {
-        const value = ctx.data[key];
-        pairs.push({
-          key: { status: "valid", value: key },
-          value: catchall._parse(
-            new ParseInputLazyPath(ctx, value, ctx.path, key)
-            //, ctx.child(key), value, getParsedType(value)
-          ),
-          alwaysSet: key in ctx.data
-        });
-      }
-    }
-    if (ctx.common.async) {
-      return Promise.resolve().then(async () => {
-        const syncPairs = [];
-        for (const pair of pairs) {
-          const key = await pair.key;
-          const value = await pair.value;
-          syncPairs.push({
-            key,
-            value,
-            alwaysSet: pair.alwaysSet
-          });
-        }
-        return syncPairs;
-      }).then((syncPairs) => {
-        return ParseStatus.mergeObjectSync(status, syncPairs);
-      });
-    } else {
-      return ParseStatus.mergeObjectSync(status, pairs);
-    }
-  }
-  get shape() {
-    return this._def.shape();
-  }
-  strict(message) {
-    errorUtil.errToObj;
-    return new _ZodObject({
-      ...this._def,
-      unknownKeys: "strict",
-      ...message !== void 0 ? {
-        errorMap: (issue2, ctx) => {
-          const defaultError = this._def.errorMap?.(issue2, ctx).message ?? ctx.defaultError;
-          if (issue2.code === "unrecognized_keys")
-            return {
-              message: errorUtil.errToObj(message).message ?? defaultError
-            };
-          return {
-            message: defaultError
-          };
-        }
-      } : {}
-    });
-  }
-  strip() {
-    return new _ZodObject({
-      ...this._def,
-      unknownKeys: "strip"
-    });
-  }
-  passthrough() {
-    return new _ZodObject({
-      ...this._def,
-      unknownKeys: "passthrough"
-    });
-  }
-  // const AugmentFactory =
-  //   <Def extends ZodObjectDef>(def: Def) =>
-  //   <Augmentation extends ZodRawShape>(
-  //     augmentation: Augmentation
-  //   ): ZodObject<
-  //     extendShape<ReturnType<Def["shape"]>, Augmentation>,
-  //     Def["unknownKeys"],
-  //     Def["catchall"]
-  //   > => {
-  //     return new ZodObject({
-  //       ...def,
-  //       shape: () => ({
-  //         ...def.shape(),
-  //         ...augmentation,
-  //       }),
-  //     }) as any;
-  //   };
-  extend(augmentation) {
-    return new _ZodObject({
-      ...this._def,
-      shape: () => ({
-        ...this._def.shape(),
-        ...augmentation
-      })
-    });
-  }
-  /**
-   * Prior to zod@1.0.12 there was a bug in the
-   * inferred type of merged objects. Please
-   * upgrade if you are experiencing issues.
-   */
-  merge(merging) {
-    const merged = new _ZodObject({
-      unknownKeys: merging._def.unknownKeys,
-      catchall: merging._def.catchall,
-      shape: () => ({
-        ...this._def.shape(),
-        ...merging._def.shape()
-      }),
-      typeName: ZodFirstPartyTypeKind.ZodObject
-    });
-    return merged;
-  }
-  // merge<
-  //   Incoming extends AnyZodObject,
-  //   Augmentation extends Incoming["shape"],
-  //   NewOutput extends {
-  //     [k in keyof Augmentation | keyof Output]: k extends keyof Augmentation
-  //       ? Augmentation[k]["_output"]
-  //       : k extends keyof Output
-  //       ? Output[k]
-  //       : never;
-  //   },
-  //   NewInput extends {
-  //     [k in keyof Augmentation | keyof Input]: k extends keyof Augmentation
-  //       ? Augmentation[k]["_input"]
-  //       : k extends keyof Input
-  //       ? Input[k]
-  //       : never;
-  //   }
-  // >(
-  //   merging: Incoming
-  // ): ZodObject<
-  //   extendShape<T, ReturnType<Incoming["_def"]["shape"]>>,
-  //   Incoming["_def"]["unknownKeys"],
-  //   Incoming["_def"]["catchall"],
-  //   NewOutput,
-  //   NewInput
-  // > {
-  //   const merged: any = new ZodObject({
-  //     unknownKeys: merging._def.unknownKeys,
-  //     catchall: merging._def.catchall,
-  //     shape: () =>
-  //       objectUtil.mergeShapes(this._def.shape(), merging._def.shape()),
-  //     typeName: ZodFirstPartyTypeKind.ZodObject,
-  //   }) as any;
-  //   return merged;
-  // }
-  setKey(key, schema) {
-    return this.augment({ [key]: schema });
-  }
-  // merge<Incoming extends AnyZodObject>(
-  //   merging: Incoming
-  // ): //ZodObject<T & Incoming["_shape"], UnknownKeys, Catchall> = (merging) => {
-  // ZodObject<
-  //   extendShape<T, ReturnType<Incoming["_def"]["shape"]>>,
-  //   Incoming["_def"]["unknownKeys"],
-  //   Incoming["_def"]["catchall"]
-  // > {
-  //   // const mergedShape = objectUtil.mergeShapes(
-  //   //   this._def.shape(),
-  //   //   merging._def.shape()
-  //   // );
-  //   const merged: any = new ZodObject({
-  //     unknownKeys: merging._def.unknownKeys,
-  //     catchall: merging._def.catchall,
-  //     shape: () =>
-  //       objectUtil.mergeShapes(this._def.shape(), merging._def.shape()),
-  //     typeName: ZodFirstPartyTypeKind.ZodObject,
-  //   }) as any;
-  //   return merged;
-  // }
-  catchall(index2) {
-    return new _ZodObject({
-      ...this._def,
-      catchall: index2
-    });
-  }
-  pick(mask) {
-    const shape = {};
-    for (const key of util.objectKeys(mask)) {
-      if (mask[key] && this.shape[key]) {
-        shape[key] = this.shape[key];
-      }
-    }
-    return new _ZodObject({
-      ...this._def,
-      shape: () => shape
-    });
-  }
-  omit(mask) {
-    const shape = {};
-    for (const key of util.objectKeys(this.shape)) {
-      if (!mask[key]) {
-        shape[key] = this.shape[key];
-      }
-    }
-    return new _ZodObject({
-      ...this._def,
-      shape: () => shape
-    });
-  }
-  /**
-   * @deprecated
-   */
-  deepPartial() {
-    return deepPartialify(this);
-  }
-  partial(mask) {
-    const newShape = {};
-    for (const key of util.objectKeys(this.shape)) {
-      const fieldSchema = this.shape[key];
-      if (mask && !mask[key]) {
-        newShape[key] = fieldSchema;
-      } else {
-        newShape[key] = fieldSchema.optional();
-      }
-    }
-    return new _ZodObject({
-      ...this._def,
-      shape: () => newShape
-    });
-  }
-  required(mask) {
-    const newShape = {};
-    for (const key of util.objectKeys(this.shape)) {
-      if (mask && !mask[key]) {
-        newShape[key] = this.shape[key];
-      } else {
-        const fieldSchema = this.shape[key];
-        let newField = fieldSchema;
-        while (newField instanceof ZodOptional) {
-          newField = newField._def.innerType;
-        }
-        newShape[key] = newField;
-      }
-    }
-    return new _ZodObject({
-      ...this._def,
-      shape: () => newShape
-    });
-  }
-  keyof() {
-    return createZodEnum(util.objectKeys(this.shape));
-  }
-};
-ZodObject.create = (shape, params) => {
-  return new ZodObject({
-    shape: () => shape,
-    unknownKeys: "strip",
-    catchall: ZodNever.create(),
-    typeName: ZodFirstPartyTypeKind.ZodObject,
-    ...processCreateParams(params)
-  });
-};
-ZodObject.strictCreate = (shape, params) => {
-  return new ZodObject({
-    shape: () => shape,
-    unknownKeys: "strict",
-    catchall: ZodNever.create(),
-    typeName: ZodFirstPartyTypeKind.ZodObject,
-    ...processCreateParams(params)
-  });
-};
-ZodObject.lazycreate = (shape, params) => {
-  return new ZodObject({
-    shape,
-    unknownKeys: "strip",
-    catchall: ZodNever.create(),
-    typeName: ZodFirstPartyTypeKind.ZodObject,
-    ...processCreateParams(params)
-  });
-};
-var ZodUnion = class extends ZodType {
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    const options = this._def.options;
-    function handleResults(results) {
-      for (const result of results) {
-        if (result.result.status === "valid") {
-          return result.result;
-        }
-      }
-      for (const result of results) {
-        if (result.result.status === "dirty") {
-          ctx.common.issues.push(...result.ctx.common.issues);
-          return result.result;
-        }
-      }
-      const unionErrors = results.map((result) => new ZodError(result.ctx.common.issues));
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_union,
-        unionErrors
-      });
-      return INVALID;
-    }
-    if (ctx.common.async) {
-      return Promise.all(options.map(async (option) => {
-        const childCtx = {
-          ...ctx,
-          common: {
-            ...ctx.common,
-            issues: []
-          },
-          parent: null
-        };
-        return {
-          result: await option._parseAsync({
-            data: ctx.data,
-            path: ctx.path,
-            parent: childCtx
-          }),
-          ctx: childCtx
-        };
-      })).then(handleResults);
-    } else {
-      let dirty = void 0;
-      const issues = [];
-      for (const option of options) {
-        const childCtx = {
-          ...ctx,
-          common: {
-            ...ctx.common,
-            issues: []
-          },
-          parent: null
-        };
-        const result = option._parseSync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: childCtx
-        });
-        if (result.status === "valid") {
-          return result;
-        } else if (result.status === "dirty" && !dirty) {
-          dirty = { result, ctx: childCtx };
-        }
-        if (childCtx.common.issues.length) {
-          issues.push(childCtx.common.issues);
-        }
-      }
-      if (dirty) {
-        ctx.common.issues.push(...dirty.ctx.common.issues);
-        return dirty.result;
-      }
-      const unionErrors = issues.map((issues2) => new ZodError(issues2));
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_union,
-        unionErrors
-      });
-      return INVALID;
-    }
-  }
-  get options() {
-    return this._def.options;
-  }
-};
-ZodUnion.create = (types5, params) => {
-  return new ZodUnion({
-    options: types5,
-    typeName: ZodFirstPartyTypeKind.ZodUnion,
-    ...processCreateParams(params)
-  });
-};
-var getDiscriminator = (type) => {
-  if (type instanceof ZodLazy) {
-    return getDiscriminator(type.schema);
-  } else if (type instanceof ZodEffects) {
-    return getDiscriminator(type.innerType());
-  } else if (type instanceof ZodLiteral) {
-    return [type.value];
-  } else if (type instanceof ZodEnum) {
-    return type.options;
-  } else if (type instanceof ZodNativeEnum) {
-    return util.objectValues(type.enum);
-  } else if (type instanceof ZodDefault) {
-    return getDiscriminator(type._def.innerType);
-  } else if (type instanceof ZodUndefined) {
-    return [void 0];
-  } else if (type instanceof ZodNull) {
-    return [null];
-  } else if (type instanceof ZodOptional) {
-    return [void 0, ...getDiscriminator(type.unwrap())];
-  } else if (type instanceof ZodNullable) {
-    return [null, ...getDiscriminator(type.unwrap())];
-  } else if (type instanceof ZodBranded) {
-    return getDiscriminator(type.unwrap());
-  } else if (type instanceof ZodReadonly) {
-    return getDiscriminator(type.unwrap());
-  } else if (type instanceof ZodCatch) {
-    return getDiscriminator(type._def.innerType);
-  } else {
-    return [];
-  }
-};
-var ZodDiscriminatedUnion = class _ZodDiscriminatedUnion extends ZodType {
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.object) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.object,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    const discriminator = this.discriminator;
-    const discriminatorValue = ctx.data[discriminator];
-    const option = this.optionsMap.get(discriminatorValue);
-    if (!option) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_union_discriminator,
-        options: Array.from(this.optionsMap.keys()),
-        path: [discriminator]
-      });
-      return INVALID;
-    }
-    if (ctx.common.async) {
-      return option._parseAsync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
-      });
-    } else {
-      return option._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
-      });
-    }
-  }
-  get discriminator() {
-    return this._def.discriminator;
-  }
-  get options() {
-    return this._def.options;
-  }
-  get optionsMap() {
-    return this._def.optionsMap;
-  }
-  /**
-   * The constructor of the discriminated union schema. Its behaviour is very similar to that of the normal z.union() constructor.
-   * However, it only allows a union of objects, all of which need to share a discriminator property. This property must
-   * have a different value for each object in the union.
-   * @param discriminator the name of the discriminator property
-   * @param types an array of object schemas
-   * @param params
-   */
-  static create(discriminator, options, params) {
-    const optionsMap = /* @__PURE__ */ new Map();
-    for (const type of options) {
-      const discriminatorValues = getDiscriminator(type.shape[discriminator]);
-      if (!discriminatorValues.length) {
-        throw new Error(`A discriminator value for key \`${discriminator}\` could not be extracted from all schema options`);
-      }
-      for (const value of discriminatorValues) {
-        if (optionsMap.has(value)) {
-          throw new Error(`Discriminator property ${String(discriminator)} has duplicate value ${String(value)}`);
-        }
-        optionsMap.set(value, type);
-      }
-    }
-    return new _ZodDiscriminatedUnion({
-      typeName: ZodFirstPartyTypeKind.ZodDiscriminatedUnion,
-      discriminator,
-      options,
-      optionsMap,
-      ...processCreateParams(params)
-    });
-  }
-};
-function mergeValues(a, b) {
-  const aType = getParsedType(a);
-  const bType = getParsedType(b);
-  if (a === b) {
-    return { valid: true, data: a };
-  } else if (aType === ZodParsedType.object && bType === ZodParsedType.object) {
-    const bKeys = util.objectKeys(b);
-    const sharedKeys = util.objectKeys(a).filter((key) => bKeys.indexOf(key) !== -1);
-    const newObj = { ...a, ...b };
-    for (const key of sharedKeys) {
-      const sharedValue = mergeValues(a[key], b[key]);
-      if (!sharedValue.valid) {
-        return { valid: false };
-      }
-      newObj[key] = sharedValue.data;
-    }
-    return { valid: true, data: newObj };
-  } else if (aType === ZodParsedType.array && bType === ZodParsedType.array) {
-    if (a.length !== b.length) {
-      return { valid: false };
-    }
-    const newArray = [];
-    for (let index2 = 0; index2 < a.length; index2++) {
-      const itemA = a[index2];
-      const itemB = b[index2];
-      const sharedValue = mergeValues(itemA, itemB);
-      if (!sharedValue.valid) {
-        return { valid: false };
-      }
-      newArray.push(sharedValue.data);
-    }
-    return { valid: true, data: newArray };
-  } else if (aType === ZodParsedType.date && bType === ZodParsedType.date && +a === +b) {
-    return { valid: true, data: a };
-  } else {
-    return { valid: false };
-  }
-}
-var ZodIntersection = class extends ZodType {
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    const handleParsed = (parsedLeft, parsedRight) => {
-      if (isAborted(parsedLeft) || isAborted(parsedRight)) {
-        return INVALID;
-      }
-      const merged = mergeValues(parsedLeft.value, parsedRight.value);
-      if (!merged.valid) {
-        addIssueToContext(ctx, {
-          code: ZodIssueCode.invalid_intersection_types
-        });
-        return INVALID;
-      }
-      if (isDirty(parsedLeft) || isDirty(parsedRight)) {
-        status.dirty();
-      }
-      return { status: status.value, value: merged.data };
-    };
-    if (ctx.common.async) {
-      return Promise.all([
-        this._def.left._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
-        }),
-        this._def.right._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
-        })
-      ]).then(([left, right]) => handleParsed(left, right));
-    } else {
-      return handleParsed(this._def.left._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
-      }), this._def.right._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
-      }));
-    }
-  }
-};
-ZodIntersection.create = (left, right, params) => {
-  return new ZodIntersection({
-    left,
-    right,
-    typeName: ZodFirstPartyTypeKind.ZodIntersection,
-    ...processCreateParams(params)
-  });
-};
-var ZodTuple = class _ZodTuple extends ZodType {
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.array) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.array,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    if (ctx.data.length < this._def.items.length) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.too_small,
-        minimum: this._def.items.length,
-        inclusive: true,
-        exact: false,
-        type: "array"
-      });
-      return INVALID;
-    }
-    const rest = this._def.rest;
-    if (!rest && ctx.data.length > this._def.items.length) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.too_big,
-        maximum: this._def.items.length,
-        inclusive: true,
-        exact: false,
-        type: "array"
-      });
-      status.dirty();
-    }
-    const items = [...ctx.data].map((item, itemIndex) => {
-      const schema = this._def.items[itemIndex] || this._def.rest;
-      if (!schema)
-        return null;
-      return schema._parse(new ParseInputLazyPath(ctx, item, ctx.path, itemIndex));
-    }).filter((x2) => !!x2);
-    if (ctx.common.async) {
-      return Promise.all(items).then((results) => {
-        return ParseStatus.mergeArray(status, results);
-      });
-    } else {
-      return ParseStatus.mergeArray(status, items);
-    }
-  }
-  get items() {
-    return this._def.items;
-  }
-  rest(rest) {
-    return new _ZodTuple({
-      ...this._def,
-      rest
-    });
-  }
-};
-ZodTuple.create = (schemas, params) => {
-  if (!Array.isArray(schemas)) {
-    throw new Error("You must pass an array of schemas to z.tuple([ ... ])");
-  }
-  return new ZodTuple({
-    items: schemas,
-    typeName: ZodFirstPartyTypeKind.ZodTuple,
-    rest: null,
-    ...processCreateParams(params)
-  });
-};
-var ZodRecord = class _ZodRecord extends ZodType {
-  get keySchema() {
-    return this._def.keyType;
-  }
-  get valueSchema() {
-    return this._def.valueType;
-  }
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.object) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.object,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    const pairs = [];
-    const keyType = this._def.keyType;
-    const valueType = this._def.valueType;
-    for (const key in ctx.data) {
-      pairs.push({
-        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, key)),
-        value: valueType._parse(new ParseInputLazyPath(ctx, ctx.data[key], ctx.path, key)),
-        alwaysSet: key in ctx.data
-      });
-    }
-    if (ctx.common.async) {
-      return ParseStatus.mergeObjectAsync(status, pairs);
-    } else {
-      return ParseStatus.mergeObjectSync(status, pairs);
-    }
-  }
-  get element() {
-    return this._def.valueType;
-  }
-  static create(first, second, third) {
-    if (second instanceof ZodType) {
-      return new _ZodRecord({
-        keyType: first,
-        valueType: second,
-        typeName: ZodFirstPartyTypeKind.ZodRecord,
-        ...processCreateParams(third)
-      });
-    }
-    return new _ZodRecord({
-      keyType: ZodString.create(),
-      valueType: first,
-      typeName: ZodFirstPartyTypeKind.ZodRecord,
-      ...processCreateParams(second)
-    });
-  }
-};
-var ZodMap = class extends ZodType {
-  get keySchema() {
-    return this._def.keyType;
-  }
-  get valueSchema() {
-    return this._def.valueType;
-  }
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.map) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.map,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    const keyType = this._def.keyType;
-    const valueType = this._def.valueType;
-    const pairs = [...ctx.data.entries()].map(([key, value], index2) => {
-      return {
-        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, [index2, "key"])),
-        value: valueType._parse(new ParseInputLazyPath(ctx, value, ctx.path, [index2, "value"]))
-      };
-    });
-    if (ctx.common.async) {
-      const finalMap = /* @__PURE__ */ new Map();
-      return Promise.resolve().then(async () => {
-        for (const pair of pairs) {
-          const key = await pair.key;
-          const value = await pair.value;
-          if (key.status === "aborted" || value.status === "aborted") {
-            return INVALID;
-          }
-          if (key.status === "dirty" || value.status === "dirty") {
-            status.dirty();
-          }
-          finalMap.set(key.value, value.value);
-        }
-        return { status: status.value, value: finalMap };
-      });
-    } else {
-      const finalMap = /* @__PURE__ */ new Map();
-      for (const pair of pairs) {
-        const key = pair.key;
-        const value = pair.value;
-        if (key.status === "aborted" || value.status === "aborted") {
-          return INVALID;
-        }
-        if (key.status === "dirty" || value.status === "dirty") {
-          status.dirty();
-        }
-        finalMap.set(key.value, value.value);
-      }
-      return { status: status.value, value: finalMap };
-    }
-  }
-};
-ZodMap.create = (keyType, valueType, params) => {
-  return new ZodMap({
-    valueType,
-    keyType,
-    typeName: ZodFirstPartyTypeKind.ZodMap,
-    ...processCreateParams(params)
-  });
-};
-var ZodSet = class _ZodSet extends ZodType {
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.set) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.set,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    const def = this._def;
-    if (def.minSize !== null) {
-      if (ctx.data.size < def.minSize.value) {
-        addIssueToContext(ctx, {
-          code: ZodIssueCode.too_small,
-          minimum: def.minSize.value,
-          type: "set",
-          inclusive: true,
-          exact: false,
-          message: def.minSize.message
-        });
-        status.dirty();
-      }
-    }
-    if (def.maxSize !== null) {
-      if (ctx.data.size > def.maxSize.value) {
-        addIssueToContext(ctx, {
-          code: ZodIssueCode.too_big,
-          maximum: def.maxSize.value,
-          type: "set",
-          inclusive: true,
-          exact: false,
-          message: def.maxSize.message
-        });
-        status.dirty();
-      }
-    }
-    const valueType = this._def.valueType;
-    function finalizeSet(elements2) {
-      const parsedSet = /* @__PURE__ */ new Set();
-      for (const element of elements2) {
-        if (element.status === "aborted")
-          return INVALID;
-        if (element.status === "dirty")
-          status.dirty();
-        parsedSet.add(element.value);
-      }
-      return { status: status.value, value: parsedSet };
-    }
-    const elements = [...ctx.data.values()].map((item, i2) => valueType._parse(new ParseInputLazyPath(ctx, item, ctx.path, i2)));
-    if (ctx.common.async) {
-      return Promise.all(elements).then((elements2) => finalizeSet(elements2));
-    } else {
-      return finalizeSet(elements);
-    }
-  }
-  min(minSize, message) {
-    return new _ZodSet({
-      ...this._def,
-      minSize: { value: minSize, message: errorUtil.toString(message) }
-    });
-  }
-  max(maxSize, message) {
-    return new _ZodSet({
-      ...this._def,
-      maxSize: { value: maxSize, message: errorUtil.toString(message) }
-    });
-  }
-  size(size, message) {
-    return this.min(size, message).max(size, message);
-  }
-  nonempty(message) {
-    return this.min(1, message);
-  }
-};
-ZodSet.create = (valueType, params) => {
-  return new ZodSet({
-    valueType,
-    minSize: null,
-    maxSize: null,
-    typeName: ZodFirstPartyTypeKind.ZodSet,
-    ...processCreateParams(params)
-  });
-};
-var ZodFunction = class _ZodFunction extends ZodType {
-  constructor() {
-    super(...arguments);
-    this.validate = this.implement;
-  }
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.function) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.function,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    function makeArgsIssue(args, error40) {
-      return makeIssue({
-        data: args,
-        path: ctx.path,
-        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap(), en_default].filter((x2) => !!x2),
-        issueData: {
-          code: ZodIssueCode.invalid_arguments,
-          argumentsError: error40
-        }
-      });
-    }
-    function makeReturnsIssue(returns, error40) {
-      return makeIssue({
-        data: returns,
-        path: ctx.path,
-        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap(), en_default].filter((x2) => !!x2),
-        issueData: {
-          code: ZodIssueCode.invalid_return_type,
-          returnTypeError: error40
-        }
-      });
-    }
-    const params = { errorMap: ctx.common.contextualErrorMap };
-    const fn = ctx.data;
-    if (this._def.returns instanceof ZodPromise) {
-      const me = this;
-      return OK(async function(...args) {
-        const error40 = new ZodError([]);
-        const parsedArgs = await me._def.args.parseAsync(args, params).catch((e2) => {
-          error40.addIssue(makeArgsIssue(args, e2));
-          throw error40;
-        });
-        const result = await Reflect.apply(fn, this, parsedArgs);
-        const parsedReturns = await me._def.returns._def.type.parseAsync(result, params).catch((e2) => {
-          error40.addIssue(makeReturnsIssue(result, e2));
-          throw error40;
-        });
-        return parsedReturns;
-      });
-    } else {
-      const me = this;
-      return OK(function(...args) {
-        const parsedArgs = me._def.args.safeParse(args, params);
-        if (!parsedArgs.success) {
-          throw new ZodError([makeArgsIssue(args, parsedArgs.error)]);
-        }
-        const result = Reflect.apply(fn, this, parsedArgs.data);
-        const parsedReturns = me._def.returns.safeParse(result, params);
-        if (!parsedReturns.success) {
-          throw new ZodError([makeReturnsIssue(result, parsedReturns.error)]);
-        }
-        return parsedReturns.data;
-      });
-    }
-  }
-  parameters() {
-    return this._def.args;
-  }
-  returnType() {
-    return this._def.returns;
-  }
-  args(...items) {
-    return new _ZodFunction({
-      ...this._def,
-      args: ZodTuple.create(items).rest(ZodUnknown.create())
-    });
-  }
-  returns(returnType) {
-    return new _ZodFunction({
-      ...this._def,
-      returns: returnType
-    });
-  }
-  implement(func) {
-    const validatedFunc = this.parse(func);
-    return validatedFunc;
-  }
-  strictImplement(func) {
-    const validatedFunc = this.parse(func);
-    return validatedFunc;
-  }
-  static create(args, returns, params) {
-    return new _ZodFunction({
-      args: args ? args : ZodTuple.create([]).rest(ZodUnknown.create()),
-      returns: returns || ZodUnknown.create(),
-      typeName: ZodFirstPartyTypeKind.ZodFunction,
-      ...processCreateParams(params)
-    });
-  }
-};
-var ZodLazy = class extends ZodType {
-  get schema() {
-    return this._def.getter();
-  }
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    const lazySchema = this._def.getter();
-    return lazySchema._parse({ data: ctx.data, path: ctx.path, parent: ctx });
-  }
-};
-ZodLazy.create = (getter, params) => {
-  return new ZodLazy({
-    getter,
-    typeName: ZodFirstPartyTypeKind.ZodLazy,
-    ...processCreateParams(params)
-  });
-};
-var ZodLiteral = class extends ZodType {
-  _parse(input) {
-    if (input.data !== this._def.value) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        received: ctx.data,
-        code: ZodIssueCode.invalid_literal,
-        expected: this._def.value
-      });
-      return INVALID;
-    }
-    return { status: "valid", value: input.data };
-  }
-  get value() {
-    return this._def.value;
-  }
-};
-ZodLiteral.create = (value, params) => {
-  return new ZodLiteral({
-    value,
-    typeName: ZodFirstPartyTypeKind.ZodLiteral,
-    ...processCreateParams(params)
-  });
-};
-function createZodEnum(values, params) {
-  return new ZodEnum({
-    values,
-    typeName: ZodFirstPartyTypeKind.ZodEnum,
-    ...processCreateParams(params)
-  });
-}
-var ZodEnum = class _ZodEnum extends ZodType {
-  _parse(input) {
-    if (typeof input.data !== "string") {
-      const ctx = this._getOrReturnCtx(input);
-      const expectedValues = this._def.values;
-      addIssueToContext(ctx, {
-        expected: util.joinValues(expectedValues),
-        received: ctx.parsedType,
-        code: ZodIssueCode.invalid_type
-      });
-      return INVALID;
-    }
-    if (!this._cache) {
-      this._cache = new Set(this._def.values);
-    }
-    if (!this._cache.has(input.data)) {
-      const ctx = this._getOrReturnCtx(input);
-      const expectedValues = this._def.values;
-      addIssueToContext(ctx, {
-        received: ctx.data,
-        code: ZodIssueCode.invalid_enum_value,
-        options: expectedValues
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-  get options() {
-    return this._def.values;
-  }
-  get enum() {
-    const enumValues = {};
-    for (const val of this._def.values) {
-      enumValues[val] = val;
-    }
-    return enumValues;
-  }
-  get Values() {
-    const enumValues = {};
-    for (const val of this._def.values) {
-      enumValues[val] = val;
-    }
-    return enumValues;
-  }
-  get Enum() {
-    const enumValues = {};
-    for (const val of this._def.values) {
-      enumValues[val] = val;
-    }
-    return enumValues;
-  }
-  extract(values, newDef = this._def) {
-    return _ZodEnum.create(values, {
-      ...this._def,
-      ...newDef
-    });
-  }
-  exclude(values, newDef = this._def) {
-    return _ZodEnum.create(this.options.filter((opt) => !values.includes(opt)), {
-      ...this._def,
-      ...newDef
-    });
-  }
-};
-ZodEnum.create = createZodEnum;
-var ZodNativeEnum = class extends ZodType {
-  _parse(input) {
-    const nativeEnumValues = util.getValidEnumValues(this._def.values);
-    const ctx = this._getOrReturnCtx(input);
-    if (ctx.parsedType !== ZodParsedType.string && ctx.parsedType !== ZodParsedType.number) {
-      const expectedValues = util.objectValues(nativeEnumValues);
-      addIssueToContext(ctx, {
-        expected: util.joinValues(expectedValues),
-        received: ctx.parsedType,
-        code: ZodIssueCode.invalid_type
-      });
-      return INVALID;
-    }
-    if (!this._cache) {
-      this._cache = new Set(util.getValidEnumValues(this._def.values));
-    }
-    if (!this._cache.has(input.data)) {
-      const expectedValues = util.objectValues(nativeEnumValues);
-      addIssueToContext(ctx, {
-        received: ctx.data,
-        code: ZodIssueCode.invalid_enum_value,
-        options: expectedValues
-      });
-      return INVALID;
-    }
-    return OK(input.data);
-  }
-  get enum() {
-    return this._def.values;
-  }
-};
-ZodNativeEnum.create = (values, params) => {
-  return new ZodNativeEnum({
-    values,
-    typeName: ZodFirstPartyTypeKind.ZodNativeEnum,
-    ...processCreateParams(params)
-  });
-};
-var ZodPromise = class extends ZodType {
-  unwrap() {
-    return this._def.type;
-  }
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.promise && ctx.common.async === false) {
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.promise,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    const promisified = ctx.parsedType === ZodParsedType.promise ? ctx.data : Promise.resolve(ctx.data);
-    return OK(promisified.then((data) => {
-      return this._def.type.parseAsync(data, {
-        path: ctx.path,
-        errorMap: ctx.common.contextualErrorMap
-      });
-    }));
-  }
-};
-ZodPromise.create = (schema, params) => {
-  return new ZodPromise({
-    type: schema,
-    typeName: ZodFirstPartyTypeKind.ZodPromise,
-    ...processCreateParams(params)
-  });
-};
-var ZodEffects = class extends ZodType {
-  innerType() {
-    return this._def.schema;
-  }
-  sourceType() {
-    return this._def.schema._def.typeName === ZodFirstPartyTypeKind.ZodEffects ? this._def.schema.sourceType() : this._def.schema;
-  }
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    const effect = this._def.effect || null;
-    const checkCtx = {
-      addIssue: (arg) => {
-        addIssueToContext(ctx, arg);
-        if (arg.fatal) {
-          status.abort();
-        } else {
-          status.dirty();
-        }
-      },
-      get path() {
-        return ctx.path;
-      }
-    };
-    checkCtx.addIssue = checkCtx.addIssue.bind(checkCtx);
-    if (effect.type === "preprocess") {
-      const processed = effect.transform(ctx.data, checkCtx);
-      if (ctx.common.async) {
-        return Promise.resolve(processed).then(async (processed2) => {
-          if (status.value === "aborted")
-            return INVALID;
-          const result = await this._def.schema._parseAsync({
-            data: processed2,
-            path: ctx.path,
-            parent: ctx
-          });
-          if (result.status === "aborted")
-            return INVALID;
-          if (result.status === "dirty")
-            return DIRTY(result.value);
-          if (status.value === "dirty")
-            return DIRTY(result.value);
-          return result;
-        });
-      } else {
-        if (status.value === "aborted")
-          return INVALID;
-        const result = this._def.schema._parseSync({
-          data: processed,
-          path: ctx.path,
-          parent: ctx
-        });
-        if (result.status === "aborted")
-          return INVALID;
-        if (result.status === "dirty")
-          return DIRTY(result.value);
-        if (status.value === "dirty")
-          return DIRTY(result.value);
-        return result;
-      }
-    }
-    if (effect.type === "refinement") {
-      const executeRefinement = (acc) => {
-        const result = effect.refinement(acc, checkCtx);
-        if (ctx.common.async) {
-          return Promise.resolve(result);
-        }
-        if (result instanceof Promise) {
-          throw new Error("Async refinement encountered during synchronous parse operation. Use .parseAsync instead.");
-        }
-        return acc;
-      };
-      if (ctx.common.async === false) {
-        const inner = this._def.schema._parseSync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
-        });
-        if (inner.status === "aborted")
-          return INVALID;
-        if (inner.status === "dirty")
-          status.dirty();
-        executeRefinement(inner.value);
-        return { status: status.value, value: inner.value };
-      } else {
-        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((inner) => {
-          if (inner.status === "aborted")
-            return INVALID;
-          if (inner.status === "dirty")
-            status.dirty();
-          return executeRefinement(inner.value).then(() => {
-            return { status: status.value, value: inner.value };
-          });
-        });
-      }
-    }
-    if (effect.type === "transform") {
-      if (ctx.common.async === false) {
-        const base = this._def.schema._parseSync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
-        });
-        if (!isValid(base))
-          return INVALID;
-        const result = effect.transform(base.value, checkCtx);
-        if (result instanceof Promise) {
-          throw new Error(`Asynchronous transform encountered during synchronous parse operation. Use .parseAsync instead.`);
-        }
-        return { status: status.value, value: result };
-      } else {
-        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((base) => {
-          if (!isValid(base))
-            return INVALID;
-          return Promise.resolve(effect.transform(base.value, checkCtx)).then((result) => ({
-            status: status.value,
-            value: result
-          }));
-        });
-      }
-    }
-    util.assertNever(effect);
-  }
-};
-ZodEffects.create = (schema, effect, params) => {
-  return new ZodEffects({
-    schema,
-    typeName: ZodFirstPartyTypeKind.ZodEffects,
-    effect,
-    ...processCreateParams(params)
-  });
-};
-ZodEffects.createWithPreprocess = (preprocess2, schema, params) => {
-  return new ZodEffects({
-    schema,
-    effect: { type: "preprocess", transform: preprocess2 },
-    typeName: ZodFirstPartyTypeKind.ZodEffects,
-    ...processCreateParams(params)
-  });
-};
-var ZodOptional = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 === ZodParsedType.undefined) {
-      return OK(void 0);
-    }
-    return this._def.innerType._parse(input);
-  }
-  unwrap() {
-    return this._def.innerType;
-  }
-};
-ZodOptional.create = (type, params) => {
-  return new ZodOptional({
-    innerType: type,
-    typeName: ZodFirstPartyTypeKind.ZodOptional,
-    ...processCreateParams(params)
-  });
-};
-var ZodNullable = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 === ZodParsedType.null) {
-      return OK(null);
-    }
-    return this._def.innerType._parse(input);
-  }
-  unwrap() {
-    return this._def.innerType;
-  }
-};
-ZodNullable.create = (type, params) => {
-  return new ZodNullable({
-    innerType: type,
-    typeName: ZodFirstPartyTypeKind.ZodNullable,
-    ...processCreateParams(params)
-  });
-};
-var ZodDefault = class extends ZodType {
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    let data = ctx.data;
-    if (ctx.parsedType === ZodParsedType.undefined) {
-      data = this._def.defaultValue();
-    }
-    return this._def.innerType._parse({
-      data,
-      path: ctx.path,
-      parent: ctx
-    });
-  }
-  removeDefault() {
-    return this._def.innerType;
-  }
-};
-ZodDefault.create = (type, params) => {
-  return new ZodDefault({
-    innerType: type,
-    typeName: ZodFirstPartyTypeKind.ZodDefault,
-    defaultValue: typeof params.default === "function" ? params.default : () => params.default,
-    ...processCreateParams(params)
-  });
-};
-var ZodCatch = class extends ZodType {
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    const newCtx = {
-      ...ctx,
-      common: {
-        ...ctx.common,
-        issues: []
-      }
-    };
-    const result = this._def.innerType._parse({
-      data: newCtx.data,
-      path: newCtx.path,
-      parent: {
-        ...newCtx
-      }
-    });
-    if (isAsync(result)) {
-      return result.then((result2) => {
-        return {
-          status: "valid",
-          value: result2.status === "valid" ? result2.value : this._def.catchValue({
-            get error() {
-              return new ZodError(newCtx.common.issues);
-            },
-            input: newCtx.data
-          })
-        };
-      });
-    } else {
-      return {
-        status: "valid",
-        value: result.status === "valid" ? result.value : this._def.catchValue({
-          get error() {
-            return new ZodError(newCtx.common.issues);
-          },
-          input: newCtx.data
-        })
-      };
-    }
-  }
-  removeCatch() {
-    return this._def.innerType;
-  }
-};
-ZodCatch.create = (type, params) => {
-  return new ZodCatch({
-    innerType: type,
-    typeName: ZodFirstPartyTypeKind.ZodCatch,
-    catchValue: typeof params.catch === "function" ? params.catch : () => params.catch,
-    ...processCreateParams(params)
-  });
-};
-var ZodNaN = class extends ZodType {
-  _parse(input) {
-    const parsedType4 = this._getType(input);
-    if (parsedType4 !== ZodParsedType.nan) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.nan,
-        received: ctx.parsedType
-      });
-      return INVALID;
-    }
-    return { status: "valid", value: input.data };
-  }
-};
-ZodNaN.create = (params) => {
-  return new ZodNaN({
-    typeName: ZodFirstPartyTypeKind.ZodNaN,
-    ...processCreateParams(params)
-  });
-};
-var BRAND = /* @__PURE__ */ Symbol("zod_brand");
-var ZodBranded = class extends ZodType {
-  _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    const data = ctx.data;
-    return this._def.type._parse({
-      data,
-      path: ctx.path,
-      parent: ctx
-    });
-  }
-  unwrap() {
-    return this._def.type;
-  }
-};
-var ZodPipeline = class _ZodPipeline extends ZodType {
-  _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.common.async) {
-      const handleAsync = async () => {
-        const inResult = await this._def.in._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
-        });
-        if (inResult.status === "aborted")
-          return INVALID;
-        if (inResult.status === "dirty") {
-          status.dirty();
-          return DIRTY(inResult.value);
-        } else {
-          return this._def.out._parseAsync({
-            data: inResult.value,
-            path: ctx.path,
-            parent: ctx
-          });
-        }
-      };
-      return handleAsync();
-    } else {
-      const inResult = this._def.in._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
-      });
-      if (inResult.status === "aborted")
-        return INVALID;
-      if (inResult.status === "dirty") {
-        status.dirty();
-        return {
-          status: "dirty",
-          value: inResult.value
-        };
-      } else {
-        return this._def.out._parseSync({
-          data: inResult.value,
-          path: ctx.path,
-          parent: ctx
-        });
-      }
-    }
-  }
-  static create(a, b) {
-    return new _ZodPipeline({
-      in: a,
-      out: b,
-      typeName: ZodFirstPartyTypeKind.ZodPipeline
-    });
-  }
-};
-var ZodReadonly = class extends ZodType {
-  _parse(input) {
-    const result = this._def.innerType._parse(input);
-    const freeze = (data) => {
-      if (isValid(data)) {
-        data.value = Object.freeze(data.value);
-      }
-      return data;
-    };
-    return isAsync(result) ? result.then((data) => freeze(data)) : freeze(result);
-  }
-  unwrap() {
-    return this._def.innerType;
-  }
-};
-ZodReadonly.create = (type, params) => {
-  return new ZodReadonly({
-    innerType: type,
-    typeName: ZodFirstPartyTypeKind.ZodReadonly,
-    ...processCreateParams(params)
-  });
-};
-function cleanParams(params, data) {
-  const p = typeof params === "function" ? params(data) : typeof params === "string" ? { message: params } : params;
-  const p2 = typeof p === "string" ? { message: p } : p;
-  return p2;
-}
-function custom(check2, _params = {}, fatal) {
-  if (check2)
-    return ZodAny.create().superRefine((data, ctx) => {
-      const r2 = check2(data);
-      if (r2 instanceof Promise) {
-        return r2.then((r3) => {
-          if (!r3) {
-            const params = cleanParams(_params, data);
-            const _fatal = params.fatal ?? fatal ?? true;
-            ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
-          }
-        });
-      }
-      if (!r2) {
-        const params = cleanParams(_params, data);
-        const _fatal = params.fatal ?? fatal ?? true;
-        ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
-      }
-      return;
-    });
-  return ZodAny.create();
-}
-var late = {
-  object: ZodObject.lazycreate
-};
-var ZodFirstPartyTypeKind;
-(function(ZodFirstPartyTypeKind2) {
-  ZodFirstPartyTypeKind2["ZodString"] = "ZodString";
-  ZodFirstPartyTypeKind2["ZodNumber"] = "ZodNumber";
-  ZodFirstPartyTypeKind2["ZodNaN"] = "ZodNaN";
-  ZodFirstPartyTypeKind2["ZodBigInt"] = "ZodBigInt";
-  ZodFirstPartyTypeKind2["ZodBoolean"] = "ZodBoolean";
-  ZodFirstPartyTypeKind2["ZodDate"] = "ZodDate";
-  ZodFirstPartyTypeKind2["ZodSymbol"] = "ZodSymbol";
-  ZodFirstPartyTypeKind2["ZodUndefined"] = "ZodUndefined";
-  ZodFirstPartyTypeKind2["ZodNull"] = "ZodNull";
-  ZodFirstPartyTypeKind2["ZodAny"] = "ZodAny";
-  ZodFirstPartyTypeKind2["ZodUnknown"] = "ZodUnknown";
-  ZodFirstPartyTypeKind2["ZodNever"] = "ZodNever";
-  ZodFirstPartyTypeKind2["ZodVoid"] = "ZodVoid";
-  ZodFirstPartyTypeKind2["ZodArray"] = "ZodArray";
-  ZodFirstPartyTypeKind2["ZodObject"] = "ZodObject";
-  ZodFirstPartyTypeKind2["ZodUnion"] = "ZodUnion";
-  ZodFirstPartyTypeKind2["ZodDiscriminatedUnion"] = "ZodDiscriminatedUnion";
-  ZodFirstPartyTypeKind2["ZodIntersection"] = "ZodIntersection";
-  ZodFirstPartyTypeKind2["ZodTuple"] = "ZodTuple";
-  ZodFirstPartyTypeKind2["ZodRecord"] = "ZodRecord";
-  ZodFirstPartyTypeKind2["ZodMap"] = "ZodMap";
-  ZodFirstPartyTypeKind2["ZodSet"] = "ZodSet";
-  ZodFirstPartyTypeKind2["ZodFunction"] = "ZodFunction";
-  ZodFirstPartyTypeKind2["ZodLazy"] = "ZodLazy";
-  ZodFirstPartyTypeKind2["ZodLiteral"] = "ZodLiteral";
-  ZodFirstPartyTypeKind2["ZodEnum"] = "ZodEnum";
-  ZodFirstPartyTypeKind2["ZodEffects"] = "ZodEffects";
-  ZodFirstPartyTypeKind2["ZodNativeEnum"] = "ZodNativeEnum";
-  ZodFirstPartyTypeKind2["ZodOptional"] = "ZodOptional";
-  ZodFirstPartyTypeKind2["ZodNullable"] = "ZodNullable";
-  ZodFirstPartyTypeKind2["ZodDefault"] = "ZodDefault";
-  ZodFirstPartyTypeKind2["ZodCatch"] = "ZodCatch";
-  ZodFirstPartyTypeKind2["ZodPromise"] = "ZodPromise";
-  ZodFirstPartyTypeKind2["ZodBranded"] = "ZodBranded";
-  ZodFirstPartyTypeKind2["ZodPipeline"] = "ZodPipeline";
-  ZodFirstPartyTypeKind2["ZodReadonly"] = "ZodReadonly";
-})(ZodFirstPartyTypeKind || (ZodFirstPartyTypeKind = {}));
-var instanceOfType = (cls, params = {
-  message: `Input not instance of ${cls.name}`
-}) => custom((data) => data instanceof cls, params);
-var stringType = ZodString.create;
-var numberType = ZodNumber.create;
-var nanType = ZodNaN.create;
-var bigIntType = ZodBigInt.create;
-var booleanType = ZodBoolean.create;
-var dateType = ZodDate.create;
-var symbolType = ZodSymbol.create;
-var undefinedType = ZodUndefined.create;
-var nullType = ZodNull.create;
-var anyType = ZodAny.create;
-var unknownType = ZodUnknown.create;
-var neverType = ZodNever.create;
-var voidType = ZodVoid.create;
-var arrayType = ZodArray.create;
-var objectType = ZodObject.create;
-var strictObjectType = ZodObject.strictCreate;
-var unionType = ZodUnion.create;
-var discriminatedUnionType = ZodDiscriminatedUnion.create;
-var intersectionType = ZodIntersection.create;
-var tupleType = ZodTuple.create;
-var recordType = ZodRecord.create;
-var mapType = ZodMap.create;
-var setType = ZodSet.create;
-var functionType = ZodFunction.create;
-var lazyType = ZodLazy.create;
-var literalType = ZodLiteral.create;
-var enumType = ZodEnum.create;
-var nativeEnumType = ZodNativeEnum.create;
-var promiseType = ZodPromise.create;
-var effectsType = ZodEffects.create;
-var optionalType = ZodOptional.create;
-var nullableType = ZodNullable.create;
-var preprocessType = ZodEffects.createWithPreprocess;
-var pipelineType = ZodPipeline.create;
-var ostring = () => stringType().optional();
-var onumber = () => numberType().optional();
-var oboolean = () => booleanType().optional();
-var coerce = {
-  string: ((arg) => ZodString.create({ ...arg, coerce: true })),
-  number: ((arg) => ZodNumber.create({ ...arg, coerce: true })),
-  boolean: ((arg) => ZodBoolean.create({
-    ...arg,
-    coerce: true
-  })),
-  bigint: ((arg) => ZodBigInt.create({ ...arg, coerce: true })),
-  date: ((arg) => ZodDate.create({ ...arg, coerce: true }))
-};
-var NEVER = INVALID;
-
-// ../../lib/api-zod/src/generated/api.ts
-var HealthCheckResponse = objectType({
-  status: stringType()
-});
-var RegisterBody = objectType({
-  name: stringType(),
-  email: stringType(),
-  password: stringType(),
-  phone: stringType().nullish(),
-  role: enumType(["customer", "vendor", "delivery_partner", "admin"])
-});
-var LoginBody = objectType({
-  email: stringType(),
-  password: stringType()
-});
-var LoginResponse = objectType({
-  token: stringType(),
-  user: objectType({
-    id: numberType(),
-    name: stringType(),
-    email: stringType(),
-    phone: stringType().nullish(),
-    role: enumType([
-      "customer",
-      "vendor",
-      "delivery_partner",
-      "admin",
-      "super_admin",
-      "city_admin"
-    ]),
-    avatar: stringType().nullish(),
-    walletBalance: numberType().optional(),
-    isActive: booleanType().optional(),
-    cityId: numberType().nullish(),
-    lat: numberType().nullish(),
-    lng: numberType().nullish(),
-    city: stringType().nullish(),
-    state: stringType().nullish(),
-    pincode: stringType().nullish(),
-    area: stringType().nullish(),
-    permissions: arrayType(stringType()).nullish(),
-    createdAt: stringType()
-  })
-});
-var GoogleAuthBody = objectType({
-  credential: stringType().describe("Google ID token (JWT) returned by Google Identity Services"),
-  role: enumType(["customer", "vendor", "delivery_partner"]).optional(),
-  cityId: numberType().nullish()
-});
-var GoogleAuthResponse = objectType({
-  token: stringType(),
-  user: objectType({
-    id: numberType(),
-    name: stringType(),
-    email: stringType(),
-    phone: stringType().nullish(),
-    role: enumType([
-      "customer",
-      "vendor",
-      "delivery_partner",
-      "admin",
-      "super_admin",
-      "city_admin"
-    ]),
-    avatar: stringType().nullish(),
-    walletBalance: numberType().optional(),
-    isActive: booleanType().optional(),
-    cityId: numberType().nullish(),
-    lat: numberType().nullish(),
-    lng: numberType().nullish(),
-    city: stringType().nullish(),
-    state: stringType().nullish(),
-    pincode: stringType().nullish(),
-    area: stringType().nullish(),
-    permissions: arrayType(stringType()).nullish(),
-    createdAt: stringType()
-  })
-});
-var GetMeResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var ListUsersQueryParams = objectType({
-  role: coerce.string().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListUsersResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      name: stringType(),
-      email: stringType(),
-      phone: stringType().nullish(),
-      role: enumType([
-        "customer",
-        "vendor",
-        "delivery_partner",
-        "admin",
-        "super_admin",
-        "city_admin"
-      ]),
-      avatar: stringType().nullish(),
-      walletBalance: numberType().optional(),
-      isActive: booleanType().optional(),
-      cityId: numberType().nullish(),
-      lat: numberType().nullish(),
-      lng: numberType().nullish(),
-      city: stringType().nullish(),
-      state: stringType().nullish(),
-      pincode: stringType().nullish(),
-      area: stringType().nullish(),
-      permissions: arrayType(stringType()).nullish(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var UpdateMyLocationBody = objectType({
-  lat: numberType(),
-  lng: numberType(),
-  city: stringType().optional(),
-  state: stringType().optional(),
-  pincode: stringType().optional(),
-  area: stringType().optional()
-});
-var UpdateMyLocationResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var GetUserParams = objectType({
-  id: coerce.number()
-});
-var GetUserResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var UpdateUserParams = objectType({
-  id: coerce.number()
-});
-var UpdateUserBody = objectType({
-  name: stringType().optional(),
-  phone: stringType().optional(),
-  avatar: stringType().optional(),
-  isActive: booleanType().optional()
-});
-var UpdateUserResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var DeleteUserParams = objectType({
-  id: coerce.number()
-});
-var ListCategoriesResponseItem = objectType({
-  id: numberType(),
-  name: stringType(),
-  slug: stringType(),
-  icon: stringType().nullish(),
-  image: stringType().nullish(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var ListCategoriesResponse = arrayType(ListCategoriesResponseItem);
-var CreateCategoryBody = objectType({
-  name: stringType(),
-  slug: stringType(),
-  icon: stringType().optional(),
-  image: stringType().optional(),
-  sortOrder: numberType().optional()
-});
-var UpdateCategoryParams = objectType({
-  id: coerce.number()
-});
-var UpdateCategoryBody = objectType({
-  name: stringType().optional(),
-  slug: stringType().optional(),
-  icon: stringType().optional(),
-  image: stringType().optional(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var UpdateCategoryResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  slug: stringType(),
-  icon: stringType().nullish(),
-  image: stringType().nullish(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var DeleteCategoryParams = objectType({
-  id: coerce.number()
-});
-var ListSubcategoriesQueryParams = objectType({
-  categoryId: coerce.number().optional()
-});
-var ListSubcategoriesResponseItem = objectType({
-  id: numberType(),
-  categoryId: numberType(),
-  name: stringType(),
-  slug: stringType(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var ListSubcategoriesResponse = arrayType(
-  ListSubcategoriesResponseItem
-);
-var CreateSubcategoryBody = objectType({
-  categoryId: numberType(),
-  name: stringType(),
-  slug: stringType(),
-  sortOrder: numberType().optional()
-});
-var UpdateSubcategoryParams = objectType({
-  id: coerce.number()
-});
-var UpdateSubcategoryBody = objectType({
-  name: stringType().optional(),
-  slug: stringType().optional(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var UpdateSubcategoryResponse = objectType({
-  id: numberType(),
-  categoryId: numberType(),
-  name: stringType(),
-  slug: stringType(),
-  isActive: booleanType().optional(),
-  sortOrder: numberType().optional()
-});
-var DeleteSubcategoryParams = objectType({
-  id: coerce.number()
-});
-var ListVendorsQueryParams = objectType({
-  status: coerce.string().optional(),
-  category: coerce.string().optional(),
-  city: coerce.string().optional(),
-  userId: coerce.number().optional(),
-  featured: coerce.boolean().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListVendorsResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      userId: numberType(),
-      cityId: numberType().nullish(),
-      shopName: stringType(),
-      categoryId: numberType(),
-      categoryName: stringType().nullish(),
-      description: stringType().nullish(),
-      logo: stringType().nullish(),
-      coverImage: stringType().nullish(),
-      address: stringType().nullish(),
-      city: stringType().nullish(),
-      lat: numberType().nullish(),
-      lng: numberType().nullish(),
-      deliveryRadiusKm: numberType().optional(),
-      distanceKm: numberType().nullish(),
-      phone: stringType().nullish(),
-      status: enumType(["pending", "approved", "rejected", "suspended"]),
-      commissionRate: numberType().optional(),
-      rating: numberType().optional(),
-      totalOrders: numberType().optional(),
-      isOpen: booleanType().optional(),
-      isFeatured: booleanType().optional(),
-      openTime: stringType().nullish(),
-      closeTime: stringType().nullish(),
-      payoutMethod: stringType().nullish(),
-      bankAccountNumber: stringType().nullish(),
-      bankIfsc: stringType().nullish(),
-      bankName: stringType().nullish(),
-      upiId: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var CreateVendorBody = objectType({
-  shopName: stringType(),
-  categoryId: numberType(),
-  cityId: numberType().optional(),
-  description: stringType().optional(),
-  logo: stringType().optional(),
-  address: stringType(),
-  city: stringType(),
-  lat: numberType().optional(),
-  lng: numberType().optional(),
-  deliveryRadiusKm: numberType().optional(),
-  phone: stringType(),
-  openTime: stringType().optional(),
-  closeTime: stringType().optional(),
-  payoutMethod: stringType().optional(),
-  upiId: stringType().optional(),
-  bankName: stringType().optional(),
-  bankAccountNumber: stringType().optional(),
-  bankIfsc: stringType().optional()
-});
-var ListNearbyVendorsQueryParams = objectType({
-  city: coerce.string().optional(),
-  lat: coerce.number().optional(),
-  lng: coerce.number().optional(),
-  radius: coerce.number().optional(),
-  category: coerce.string().optional()
-});
-var ListNearbyVendorsResponseItem = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var ListNearbyVendorsResponse = arrayType(
-  ListNearbyVendorsResponseItem
-);
-var GetVendorParams = objectType({
-  id: coerce.number()
-});
-var GetVendorResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var UpdateVendorParams = objectType({
-  id: coerce.number()
-});
-var UpdateVendorBody = objectType({
-  shopName: stringType().optional(),
-  payoutMethod: stringType().optional(),
-  bankAccountNumber: stringType().optional(),
-  bankIfsc: stringType().optional(),
-  bankName: stringType().optional(),
-  upiId: stringType().optional(),
-  description: stringType().optional(),
-  logo: stringType().optional(),
-  coverImage: stringType().optional(),
-  address: stringType().optional(),
-  city: stringType().optional(),
-  lat: numberType().optional(),
-  lng: numberType().optional(),
-  deliveryRadiusKm: numberType().optional(),
-  phone: stringType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().optional(),
-  closeTime: stringType().optional()
-});
-var UpdateVendorResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var ApproveVendorParams = objectType({
-  id: coerce.number()
-});
-var ApproveVendorResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var RejectVendorParams = objectType({
-  id: coerce.number()
-});
-var RejectVendorResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var GetVendorStatsParams = objectType({
-  id: coerce.number()
-});
-var GetVendorStatsResponse = objectType({
-  totalEarnings: numberType(),
-  totalOrders: numberType(),
-  pendingOrders: numberType(),
-  completedOrders: numberType(),
-  thisMonthEarnings: numberType(),
-  averageRating: numberType().optional()
-});
-var ListProductsQueryParams = objectType({
-  vendorId: coerce.number().optional(),
-  categoryId: coerce.number().optional(),
-  subcategoryId: coerce.number().optional(),
-  search: coerce.string().optional(),
-  includePending: coerce.boolean().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListProductsResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      vendorId: numberType(),
-      vendorName: stringType().nullish(),
-      categoryId: numberType(),
-      categoryName: stringType().nullish(),
-      subcategoryId: numberType().nullish(),
-      subcategoryName: stringType().nullish(),
-      name: stringType(),
-      description: stringType().nullish(),
-      price: numberType(),
-      mrp: numberType().nullish(),
-      images: arrayType(stringType()).optional(),
-      stock: numberType(),
-      unit: stringType().nullish(),
-      isAvailable: booleanType(),
-      isApproved: booleanType().optional(),
-      rejectionReason: stringType().nullish(),
-      rating: numberType().optional(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var CreateProductBody = objectType({
-  vendorId: numberType(),
-  categoryId: numberType(),
-  subcategoryId: numberType().optional(),
-  name: stringType(),
-  description: stringType().optional(),
-  price: numberType(),
-  mrp: numberType().optional(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType(),
-  unit: stringType().optional()
-});
-var GetProductParams = objectType({
-  id: coerce.number()
-});
-var GetProductResponse = objectType({
-  id: numberType(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  subcategoryId: numberType().nullish(),
-  subcategoryName: stringType().nullish(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  mrp: numberType().nullish(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType(),
-  unit: stringType().nullish(),
-  isAvailable: booleanType(),
-  isApproved: booleanType().optional(),
-  rejectionReason: stringType().nullish(),
-  rating: numberType().optional(),
-  createdAt: stringType()
-});
-var UpdateProductParams = objectType({
-  id: coerce.number()
-});
-var UpdateProductBody = objectType({
-  categoryId: numberType().optional(),
-  subcategoryId: numberType().optional(),
-  name: stringType().optional(),
-  description: stringType().optional(),
-  price: numberType().optional(),
-  mrp: numberType().optional(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType().optional(),
-  unit: stringType().optional(),
-  isAvailable: booleanType().optional()
-});
-var UpdateProductResponse = objectType({
-  id: numberType(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  subcategoryId: numberType().nullish(),
-  subcategoryName: stringType().nullish(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  mrp: numberType().nullish(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType(),
-  unit: stringType().nullish(),
-  isAvailable: booleanType(),
-  isApproved: booleanType().optional(),
-  rejectionReason: stringType().nullish(),
-  rating: numberType().optional(),
-  createdAt: stringType()
-});
-var DeleteProductParams = objectType({
-  id: coerce.number()
-});
-var ListPendingProductsResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      vendorId: numberType(),
-      vendorName: stringType().nullish(),
-      categoryId: numberType(),
-      categoryName: stringType().nullish(),
-      subcategoryId: numberType().nullish(),
-      subcategoryName: stringType().nullish(),
-      name: stringType(),
-      description: stringType().nullish(),
-      price: numberType(),
-      mrp: numberType().nullish(),
-      images: arrayType(stringType()).optional(),
-      stock: numberType(),
-      unit: stringType().nullish(),
-      isAvailable: booleanType(),
-      isApproved: booleanType().optional(),
-      rejectionReason: stringType().nullish(),
-      rating: numberType().optional(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var ApproveProductParams = objectType({
-  id: coerce.number()
-});
-var ApproveProductResponse = objectType({
-  id: numberType(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  subcategoryId: numberType().nullish(),
-  subcategoryName: stringType().nullish(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  mrp: numberType().nullish(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType(),
-  unit: stringType().nullish(),
-  isAvailable: booleanType(),
-  isApproved: booleanType().optional(),
-  rejectionReason: stringType().nullish(),
-  rating: numberType().optional(),
-  createdAt: stringType()
-});
-var RejectProductParams = objectType({
-  id: coerce.number()
-});
-var RejectProductResponse = objectType({
-  id: numberType(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  subcategoryId: numberType().nullish(),
-  subcategoryName: stringType().nullish(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  mrp: numberType().nullish(),
-  images: arrayType(stringType()).optional(),
-  stock: numberType(),
-  unit: stringType().nullish(),
-  isAvailable: booleanType(),
-  isApproved: booleanType().optional(),
-  rejectionReason: stringType().nullish(),
-  rating: numberType().optional(),
-  createdAt: stringType()
-});
-var GetCartResponse = objectType({
-  vendorId: numberType().nullish(),
-  vendorName: stringType().nullish(),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  itemCount: numberType()
-});
-var AddCartItemBody = objectType({
-  productId: numberType(),
-  quantity: numberType()
-});
-var AddCartItemResponse = objectType({
-  vendorId: numberType().nullish(),
-  vendorName: stringType().nullish(),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  itemCount: numberType()
-});
-var UpdateCartItemParams = objectType({
-  productId: coerce.number()
-});
-var UpdateCartItemBody = objectType({
-  quantity: numberType()
-});
-var UpdateCartItemResponse = objectType({
-  vendorId: numberType().nullish(),
-  vendorName: stringType().nullish(),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  itemCount: numberType()
-});
-var RemoveCartItemParams = objectType({
-  productId: coerce.number()
-});
-var RemoveCartItemResponse = objectType({
-  vendorId: numberType().nullish(),
-  vendorName: stringType().nullish(),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  itemCount: numberType()
-});
-var ListOrdersQueryParams = objectType({
-  status: coerce.string().optional(),
-  vendorId: coerce.number().optional(),
-  customerId: coerce.number().optional(),
-  deliveryPartnerId: coerce.number().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListOrdersResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      cityId: numberType().nullish(),
-      customerId: numberType(),
-      customerName: stringType().nullish(),
-      vendorId: numberType(),
-      vendorName: stringType().nullish(),
-      deliveryPartnerId: numberType().nullish(),
-      deliveryPartnerName: stringType().nullish(),
-      status: enumType([
-        "pending",
-        "confirmed",
-        "preparing",
-        "ready",
-        "picked_up",
-        "delivered",
-        "cancelled"
-      ]),
-      items: arrayType(
-        objectType({
-          productId: numberType(),
-          name: stringType(),
-          image: stringType().nullish(),
-          price: numberType(),
-          quantity: numberType(),
-          subtotal: numberType()
-        })
-      ),
-      deliveryAddress: stringType().optional(),
-      deliveryLat: numberType().nullish(),
-      deliveryLng: numberType().nullish(),
-      subtotal: numberType().optional(),
-      deliveryFee: numberType().optional(),
-      discount: numberType().optional(),
-      total: numberType(),
-      paymentMethod: enumType(["cod", "wallet", "online"]),
-      paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-      couponCode: stringType().nullish(),
-      notes: stringType().nullish(),
-      estimatedDeliveryTime: stringType().nullish(),
-      deliveredAt: stringType().nullish(),
-      customerPhone: stringType().nullish(),
-      vendorPhone: stringType().nullish(),
-      deliveryPartnerPhone: stringType().nullish(),
-      deliveryPartnerLat: numberType().nullish(),
-      deliveryPartnerLng: numberType().nullish(),
-      deliveryOtp: stringType().nullish(),
-      vendorRating: numberType().nullish(),
-      vendorRatingComment: stringType().nullish(),
-      deliveryRating: numberType().nullish(),
-      deliveryRatingComment: stringType().nullish(),
-      razorpayPaymentId: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var CreateOrderBody = objectType({
-  vendorId: numberType(),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      quantity: numberType()
-    })
-  ),
-  deliveryAddress: stringType(),
-  customerName: stringType().optional().describe(
-    "Recipient name for this delivery. Snapshotted on the order and saved to the customer's profile for future orders."
-  ),
-  customerPhone: stringType().optional().describe(
-    "Recipient contact number the rider can call. Snapshotted on the order and saved to the customer's profile for future orders."
-  ),
-  deliveryLat: numberType().optional(),
-  deliveryLng: numberType().optional(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  couponCode: stringType().optional(),
-  notes: stringType().optional(),
-  clientOrderId: stringType().optional().describe(
-    "Client-generated idempotency key (UUID). Resubmitting the same key returns the existing order instead of creating a duplicate."
-  )
-});
-var GetPaymentConfigResponse = objectType({
-  upiEnabled: booleanType(),
-  razorpayEnabled: booleanType(),
-  upiId: stringType().nullish(),
-  upiName: stringType().nullish(),
-  upiQrImage: stringType().nullish()
-});
-var GetPublicSettingsResponse = objectType({
-  currency: stringType(),
-  supportEmail: stringType().nullish(),
-  supportPhone: stringType().nullish(),
-  orderPhone: stringType().nullish(),
-  callToOrderEnabled: booleanType().optional(),
-  riderCashLimit: numberType().optional(),
-  upiId: stringType().nullish(),
-  upiName: stringType().nullish(),
-  upiQrImage: stringType().nullish()
-});
-var CreateRazorpayOrderBody = objectType({
-  orderId: numberType()
-});
-var CreateRazorpayOrderResponse = objectType({
-  razorpayOrderId: stringType(),
-  amount: numberType(),
-  currency: stringType(),
-  keyId: stringType()
-});
-var VerifyRazorpayPaymentBody = objectType({
-  orderId: numberType(),
-  razorpayOrderId: stringType(),
-  razorpayPaymentId: stringType(),
-  razorpaySignature: stringType()
-});
-var VerifyRazorpayPaymentResponse = objectType({
-  success: booleanType(),
-  paymentStatus: stringType()
-});
-var GetOrderParams = objectType({
-  id: coerce.number()
-});
-var GetOrderResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  customerId: numberType(),
-  customerName: stringType().nullish(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  deliveryPartnerId: numberType().nullish(),
-  deliveryPartnerName: stringType().nullish(),
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ]),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  deliveryAddress: stringType().optional(),
-  deliveryLat: numberType().nullish(),
-  deliveryLng: numberType().nullish(),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-  couponCode: stringType().nullish(),
-  notes: stringType().nullish(),
-  estimatedDeliveryTime: stringType().nullish(),
-  deliveredAt: stringType().nullish(),
-  customerPhone: stringType().nullish(),
-  vendorPhone: stringType().nullish(),
-  deliveryPartnerPhone: stringType().nullish(),
-  deliveryPartnerLat: numberType().nullish(),
-  deliveryPartnerLng: numberType().nullish(),
-  deliveryOtp: stringType().nullish(),
-  vendorRating: numberType().nullish(),
-  vendorRatingComment: stringType().nullish(),
-  deliveryRating: numberType().nullish(),
-  deliveryRatingComment: stringType().nullish(),
-  razorpayPaymentId: stringType().nullish(),
-  createdAt: stringType()
-});
-var UpdateOrderStatusParams = objectType({
-  id: coerce.number()
-});
-var UpdateOrderStatusBody = objectType({
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ])
-});
-var UpdateOrderStatusResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  customerId: numberType(),
-  customerName: stringType().nullish(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  deliveryPartnerId: numberType().nullish(),
-  deliveryPartnerName: stringType().nullish(),
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ]),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  deliveryAddress: stringType().optional(),
-  deliveryLat: numberType().nullish(),
-  deliveryLng: numberType().nullish(),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-  couponCode: stringType().nullish(),
-  notes: stringType().nullish(),
-  estimatedDeliveryTime: stringType().nullish(),
-  deliveredAt: stringType().nullish(),
-  customerPhone: stringType().nullish(),
-  vendorPhone: stringType().nullish(),
-  deliveryPartnerPhone: stringType().nullish(),
-  deliveryPartnerLat: numberType().nullish(),
-  deliveryPartnerLng: numberType().nullish(),
-  deliveryOtp: stringType().nullish(),
-  vendorRating: numberType().nullish(),
-  vendorRatingComment: stringType().nullish(),
-  deliveryRating: numberType().nullish(),
-  deliveryRatingComment: stringType().nullish(),
-  razorpayPaymentId: stringType().nullish(),
-  createdAt: stringType()
-});
-var AssignDeliveryParams = objectType({
-  id: coerce.number()
-});
-var AssignDeliveryBody = objectType({
-  deliveryPartnerId: numberType()
-});
-var AssignDeliveryResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  customerId: numberType(),
-  customerName: stringType().nullish(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  deliveryPartnerId: numberType().nullish(),
-  deliveryPartnerName: stringType().nullish(),
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ]),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  deliveryAddress: stringType().optional(),
-  deliveryLat: numberType().nullish(),
-  deliveryLng: numberType().nullish(),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-  couponCode: stringType().nullish(),
-  notes: stringType().nullish(),
-  estimatedDeliveryTime: stringType().nullish(),
-  deliveredAt: stringType().nullish(),
-  customerPhone: stringType().nullish(),
-  vendorPhone: stringType().nullish(),
-  deliveryPartnerPhone: stringType().nullish(),
-  deliveryPartnerLat: numberType().nullish(),
-  deliveryPartnerLng: numberType().nullish(),
-  deliveryOtp: stringType().nullish(),
-  vendorRating: numberType().nullish(),
-  vendorRatingComment: stringType().nullish(),
-  deliveryRating: numberType().nullish(),
-  deliveryRatingComment: stringType().nullish(),
-  razorpayPaymentId: stringType().nullish(),
-  createdAt: stringType()
-});
-var VerifyDeliveryOtpParams = objectType({
-  id: coerce.number()
-});
-var VerifyDeliveryOtpBody = objectType({
-  otp: stringType()
-});
-var VerifyDeliveryOtpResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  customerId: numberType(),
-  customerName: stringType().nullish(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  deliveryPartnerId: numberType().nullish(),
-  deliveryPartnerName: stringType().nullish(),
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ]),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  deliveryAddress: stringType().optional(),
-  deliveryLat: numberType().nullish(),
-  deliveryLng: numberType().nullish(),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-  couponCode: stringType().nullish(),
-  notes: stringType().nullish(),
-  estimatedDeliveryTime: stringType().nullish(),
-  deliveredAt: stringType().nullish(),
-  customerPhone: stringType().nullish(),
-  vendorPhone: stringType().nullish(),
-  deliveryPartnerPhone: stringType().nullish(),
-  deliveryPartnerLat: numberType().nullish(),
-  deliveryPartnerLng: numberType().nullish(),
-  deliveryOtp: stringType().nullish(),
-  vendorRating: numberType().nullish(),
-  vendorRatingComment: stringType().nullish(),
-  deliveryRating: numberType().nullish(),
-  deliveryRatingComment: stringType().nullish(),
-  razorpayPaymentId: stringType().nullish(),
-  createdAt: stringType()
-});
-var RateOrderParams = objectType({
-  id: coerce.number()
-});
-var rateOrderBodyVendorRatingMax = 5;
-var rateOrderBodyDeliveryRatingMax = 5;
-var RateOrderBody = objectType({
-  vendorRating: numberType().min(1).max(rateOrderBodyVendorRatingMax).optional(),
-  vendorRatingComment: stringType().optional(),
-  deliveryRating: numberType().min(1).max(rateOrderBodyDeliveryRatingMax).optional(),
-  deliveryRatingComment: stringType().optional()
-});
-var RateOrderResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  customerId: numberType(),
-  customerName: stringType().nullish(),
-  vendorId: numberType(),
-  vendorName: stringType().nullish(),
-  deliveryPartnerId: numberType().nullish(),
-  deliveryPartnerName: stringType().nullish(),
-  status: enumType([
-    "pending",
-    "confirmed",
-    "preparing",
-    "ready",
-    "picked_up",
-    "delivered",
-    "cancelled"
-  ]),
-  items: arrayType(
-    objectType({
-      productId: numberType(),
-      name: stringType(),
-      image: stringType().nullish(),
-      price: numberType(),
-      quantity: numberType(),
-      subtotal: numberType()
-    })
-  ),
-  deliveryAddress: stringType().optional(),
-  deliveryLat: numberType().nullish(),
-  deliveryLng: numberType().nullish(),
-  subtotal: numberType().optional(),
-  deliveryFee: numberType().optional(),
-  discount: numberType().optional(),
-  total: numberType(),
-  paymentMethod: enumType(["cod", "wallet", "online"]),
-  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-  couponCode: stringType().nullish(),
-  notes: stringType().nullish(),
-  estimatedDeliveryTime: stringType().nullish(),
-  deliveredAt: stringType().nullish(),
-  customerPhone: stringType().nullish(),
-  vendorPhone: stringType().nullish(),
-  deliveryPartnerPhone: stringType().nullish(),
-  deliveryPartnerLat: numberType().nullish(),
-  deliveryPartnerLng: numberType().nullish(),
-  deliveryOtp: stringType().nullish(),
-  vendorRating: numberType().nullish(),
-  vendorRatingComment: stringType().nullish(),
-  deliveryRating: numberType().nullish(),
-  deliveryRatingComment: stringType().nullish(),
-  razorpayPaymentId: stringType().nullish(),
-  createdAt: stringType()
-});
-var AutoAssignDeliveryParams = objectType({
-  id: coerce.number()
-});
-var AutoAssignDeliveryResponse = objectType({
-  orderId: numberType(),
-  deliveryPartnerId: numberType(),
-  deliveryPartnerName: stringType(),
-  distanceKm: numberType().nullish()
-});
-var ListDeliveryPartnersQueryParams = objectType({
-  status: coerce.string().optional(),
-  isOnline: coerce.boolean().optional(),
-  userId: coerce.number().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListDeliveryPartnersResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      userId: numberType(),
-      cityId: numberType().nullish(),
-      name: stringType().nullish(),
-      phone: stringType().nullish(),
-      vehicle: stringType().nullish(),
-      vehicleNumber: stringType().nullish(),
-      avatar: stringType().nullish(),
-      status: enumType(["pending", "approved", "rejected", "suspended"]),
-      isOnline: booleanType().optional(),
-      currentLat: numberType().nullish(),
-      currentLng: numberType().nullish(),
-      rating: numberType().optional(),
-      totalDeliveries: numberType().optional(),
-      totalEarnings: numberType().optional(),
-      walletBalance: numberType().optional(),
-      cashInHand: numberType().optional(),
-      payoutMethod: stringType().nullish(),
-      bankAccountNumber: stringType().nullish(),
-      bankIfsc: stringType().nullish(),
-      bankName: stringType().nullish(),
-      upiId: stringType().nullish(),
-      photoUrl: stringType().nullish(),
-      aadhaarNumber: stringType().nullish(),
-      aadhaarUrl: stringType().nullish(),
-      licenseNumber: stringType().nullish(),
-      licenseUrl: stringType().nullish(),
-      kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-      kycNote: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var CreateDeliveryPartnerBody = objectType({
-  phone: stringType(),
-  vehicle: stringType(),
-  vehicleNumber: stringType()
-});
-var AdminCreateDeliveryPartnerBody = objectType({
-  name: stringType(),
-  email: stringType(),
-  password: stringType(),
-  phone: stringType().optional(),
-  cityId: numberType(),
-  vehicle: stringType().optional(),
-  vehicleNumber: stringType().optional()
-});
-var GetDeliveryPartnerParams = objectType({
-  id: coerce.number()
-});
-var GetDeliveryPartnerResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  name: stringType().nullish(),
-  phone: stringType().nullish(),
-  vehicle: stringType().nullish(),
-  vehicleNumber: stringType().nullish(),
-  avatar: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().nullish(),
-  currentLng: numberType().nullish(),
-  rating: numberType().optional(),
-  totalDeliveries: numberType().optional(),
-  totalEarnings: numberType().optional(),
-  walletBalance: numberType().optional(),
-  cashInHand: numberType().optional(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  photoUrl: stringType().nullish(),
-  aadhaarNumber: stringType().nullish(),
-  aadhaarUrl: stringType().nullish(),
-  licenseNumber: stringType().nullish(),
-  licenseUrl: stringType().nullish(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish(),
-  createdAt: stringType()
-});
-var UpdateDeliveryPartnerParams = objectType({
-  id: coerce.number()
-});
-var UpdateDeliveryPartnerBody = objectType({
-  vehicle: stringType().optional(),
-  vehicleNumber: stringType().optional(),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().optional(),
-  currentLng: numberType().optional(),
-  payoutMethod: stringType().optional(),
-  bankAccountNumber: stringType().optional(),
-  bankIfsc: stringType().optional(),
-  bankName: stringType().optional(),
-  upiId: stringType().optional(),
-  photoUrl: stringType().optional(),
-  aadhaarNumber: stringType().optional(),
-  aadhaarUrl: stringType().optional(),
-  licenseNumber: stringType().optional(),
-  licenseUrl: stringType().optional(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish()
-});
-var UpdateDeliveryPartnerResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  name: stringType().nullish(),
-  phone: stringType().nullish(),
-  vehicle: stringType().nullish(),
-  vehicleNumber: stringType().nullish(),
-  avatar: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().nullish(),
-  currentLng: numberType().nullish(),
-  rating: numberType().optional(),
-  totalDeliveries: numberType().optional(),
-  totalEarnings: numberType().optional(),
-  walletBalance: numberType().optional(),
-  cashInHand: numberType().optional(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  photoUrl: stringType().nullish(),
-  aadhaarNumber: stringType().nullish(),
-  aadhaarUrl: stringType().nullish(),
-  licenseNumber: stringType().nullish(),
-  licenseUrl: stringType().nullish(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish(),
-  createdAt: stringType()
-});
-var ApproveDeliveryPartnerParams = objectType({
-  id: coerce.number()
-});
-var ApproveDeliveryPartnerResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  name: stringType().nullish(),
-  phone: stringType().nullish(),
-  vehicle: stringType().nullish(),
-  vehicleNumber: stringType().nullish(),
-  avatar: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().nullish(),
-  currentLng: numberType().nullish(),
-  rating: numberType().optional(),
-  totalDeliveries: numberType().optional(),
-  totalEarnings: numberType().optional(),
-  walletBalance: numberType().optional(),
-  cashInHand: numberType().optional(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  photoUrl: stringType().nullish(),
-  aadhaarNumber: stringType().nullish(),
-  aadhaarUrl: stringType().nullish(),
-  licenseNumber: stringType().nullish(),
-  licenseUrl: stringType().nullish(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish(),
-  createdAt: stringType()
-});
-var GetDeliveryPartnerStatsParams = objectType({
-  id: coerce.number()
-});
-var GetDeliveryPartnerStatsResponse = objectType({
-  totalEarnings: numberType(),
-  totalDeliveries: numberType(),
-  thisMonthEarnings: numberType(),
-  thisMonthDeliveries: numberType(),
-  averageRating: numberType().optional()
-});
-var GetWalletResponse = objectType({
-  userId: numberType(),
-  balance: numberType()
-});
-var ListWalletTransactionsQueryParams = objectType({
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListWalletTransactionsResponseItem = objectType({
-  id: numberType(),
-  userId: numberType(),
-  amount: numberType(),
-  type: enumType(["credit", "debit"]),
-  description: stringType(),
-  orderId: numberType().nullish(),
-  createdAt: stringType()
-});
-var ListWalletTransactionsResponse = arrayType(
-  ListWalletTransactionsResponseItem
-);
-var TopUpWalletBody = objectType({
-  amount: numberType()
-});
-var TopUpWalletResponse = objectType({
-  userId: numberType(),
-  balance: numberType()
-});
-var ListCouponsResponseItem = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  code: stringType(),
-  description: stringType().nullish(),
-  discountType: enumType(["percentage", "fixed"]),
-  discountValue: numberType(),
-  minOrderAmount: numberType().nullish(),
-  maxDiscount: numberType().nullish(),
-  usageLimit: numberType().nullish(),
-  usedCount: numberType().optional(),
-  isActive: booleanType(),
-  expiresAt: stringType().nullish(),
-  createdAt: stringType()
-});
-var ListCouponsResponse = arrayType(ListCouponsResponseItem);
-var CreateCouponBody = objectType({
-  code: stringType(),
-  cityId: numberType().optional(),
-  description: stringType().optional(),
-  discountType: enumType(["percentage", "fixed"]),
-  discountValue: numberType(),
-  minOrderAmount: numberType().optional(),
-  maxDiscount: numberType().optional(),
-  usageLimit: numberType().optional(),
-  expiresAt: stringType().optional()
-});
-var UpdateCouponParams = objectType({
-  id: coerce.number()
-});
-var UpdateCouponBody = objectType({
-  description: stringType().optional(),
-  discountValue: numberType().optional(),
-  minOrderAmount: numberType().optional(),
-  maxDiscount: numberType().optional(),
-  usageLimit: numberType().optional(),
-  isActive: booleanType().optional(),
-  expiresAt: stringType().optional()
-});
-var UpdateCouponResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  code: stringType(),
-  description: stringType().nullish(),
-  discountType: enumType(["percentage", "fixed"]),
-  discountValue: numberType(),
-  minOrderAmount: numberType().nullish(),
-  maxDiscount: numberType().nullish(),
-  usageLimit: numberType().nullish(),
-  usedCount: numberType().optional(),
-  isActive: booleanType(),
-  expiresAt: stringType().nullish(),
-  createdAt: stringType()
-});
-var DeleteCouponParams = objectType({
-  id: coerce.number()
-});
-var ValidateCouponBody = objectType({
-  code: stringType(),
-  orderAmount: numberType().optional()
-});
-var ValidateCouponResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  code: stringType(),
-  description: stringType().nullish(),
-  discountType: enumType(["percentage", "fixed"]),
-  discountValue: numberType(),
-  minOrderAmount: numberType().nullish(),
-  maxDiscount: numberType().nullish(),
-  usageLimit: numberType().nullish(),
-  usedCount: numberType().optional(),
-  isActive: booleanType(),
-  expiresAt: stringType().nullish(),
-  createdAt: stringType()
-});
-var ListReviewsQueryParams = objectType({
-  vendorId: coerce.number().optional(),
-  productId: coerce.number().optional()
-});
-var ListReviewsResponseItem = objectType({
-  id: numberType(),
-  userId: numberType(),
-  userName: stringType().nullish(),
-  vendorId: numberType().nullish(),
-  productId: numberType().nullish(),
-  orderId: numberType().nullish(),
-  rating: numberType(),
-  comment: stringType().nullish(),
-  createdAt: stringType()
-});
-var ListReviewsResponse = arrayType(ListReviewsResponseItem);
-var CreateReviewBody = objectType({
-  vendorId: numberType().optional(),
-  productId: numberType().optional(),
-  orderId: numberType().optional(),
-  rating: numberType(),
-  comment: stringType().optional()
-});
-var ListBannersResponseItem = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  title: stringType(),
-  imageUrl: stringType(),
-  linkUrl: stringType().nullish(),
-  position: numberType().optional(),
-  isActive: booleanType(),
-  createdAt: stringType()
-});
-var ListBannersResponse = arrayType(ListBannersResponseItem);
-var CreateBannerBody = objectType({
-  title: stringType(),
-  cityId: numberType().optional(),
-  imageUrl: stringType(),
-  linkUrl: stringType().optional(),
-  position: numberType().optional()
-});
-var UpdateBannerParams = objectType({
-  id: coerce.number()
-});
-var UpdateBannerBody = objectType({
-  title: stringType().optional(),
-  imageUrl: stringType().optional(),
-  linkUrl: stringType().optional(),
-  position: numberType().optional(),
-  isActive: booleanType().optional()
-});
-var UpdateBannerResponse = objectType({
-  id: numberType(),
-  cityId: numberType().nullish(),
-  title: stringType(),
-  imageUrl: stringType(),
-  linkUrl: stringType().nullish(),
-  position: numberType().optional(),
-  isActive: booleanType(),
-  createdAt: stringType()
-});
-var DeleteBannerParams = objectType({
-  id: coerce.number()
-});
-var ListCitiesResponseItem = objectType({
-  id: numberType(),
-  name: stringType(),
-  state: stringType(),
-  isActive: booleanType()
-});
-var ListCitiesResponse = arrayType(ListCitiesResponseItem);
-var CreateCityBody = objectType({
-  name: stringType(),
-  state: stringType()
-});
-var UpdateCityParams = objectType({
-  id: coerce.number()
-});
-var UpdateCityBody = objectType({
-  name: stringType().optional(),
-  state: stringType().optional(),
-  isActive: booleanType().optional()
-});
-var UpdateCityResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  state: stringType(),
-  isActive: booleanType()
-});
-var DeleteCityParams = objectType({
-  id: coerce.number()
-});
-var ListNotificationsQueryParams = objectType({
-  isRead: coerce.boolean().optional()
-});
-var ListNotificationsResponseItem = objectType({
-  id: numberType(),
-  userId: numberType(),
-  title: stringType(),
-  message: stringType(),
-  type: stringType().optional(),
-  isRead: booleanType(),
-  createdAt: stringType()
-});
-var ListNotificationsResponse = arrayType(
-  ListNotificationsResponseItem
-);
-var MarkNotificationReadParams = objectType({
-  id: coerce.number()
-});
-var MarkNotificationReadResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  title: stringType(),
-  message: stringType(),
-  type: stringType().optional(),
-  isRead: booleanType(),
-  createdAt: stringType()
-});
-var GetAdminDashboardResponse = objectType({
-  totalUsers: numberType(),
-  totalVendors: numberType(),
-  totalOrders: numberType(),
-  totalRevenue: numberType(),
-  pendingVendors: numberType(),
-  activeDeliveryPartners: numberType(),
-  todayOrders: numberType(),
-  todayRevenue: numberType(),
-  recentOrders: arrayType(
-    objectType({
-      id: numberType(),
-      cityId: numberType().nullish(),
-      customerId: numberType(),
-      customerName: stringType().nullish(),
-      vendorId: numberType(),
-      vendorName: stringType().nullish(),
-      deliveryPartnerId: numberType().nullish(),
-      deliveryPartnerName: stringType().nullish(),
-      status: enumType([
-        "pending",
-        "confirmed",
-        "preparing",
-        "ready",
-        "picked_up",
-        "delivered",
-        "cancelled"
-      ]),
-      items: arrayType(
-        objectType({
-          productId: numberType(),
-          name: stringType(),
-          image: stringType().nullish(),
-          price: numberType(),
-          quantity: numberType(),
-          subtotal: numberType()
-        })
-      ),
-      deliveryAddress: stringType().optional(),
-      deliveryLat: numberType().nullish(),
-      deliveryLng: numberType().nullish(),
-      subtotal: numberType().optional(),
-      deliveryFee: numberType().optional(),
-      discount: numberType().optional(),
-      total: numberType(),
-      paymentMethod: enumType(["cod", "wallet", "online"]),
-      paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
-      couponCode: stringType().nullish(),
-      notes: stringType().nullish(),
-      estimatedDeliveryTime: stringType().nullish(),
-      deliveredAt: stringType().nullish(),
-      customerPhone: stringType().nullish(),
-      vendorPhone: stringType().nullish(),
-      deliveryPartnerPhone: stringType().nullish(),
-      deliveryPartnerLat: numberType().nullish(),
-      deliveryPartnerLng: numberType().nullish(),
-      deliveryOtp: stringType().nullish(),
-      vendorRating: numberType().nullish(),
-      vendorRatingComment: stringType().nullish(),
-      deliveryRating: numberType().nullish(),
-      deliveryRatingComment: stringType().nullish(),
-      razorpayPaymentId: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ).optional(),
-  pendingVendorList: arrayType(
-    objectType({
-      id: numberType(),
-      userId: numberType(),
-      cityId: numberType().nullish(),
-      shopName: stringType(),
-      categoryId: numberType(),
-      categoryName: stringType().nullish(),
-      description: stringType().nullish(),
-      logo: stringType().nullish(),
-      coverImage: stringType().nullish(),
-      address: stringType().nullish(),
-      city: stringType().nullish(),
-      lat: numberType().nullish(),
-      lng: numberType().nullish(),
-      deliveryRadiusKm: numberType().optional(),
-      distanceKm: numberType().nullish(),
-      phone: stringType().nullish(),
-      status: enumType(["pending", "approved", "rejected", "suspended"]),
-      commissionRate: numberType().optional(),
-      rating: numberType().optional(),
-      totalOrders: numberType().optional(),
-      isOpen: booleanType().optional(),
-      isFeatured: booleanType().optional(),
-      openTime: stringType().nullish(),
-      closeTime: stringType().nullish(),
-      payoutMethod: stringType().nullish(),
-      bankAccountNumber: stringType().nullish(),
-      bankIfsc: stringType().nullish(),
-      bankName: stringType().nullish(),
-      upiId: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ).optional()
-});
-var GetRevenueAnalyticsQueryParams = objectType({
-  period: enumType(["daily", "weekly", "monthly"]).optional()
-});
-var GetRevenueAnalyticsResponseItem = objectType({
-  date: stringType(),
-  revenue: numberType(),
-  orders: numberType()
-});
-var GetRevenueAnalyticsResponse = arrayType(
-  GetRevenueAnalyticsResponseItem
-);
-var GetOrdersByStatusResponseItem = objectType({
-  status: stringType(),
-  count: numberType()
-});
-var GetOrdersByStatusResponse = arrayType(
-  GetOrdersByStatusResponseItem
-);
-var GetTopVendorsResponseItem = objectType({
-  vendorId: numberType(),
-  shopName: stringType(),
-  totalOrders: numberType(),
-  totalRevenue: numberType(),
-  rating: numberType()
-});
-var GetTopVendorsResponse = arrayType(GetTopVendorsResponseItem);
-var GetAdminSettingsResponse = objectType({
-  id: numberType(),
-  commissionRate: numberType(),
-  deliveryBaseFee: numberType(),
-  deliveryPerKmFee: numberType(),
-  minOrderAmount: numberType(),
-  maxDeliveryRadius: numberType().optional(),
-  currency: stringType().optional(),
-  supportEmail: stringType().nullish(),
-  supportPhone: stringType().nullish(),
-  orderPhone: stringType().nullish(),
-  callToOrderEnabled: booleanType().optional(),
-  riderCashLimit: numberType().optional(),
-  razorpayKeyId: stringType().nullish(),
-  razorpayKeySecret: stringType().nullish(),
-  razorpayWebhookSecret: stringType().nullish().describe(
-    "Razorpay webhook signing secret. Used server-side to verify webhook authenticity."
-  ),
-  upiId: stringType().nullish(),
-  upiName: stringType().nullish(),
-  upiQrImage: stringType().nullish().describe(
-    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
-  )
-});
-var UpdateAdminSettingsBody = objectType({
-  commissionRate: numberType().optional(),
-  deliveryBaseFee: numberType().optional(),
-  deliveryPerKmFee: numberType().optional(),
-  minOrderAmount: numberType().optional(),
-  maxDeliveryRadius: numberType().optional(),
-  currency: stringType().optional(),
-  supportEmail: stringType().optional(),
-  supportPhone: stringType().optional(),
-  orderPhone: stringType().optional(),
-  callToOrderEnabled: booleanType().optional(),
-  riderCashLimit: numberType().optional(),
-  razorpayKeyId: stringType().optional(),
-  razorpayKeySecret: stringType().optional(),
-  razorpayWebhookSecret: stringType().optional().describe("Razorpay webhook signing secret. Send empty string to clear."),
-  upiId: stringType().optional(),
-  upiName: stringType().optional(),
-  upiQrImage: stringType().nullish().describe(
-    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary). Send empty string to clear."
-  )
-});
-var UpdateAdminSettingsResponse = objectType({
-  id: numberType(),
-  commissionRate: numberType(),
-  deliveryBaseFee: numberType(),
-  deliveryPerKmFee: numberType(),
-  minOrderAmount: numberType(),
-  maxDeliveryRadius: numberType().optional(),
-  currency: stringType().optional(),
-  supportEmail: stringType().nullish(),
-  supportPhone: stringType().nullish(),
-  orderPhone: stringType().nullish(),
-  callToOrderEnabled: booleanType().optional(),
-  riderCashLimit: numberType().optional(),
-  razorpayKeyId: stringType().nullish(),
-  razorpayKeySecret: stringType().nullish(),
-  razorpayWebhookSecret: stringType().nullish().describe(
-    "Razorpay webhook signing secret. Used server-side to verify webhook authenticity."
-  ),
-  upiId: stringType().nullish(),
-  upiName: stringType().nullish(),
-  upiQrImage: stringType().nullish().describe(
-    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
-  )
-});
-var ListDeliverySettlementsQueryParams = objectType({
-  status: coerce.string().optional(),
-  deliveryPartnerId: coerce.number().optional()
-});
-var ListDeliverySettlementsResponseItem = objectType({
-  id: numberType(),
-  deliveryPartnerId: numberType(),
-  partnerName: stringType().nullish(),
-  amount: numberType(),
-  status: enumType(["pending", "confirmed"]),
-  note: stringType().nullish(),
-  confirmedBy: numberType().nullish(),
-  createdAt: stringType(),
-  confirmedAt: stringType().nullish()
-});
-var ListDeliverySettlementsResponse = arrayType(
-  ListDeliverySettlementsResponseItem
-);
-var CreateDeliverySettlementBody = objectType({
-  amount: numberType(),
-  note: stringType().optional()
-});
-var ConfirmDeliverySettlementParams = objectType({
-  id: coerce.number()
-});
-var ConfirmDeliverySettlementBody = objectType({
-  note: stringType().optional()
-});
-var ConfirmDeliverySettlementResponse = objectType({
-  id: numberType(),
-  deliveryPartnerId: numberType(),
-  partnerName: stringType().nullish(),
-  amount: numberType(),
-  status: enumType(["pending", "confirmed"]),
-  note: stringType().nullish(),
-  confirmedBy: numberType().nullish(),
-  createdAt: stringType(),
-  confirmedAt: stringType().nullish()
-});
-var ListSubscriptionPlansResponseItem = objectType({
-  id: numberType(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  durationDays: numberType(),
-  features: arrayType(stringType()).optional(),
-  isActive: booleanType(),
-  createdAt: stringType()
-});
-var ListSubscriptionPlansResponse = arrayType(
-  ListSubscriptionPlansResponseItem
-);
-var CreateSubscriptionPlanBody = objectType({
-  name: stringType(),
-  description: stringType().optional(),
-  price: numberType(),
-  durationDays: numberType(),
-  features: arrayType(stringType()).optional()
-});
-var UpdateSubscriptionPlanParams = objectType({
-  id: coerce.number()
-});
-var UpdateSubscriptionPlanBody = objectType({
-  name: stringType().optional(),
-  description: stringType().optional(),
-  price: numberType().optional(),
-  durationDays: numberType().optional(),
-  features: arrayType(stringType()).optional(),
-  isActive: booleanType().optional()
-});
-var UpdateSubscriptionPlanResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  description: stringType().nullish(),
-  price: numberType(),
-  durationDays: numberType(),
-  features: arrayType(stringType()).optional(),
-  isActive: booleanType(),
-  createdAt: stringType()
-});
-var DeleteSubscriptionPlanParams = objectType({
-  id: coerce.number()
-});
-var SuspendVendorParams = objectType({
-  id: coerce.number()
-});
-var SuspendVendorResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  shopName: stringType(),
-  categoryId: numberType(),
-  categoryName: stringType().nullish(),
-  description: stringType().nullish(),
-  logo: stringType().nullish(),
-  coverImage: stringType().nullish(),
-  address: stringType().nullish(),
-  city: stringType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  deliveryRadiusKm: numberType().optional(),
-  distanceKm: numberType().nullish(),
-  phone: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  commissionRate: numberType().optional(),
-  rating: numberType().optional(),
-  totalOrders: numberType().optional(),
-  isOpen: booleanType().optional(),
-  isFeatured: booleanType().optional(),
-  openTime: stringType().nullish(),
-  closeTime: stringType().nullish(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  createdAt: stringType()
-});
-var SuspendDeliveryPartnerParams = objectType({
-  id: coerce.number()
-});
-var SuspendDeliveryPartnerResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  name: stringType().nullish(),
-  phone: stringType().nullish(),
-  vehicle: stringType().nullish(),
-  vehicleNumber: stringType().nullish(),
-  avatar: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().nullish(),
-  currentLng: numberType().nullish(),
-  rating: numberType().optional(),
-  totalDeliveries: numberType().optional(),
-  totalEarnings: numberType().optional(),
-  walletBalance: numberType().optional(),
-  cashInHand: numberType().optional(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  photoUrl: stringType().nullish(),
-  aadhaarNumber: stringType().nullish(),
-  aadhaarUrl: stringType().nullish(),
-  licenseNumber: stringType().nullish(),
-  licenseUrl: stringType().nullish(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish(),
-  createdAt: stringType()
-});
-var RejectDeliveryPartnerParams = objectType({
-  id: coerce.number()
-});
-var RejectDeliveryPartnerResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  cityId: numberType().nullish(),
-  name: stringType().nullish(),
-  phone: stringType().nullish(),
-  vehicle: stringType().nullish(),
-  vehicleNumber: stringType().nullish(),
-  avatar: stringType().nullish(),
-  status: enumType(["pending", "approved", "rejected", "suspended"]),
-  isOnline: booleanType().optional(),
-  currentLat: numberType().nullish(),
-  currentLng: numberType().nullish(),
-  rating: numberType().optional(),
-  totalDeliveries: numberType().optional(),
-  totalEarnings: numberType().optional(),
-  walletBalance: numberType().optional(),
-  cashInHand: numberType().optional(),
-  payoutMethod: stringType().nullish(),
-  bankAccountNumber: stringType().nullish(),
-  bankIfsc: stringType().nullish(),
-  bankName: stringType().nullish(),
-  upiId: stringType().nullish(),
-  photoUrl: stringType().nullish(),
-  aadhaarNumber: stringType().nullish(),
-  aadhaarUrl: stringType().nullish(),
-  licenseNumber: stringType().nullish(),
-  licenseUrl: stringType().nullish(),
-  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
-  kycNote: stringType().nullish(),
-  createdAt: stringType()
-});
-var BlockUserParams = objectType({
-  id: coerce.number()
-});
-var BlockUserResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var UnblockUserParams = objectType({
-  id: coerce.number()
-});
-var UnblockUserResponse = objectType({
-  id: numberType(),
-  name: stringType(),
-  email: stringType(),
-  phone: stringType().nullish(),
-  role: enumType([
-    "customer",
-    "vendor",
-    "delivery_partner",
-    "admin",
-    "super_admin",
-    "city_admin"
-  ]),
-  avatar: stringType().nullish(),
-  walletBalance: numberType().optional(),
-  isActive: booleanType().optional(),
-  cityId: numberType().nullish(),
-  lat: numberType().nullish(),
-  lng: numberType().nullish(),
-  city: stringType().nullish(),
-  state: stringType().nullish(),
-  pincode: stringType().nullish(),
-  area: stringType().nullish(),
-  permissions: arrayType(stringType()).nullish(),
-  createdAt: stringType()
-});
-var BroadcastNotificationBody = objectType({
-  title: stringType(),
-  message: stringType(),
-  targetRole: enumType(["all", "customer", "vendor", "delivery_partner"]).optional(),
-  type: stringType().optional()
-});
-var BroadcastNotificationResponse = objectType({
-  sent: numberType()
-});
-var GetSalesReportQueryParams = objectType({
-  period: enumType(["daily", "weekly", "monthly"]).optional()
-});
-var GetSalesReportResponse = objectType({
-  totalRevenue: numberType(),
-  totalOrders: numberType(),
-  totalCommission: numberType(),
-  totalDeliveryFees: numberType(),
-  averageOrderValue: numberType().optional(),
-  periodData: arrayType(
-    objectType({
-      date: stringType(),
-      revenue: numberType(),
-      orders: numberType()
-    })
-  )
-});
-var GetVendorEarningsReportResponseItem = objectType({
-  vendorId: numberType(),
-  shopName: stringType(),
-  totalOrders: numberType(),
-  totalRevenue: numberType(),
-  commission: numberType(),
-  netEarnings: numberType(),
-  rating: numberType().optional()
-});
-var GetVendorEarningsReportResponse = arrayType(
-  GetVendorEarningsReportResponseItem
-);
-var ListWithdrawalRequestsQueryParams = objectType({
-  status: coerce.string().optional(),
-  page: coerce.number().optional(),
-  limit: coerce.number().optional()
-});
-var ListWithdrawalRequestsResponse = objectType({
-  data: arrayType(
-    objectType({
-      id: numberType(),
-      userId: numberType(),
-      userName: stringType().nullish(),
-      role: stringType(),
-      amount: numberType(),
-      status: enumType(["pending", "approved", "rejected"]),
-      notes: stringType().nullish(),
-      adminNote: stringType().nullish(),
-      processedAt: stringType().nullish(),
-      createdAt: stringType()
-    })
-  ),
-  total: numberType(),
-  page: numberType(),
-  limit: numberType()
-});
-var CreateWithdrawalRequestBody = objectType({
-  amount: numberType(),
-  notes: stringType().optional()
-});
-var UpdateWithdrawalRequestParams = objectType({
-  id: coerce.number()
-});
-var UpdateWithdrawalRequestBody = objectType({
-  status: enumType(["approved", "rejected"]),
-  adminNote: stringType().optional()
-});
-var UpdateWithdrawalRequestResponse = objectType({
-  id: numberType(),
-  userId: numberType(),
-  userName: stringType().nullish(),
-  role: stringType(),
-  amount: numberType(),
-  status: enumType(["pending", "approved", "rejected"]),
-  notes: stringType().nullish(),
-  adminNote: stringType().nullish(),
-  processedAt: stringType().nullish(),
-  createdAt: stringType()
-});
-
-// src/routes/health.ts
-var router = (0, import_express.Router)();
-router.get("/healthz", (_req, res) => {
-  const data = HealthCheckResponse.parse({ status: "ok" });
-  res.json(data);
-});
-var health_default = router;
-
-// src/routes/auth.ts
-var import_express2 = __toESM(require_express2(), 1);
-
-// ../../node_modules/.pnpm/bcryptjs@3.0.3/node_modules/bcryptjs/index.js
-import nodeCrypto from "crypto";
-var randomFallback = null;
-function randomBytes(len) {
-  try {
-    return crypto.getRandomValues(new Uint8Array(len));
-  } catch {
-  }
-  try {
-    return nodeCrypto.randomBytes(len);
-  } catch {
-  }
-  if (!randomFallback) {
-    throw Error(
-      "Neither WebCryptoAPI nor a crypto module is available. Use bcrypt.setRandomFallback to set an alternative"
-    );
-  }
-  return randomFallback(len);
-}
-function setRandomFallback(random) {
-  randomFallback = random;
-}
-function genSaltSync(rounds, seed_length) {
-  rounds = rounds || GENSALT_DEFAULT_LOG2_ROUNDS;
-  if (typeof rounds !== "number")
-    throw Error(
-      "Illegal arguments: " + typeof rounds + ", " + typeof seed_length
-    );
-  if (rounds < 4) rounds = 4;
-  else if (rounds > 31) rounds = 31;
-  var salt = [];
-  salt.push("$2b$");
-  if (rounds < 10) salt.push("0");
-  salt.push(rounds.toString());
-  salt.push("$");
-  salt.push(base64_encode(randomBytes(BCRYPT_SALT_LEN), BCRYPT_SALT_LEN));
-  return salt.join("");
-}
-function genSalt(rounds, seed_length, callback) {
-  if (typeof seed_length === "function")
-    callback = seed_length, seed_length = void 0;
-  if (typeof rounds === "function") callback = rounds, rounds = void 0;
-  if (typeof rounds === "undefined") rounds = GENSALT_DEFAULT_LOG2_ROUNDS;
-  else if (typeof rounds !== "number")
-    throw Error("illegal arguments: " + typeof rounds);
-  function _async(callback2) {
-    nextTick(function() {
-      try {
-        callback2(null, genSaltSync(rounds));
-      } catch (err) {
-        callback2(err);
-      }
-    });
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function hashSync(password, salt) {
-  if (typeof salt === "undefined") salt = GENSALT_DEFAULT_LOG2_ROUNDS;
-  if (typeof salt === "number") salt = genSaltSync(salt);
-  if (typeof password !== "string" || typeof salt !== "string")
-    throw Error("Illegal arguments: " + typeof password + ", " + typeof salt);
-  return _hash(password, salt);
-}
-function hash(password, salt, callback, progressCallback) {
-  function _async(callback2) {
-    if (typeof password === "string" && typeof salt === "number")
-      genSalt(salt, function(err, salt2) {
-        _hash(password, salt2, callback2, progressCallback);
-      });
-    else if (typeof password === "string" && typeof salt === "string")
-      _hash(password, salt, callback2, progressCallback);
-    else
-      nextTick(
-        callback2.bind(
-          this,
-          Error("Illegal arguments: " + typeof password + ", " + typeof salt)
-        )
-      );
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function safeStringCompare(known, unknown2) {
-  var diff = known.length ^ unknown2.length;
-  for (var i2 = 0; i2 < known.length; ++i2) {
-    diff |= known.charCodeAt(i2) ^ unknown2.charCodeAt(i2);
-  }
-  return diff === 0;
-}
-function compareSync(password, hash2) {
-  if (typeof password !== "string" || typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof password + ", " + typeof hash2);
-  if (hash2.length !== 60) return false;
-  return safeStringCompare(
-    hashSync(password, hash2.substring(0, hash2.length - 31)),
-    hash2
-  );
-}
-function compare(password, hashValue, callback, progressCallback) {
-  function _async(callback2) {
-    if (typeof password !== "string" || typeof hashValue !== "string") {
-      nextTick(
-        callback2.bind(
-          this,
-          Error(
-            "Illegal arguments: " + typeof password + ", " + typeof hashValue
-          )
-        )
-      );
-      return;
-    }
-    if (hashValue.length !== 60) {
-      nextTick(callback2.bind(this, null, false));
-      return;
-    }
-    hash(
-      password,
-      hashValue.substring(0, 29),
-      function(err, comp) {
-        if (err) callback2(err);
-        else callback2(null, safeStringCompare(comp, hashValue));
-      },
-      progressCallback
-    );
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function getRounds(hash2) {
-  if (typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof hash2);
-  return parseInt(hash2.split("$")[2], 10);
-}
-function getSalt(hash2) {
-  if (typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof hash2);
-  if (hash2.length !== 60)
-    throw Error("Illegal hash length: " + hash2.length + " != 60");
-  return hash2.substring(0, 29);
-}
-function truncates(password) {
-  if (typeof password !== "string")
-    throw Error("Illegal arguments: " + typeof password);
-  return utf8Length(password) > 72;
-}
-var nextTick = typeof setImmediate === "function" ? setImmediate : typeof scheduler === "object" && typeof scheduler.postTask === "function" ? scheduler.postTask.bind(scheduler) : setTimeout;
-function utf8Length(string4) {
-  var len = 0, c = 0;
-  for (var i2 = 0; i2 < string4.length; ++i2) {
-    c = string4.charCodeAt(i2);
-    if (c < 128) len += 1;
-    else if (c < 2048) len += 2;
-    else if ((c & 64512) === 55296 && (string4.charCodeAt(i2 + 1) & 64512) === 56320) {
-      ++i2;
-      len += 4;
-    } else len += 3;
-  }
-  return len;
-}
-function utf8Array(string4) {
-  var offset = 0, c1, c2;
-  var buffer = new Array(utf8Length(string4));
-  for (var i2 = 0, k = string4.length; i2 < k; ++i2) {
-    c1 = string4.charCodeAt(i2);
-    if (c1 < 128) {
-      buffer[offset++] = c1;
-    } else if (c1 < 2048) {
-      buffer[offset++] = c1 >> 6 | 192;
-      buffer[offset++] = c1 & 63 | 128;
-    } else if ((c1 & 64512) === 55296 && ((c2 = string4.charCodeAt(i2 + 1)) & 64512) === 56320) {
-      c1 = 65536 + ((c1 & 1023) << 10) + (c2 & 1023);
-      ++i2;
-      buffer[offset++] = c1 >> 18 | 240;
-      buffer[offset++] = c1 >> 12 & 63 | 128;
-      buffer[offset++] = c1 >> 6 & 63 | 128;
-      buffer[offset++] = c1 & 63 | 128;
-    } else {
-      buffer[offset++] = c1 >> 12 | 224;
-      buffer[offset++] = c1 >> 6 & 63 | 128;
-      buffer[offset++] = c1 & 63 | 128;
-    }
-  }
-  return buffer;
-}
-var BASE64_CODE = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split("");
-var BASE64_INDEX = [
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  0,
-  1,
-  54,
-  55,
-  56,
-  57,
-  58,
-  59,
-  60,
-  61,
-  62,
-  63,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26,
-  27,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  28,
-  29,
-  30,
-  31,
-  32,
-  33,
-  34,
-  35,
-  36,
-  37,
-  38,
-  39,
-  40,
-  41,
-  42,
-  43,
-  44,
-  45,
-  46,
-  47,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1
-];
-function base64_encode(b, len) {
-  var off = 0, rs = [], c1, c2;
-  if (len <= 0 || len > b.length) throw Error("Illegal len: " + len);
-  while (off < len) {
-    c1 = b[off++] & 255;
-    rs.push(BASE64_CODE[c1 >> 2 & 63]);
-    c1 = (c1 & 3) << 4;
-    if (off >= len) {
-      rs.push(BASE64_CODE[c1 & 63]);
-      break;
-    }
-    c2 = b[off++] & 255;
-    c1 |= c2 >> 4 & 15;
-    rs.push(BASE64_CODE[c1 & 63]);
-    c1 = (c2 & 15) << 2;
-    if (off >= len) {
-      rs.push(BASE64_CODE[c1 & 63]);
-      break;
-    }
-    c2 = b[off++] & 255;
-    c1 |= c2 >> 6 & 3;
-    rs.push(BASE64_CODE[c1 & 63]);
-    rs.push(BASE64_CODE[c2 & 63]);
-  }
-  return rs.join("");
-}
-function base64_decode(s2, len) {
-  var off = 0, slen = s2.length, olen = 0, rs = [], c1, c2, c3, c4, o, code;
-  if (len <= 0) throw Error("Illegal len: " + len);
-  while (off < slen - 1 && olen < len) {
-    code = s2.charCodeAt(off++);
-    c1 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    code = s2.charCodeAt(off++);
-    c2 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    if (c1 == -1 || c2 == -1) break;
-    o = c1 << 2 >>> 0;
-    o |= (c2 & 48) >> 4;
-    rs.push(String.fromCharCode(o));
-    if (++olen >= len || off >= slen) break;
-    code = s2.charCodeAt(off++);
-    c3 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    if (c3 == -1) break;
-    o = (c2 & 15) << 4 >>> 0;
-    o |= (c3 & 60) >> 2;
-    rs.push(String.fromCharCode(o));
-    if (++olen >= len || off >= slen) break;
-    code = s2.charCodeAt(off++);
-    c4 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    o = (c3 & 3) << 6 >>> 0;
-    o |= c4;
-    rs.push(String.fromCharCode(o));
-    ++olen;
-  }
-  var res = [];
-  for (off = 0; off < olen; off++) res.push(rs[off].charCodeAt(0));
-  return res;
-}
-var BCRYPT_SALT_LEN = 16;
-var GENSALT_DEFAULT_LOG2_ROUNDS = 10;
-var BLOWFISH_NUM_ROUNDS = 16;
-var MAX_EXECUTION_TIME = 100;
-var P_ORIG = [
-  608135816,
-  2242054355,
-  320440878,
-  57701188,
-  2752067618,
-  698298832,
-  137296536,
-  3964562569,
-  1160258022,
-  953160567,
-  3193202383,
-  887688300,
-  3232508343,
-  3380367581,
-  1065670069,
-  3041331479,
-  2450970073,
-  2306472731
-];
-var S_ORIG = [
-  3509652390,
-  2564797868,
-  805139163,
-  3491422135,
-  3101798381,
-  1780907670,
-  3128725573,
-  4046225305,
-  614570311,
-  3012652279,
-  134345442,
-  2240740374,
-  1667834072,
-  1901547113,
-  2757295779,
-  4103290238,
-  227898511,
-  1921955416,
-  1904987480,
-  2182433518,
-  2069144605,
-  3260701109,
-  2620446009,
-  720527379,
-  3318853667,
-  677414384,
-  3393288472,
-  3101374703,
-  2390351024,
-  1614419982,
-  1822297739,
-  2954791486,
-  3608508353,
-  3174124327,
-  2024746970,
-  1432378464,
-  3864339955,
-  2857741204,
-  1464375394,
-  1676153920,
-  1439316330,
-  715854006,
-  3033291828,
-  289532110,
-  2706671279,
-  2087905683,
-  3018724369,
-  1668267050,
-  732546397,
-  1947742710,
-  3462151702,
-  2609353502,
-  2950085171,
-  1814351708,
-  2050118529,
-  680887927,
-  999245976,
-  1800124847,
-  3300911131,
-  1713906067,
-  1641548236,
-  4213287313,
-  1216130144,
-  1575780402,
-  4018429277,
-  3917837745,
-  3693486850,
-  3949271944,
-  596196993,
-  3549867205,
-  258830323,
-  2213823033,
-  772490370,
-  2760122372,
-  1774776394,
-  2652871518,
-  566650946,
-  4142492826,
-  1728879713,
-  2882767088,
-  1783734482,
-  3629395816,
-  2517608232,
-  2874225571,
-  1861159788,
-  326777828,
-  3124490320,
-  2130389656,
-  2716951837,
-  967770486,
-  1724537150,
-  2185432712,
-  2364442137,
-  1164943284,
-  2105845187,
-  998989502,
-  3765401048,
-  2244026483,
-  1075463327,
-  1455516326,
-  1322494562,
-  910128902,
-  469688178,
-  1117454909,
-  936433444,
-  3490320968,
-  3675253459,
-  1240580251,
-  122909385,
-  2157517691,
-  634681816,
-  4142456567,
-  3825094682,
-  3061402683,
-  2540495037,
-  79693498,
-  3249098678,
-  1084186820,
-  1583128258,
-  426386531,
-  1761308591,
-  1047286709,
-  322548459,
-  995290223,
-  1845252383,
-  2603652396,
-  3431023940,
-  2942221577,
-  3202600964,
-  3727903485,
-  1712269319,
-  422464435,
-  3234572375,
-  1170764815,
-  3523960633,
-  3117677531,
-  1434042557,
-  442511882,
-  3600875718,
-  1076654713,
-  1738483198,
-  4213154764,
-  2393238008,
-  3677496056,
-  1014306527,
-  4251020053,
-  793779912,
-  2902807211,
-  842905082,
-  4246964064,
-  1395751752,
-  1040244610,
-  2656851899,
-  3396308128,
-  445077038,
-  3742853595,
-  3577915638,
-  679411651,
-  2892444358,
-  2354009459,
-  1767581616,
-  3150600392,
-  3791627101,
-  3102740896,
-  284835224,
-  4246832056,
-  1258075500,
-  768725851,
-  2589189241,
-  3069724005,
-  3532540348,
-  1274779536,
-  3789419226,
-  2764799539,
-  1660621633,
-  3471099624,
-  4011903706,
-  913787905,
-  3497959166,
-  737222580,
-  2514213453,
-  2928710040,
-  3937242737,
-  1804850592,
-  3499020752,
-  2949064160,
-  2386320175,
-  2390070455,
-  2415321851,
-  4061277028,
-  2290661394,
-  2416832540,
-  1336762016,
-  1754252060,
-  3520065937,
-  3014181293,
-  791618072,
-  3188594551,
-  3933548030,
-  2332172193,
-  3852520463,
-  3043980520,
-  413987798,
-  3465142937,
-  3030929376,
-  4245938359,
-  2093235073,
-  3534596313,
-  375366246,
-  2157278981,
-  2479649556,
-  555357303,
-  3870105701,
-  2008414854,
-  3344188149,
-  4221384143,
-  3956125452,
-  2067696032,
-  3594591187,
-  2921233993,
-  2428461,
-  544322398,
-  577241275,
-  1471733935,
-  610547355,
-  4027169054,
-  1432588573,
-  1507829418,
-  2025931657,
-  3646575487,
-  545086370,
-  48609733,
-  2200306550,
-  1653985193,
-  298326376,
-  1316178497,
-  3007786442,
-  2064951626,
-  458293330,
-  2589141269,
-  3591329599,
-  3164325604,
-  727753846,
-  2179363840,
-  146436021,
-  1461446943,
-  4069977195,
-  705550613,
-  3059967265,
-  3887724982,
-  4281599278,
-  3313849956,
-  1404054877,
-  2845806497,
-  146425753,
-  1854211946,
-  1266315497,
-  3048417604,
-  3681880366,
-  3289982499,
-  290971e4,
-  1235738493,
-  2632868024,
-  2414719590,
-  3970600049,
-  1771706367,
-  1449415276,
-  3266420449,
-  422970021,
-  1963543593,
-  2690192192,
-  3826793022,
-  1062508698,
-  1531092325,
-  1804592342,
-  2583117782,
-  2714934279,
-  4024971509,
-  1294809318,
-  4028980673,
-  1289560198,
-  2221992742,
-  1669523910,
-  35572830,
-  157838143,
-  1052438473,
-  1016535060,
-  1802137761,
-  1753167236,
-  1386275462,
-  3080475397,
-  2857371447,
-  1040679964,
-  2145300060,
-  2390574316,
-  1461121720,
-  2956646967,
-  4031777805,
-  4028374788,
-  33600511,
-  2920084762,
-  1018524850,
-  629373528,
-  3691585981,
-  3515945977,
-  2091462646,
-  2486323059,
-  586499841,
-  988145025,
-  935516892,
-  3367335476,
-  2599673255,
-  2839830854,
-  265290510,
-  3972581182,
-  2759138881,
-  3795373465,
-  1005194799,
-  847297441,
-  406762289,
-  1314163512,
-  1332590856,
-  1866599683,
-  4127851711,
-  750260880,
-  613907577,
-  1450815602,
-  3165620655,
-  3734664991,
-  3650291728,
-  3012275730,
-  3704569646,
-  1427272223,
-  778793252,
-  1343938022,
-  2676280711,
-  2052605720,
-  1946737175,
-  3164576444,
-  3914038668,
-  3967478842,
-  3682934266,
-  1661551462,
-  3294938066,
-  4011595847,
-  840292616,
-  3712170807,
-  616741398,
-  312560963,
-  711312465,
-  1351876610,
-  322626781,
-  1910503582,
-  271666773,
-  2175563734,
-  1594956187,
-  70604529,
-  3617834859,
-  1007753275,
-  1495573769,
-  4069517037,
-  2549218298,
-  2663038764,
-  504708206,
-  2263041392,
-  3941167025,
-  2249088522,
-  1514023603,
-  1998579484,
-  1312622330,
-  694541497,
-  2582060303,
-  2151582166,
-  1382467621,
-  776784248,
-  2618340202,
-  3323268794,
-  2497899128,
-  2784771155,
-  503983604,
-  4076293799,
-  907881277,
-  423175695,
-  432175456,
-  1378068232,
-  4145222326,
-  3954048622,
-  3938656102,
-  3820766613,
-  2793130115,
-  2977904593,
-  26017576,
-  3274890735,
-  3194772133,
-  1700274565,
-  1756076034,
-  4006520079,
-  3677328699,
-  720338349,
-  1533947780,
-  354530856,
-  688349552,
-  3973924725,
-  1637815568,
-  332179504,
-  3949051286,
-  53804574,
-  2852348879,
-  3044236432,
-  1282449977,
-  3583942155,
-  3416972820,
-  4006381244,
-  1617046695,
-  2628476075,
-  3002303598,
-  1686838959,
-  431878346,
-  2686675385,
-  1700445008,
-  1080580658,
-  1009431731,
-  832498133,
-  3223435511,
-  2605976345,
-  2271191193,
-  2516031870,
-  1648197032,
-  4164389018,
-  2548247927,
-  300782431,
-  375919233,
-  238389289,
-  3353747414,
-  2531188641,
-  2019080857,
-  1475708069,
-  455242339,
-  2609103871,
-  448939670,
-  3451063019,
-  1395535956,
-  2413381860,
-  1841049896,
-  1491858159,
-  885456874,
-  4264095073,
-  4001119347,
-  1565136089,
-  3898914787,
-  1108368660,
-  540939232,
-  1173283510,
-  2745871338,
-  3681308437,
-  4207628240,
-  3343053890,
-  4016749493,
-  1699691293,
-  1103962373,
-  3625875870,
-  2256883143,
-  3830138730,
-  1031889488,
-  3479347698,
-  1535977030,
-  4236805024,
-  3251091107,
-  2132092099,
-  1774941330,
-  1199868427,
-  1452454533,
-  157007616,
-  2904115357,
-  342012276,
-  595725824,
-  1480756522,
-  206960106,
-  497939518,
-  591360097,
-  863170706,
-  2375253569,
-  3596610801,
-  1814182875,
-  2094937945,
-  3421402208,
-  1082520231,
-  3463918190,
-  2785509508,
-  435703966,
-  3908032597,
-  1641649973,
-  2842273706,
-  3305899714,
-  1510255612,
-  2148256476,
-  2655287854,
-  3276092548,
-  4258621189,
-  236887753,
-  3681803219,
-  274041037,
-  1734335097,
-  3815195456,
-  3317970021,
-  1899903192,
-  1026095262,
-  4050517792,
-  356393447,
-  2410691914,
-  3873677099,
-  3682840055,
-  3913112168,
-  2491498743,
-  4132185628,
-  2489919796,
-  1091903735,
-  1979897079,
-  3170134830,
-  3567386728,
-  3557303409,
-  857797738,
-  1136121015,
-  1342202287,
-  507115054,
-  2535736646,
-  337727348,
-  3213592640,
-  1301675037,
-  2528481711,
-  1895095763,
-  1721773893,
-  3216771564,
-  62756741,
-  2142006736,
-  835421444,
-  2531993523,
-  1442658625,
-  3659876326,
-  2882144922,
-  676362277,
-  1392781812,
-  170690266,
-  3921047035,
-  1759253602,
-  3611846912,
-  1745797284,
-  664899054,
-  1329594018,
-  3901205900,
-  3045908486,
-  2062866102,
-  2865634940,
-  3543621612,
-  3464012697,
-  1080764994,
-  553557557,
-  3656615353,
-  3996768171,
-  991055499,
-  499776247,
-  1265440854,
-  648242737,
-  3940784050,
-  980351604,
-  3713745714,
-  1749149687,
-  3396870395,
-  4211799374,
-  3640570775,
-  1161844396,
-  3125318951,
-  1431517754,
-  545492359,
-  4268468663,
-  3499529547,
-  1437099964,
-  2702547544,
-  3433638243,
-  2581715763,
-  2787789398,
-  1060185593,
-  1593081372,
-  2418618748,
-  4260947970,
-  69676912,
-  2159744348,
-  86519011,
-  2512459080,
-  3838209314,
-  1220612927,
-  3339683548,
-  133810670,
-  1090789135,
-  1078426020,
-  1569222167,
-  845107691,
-  3583754449,
-  4072456591,
-  1091646820,
-  628848692,
-  1613405280,
-  3757631651,
-  526609435,
-  236106946,
-  48312990,
-  2942717905,
-  3402727701,
-  1797494240,
-  859738849,
-  992217954,
-  4005476642,
-  2243076622,
-  3870952857,
-  3732016268,
-  765654824,
-  3490871365,
-  2511836413,
-  1685915746,
-  3888969200,
-  1414112111,
-  2273134842,
-  3281911079,
-  4080962846,
-  172450625,
-  2569994100,
-  980381355,
-  4109958455,
-  2819808352,
-  2716589560,
-  2568741196,
-  3681446669,
-  3329971472,
-  1835478071,
-  660984891,
-  3704678404,
-  4045999559,
-  3422617507,
-  3040415634,
-  1762651403,
-  1719377915,
-  3470491036,
-  2693910283,
-  3642056355,
-  3138596744,
-  1364962596,
-  2073328063,
-  1983633131,
-  926494387,
-  3423689081,
-  2150032023,
-  4096667949,
-  1749200295,
-  3328846651,
-  309677260,
-  2016342300,
-  1779581495,
-  3079819751,
-  111262694,
-  1274766160,
-  443224088,
-  298511866,
-  1025883608,
-  3806446537,
-  1145181785,
-  168956806,
-  3641502830,
-  3584813610,
-  1689216846,
-  3666258015,
-  3200248200,
-  1692713982,
-  2646376535,
-  4042768518,
-  1618508792,
-  1610833997,
-  3523052358,
-  4130873264,
-  2001055236,
-  3610705100,
-  2202168115,
-  4028541809,
-  2961195399,
-  1006657119,
-  2006996926,
-  3186142756,
-  1430667929,
-  3210227297,
-  1314452623,
-  4074634658,
-  4101304120,
-  2273951170,
-  1399257539,
-  3367210612,
-  3027628629,
-  1190975929,
-  2062231137,
-  2333990788,
-  2221543033,
-  2438960610,
-  1181637006,
-  548689776,
-  2362791313,
-  3372408396,
-  3104550113,
-  3145860560,
-  296247880,
-  1970579870,
-  3078560182,
-  3769228297,
-  1714227617,
-  3291629107,
-  3898220290,
-  166772364,
-  1251581989,
-  493813264,
-  448347421,
-  195405023,
-  2709975567,
-  677966185,
-  3703036547,
-  1463355134,
-  2715995803,
-  1338867538,
-  1343315457,
-  2802222074,
-  2684532164,
-  233230375,
-  2599980071,
-  2000651841,
-  3277868038,
-  1638401717,
-  4028070440,
-  3237316320,
-  6314154,
-  819756386,
-  300326615,
-  590932579,
-  1405279636,
-  3267499572,
-  3150704214,
-  2428286686,
-  3959192993,
-  3461946742,
-  1862657033,
-  1266418056,
-  963775037,
-  2089974820,
-  2263052895,
-  1917689273,
-  448879540,
-  3550394620,
-  3981727096,
-  150775221,
-  3627908307,
-  1303187396,
-  508620638,
-  2975983352,
-  2726630617,
-  1817252668,
-  1876281319,
-  1457606340,
-  908771278,
-  3720792119,
-  3617206836,
-  2455994898,
-  1729034894,
-  1080033504,
-  976866871,
-  3556439503,
-  2881648439,
-  1522871579,
-  1555064734,
-  1336096578,
-  3548522304,
-  2579274686,
-  3574697629,
-  3205460757,
-  3593280638,
-  3338716283,
-  3079412587,
-  564236357,
-  2993598910,
-  1781952180,
-  1464380207,
-  3163844217,
-  3332601554,
-  1699332808,
-  1393555694,
-  1183702653,
-  3581086237,
-  1288719814,
-  691649499,
-  2847557200,
-  2895455976,
-  3193889540,
-  2717570544,
-  1781354906,
-  1676643554,
-  2592534050,
-  3230253752,
-  1126444790,
-  2770207658,
-  2633158820,
-  2210423226,
-  2615765581,
-  2414155088,
-  3127139286,
-  673620729,
-  2805611233,
-  1269405062,
-  4015350505,
-  3341807571,
-  4149409754,
-  1057255273,
-  2012875353,
-  2162469141,
-  2276492801,
-  2601117357,
-  993977747,
-  3918593370,
-  2654263191,
-  753973209,
-  36408145,
-  2530585658,
-  25011837,
-  3520020182,
-  2088578344,
-  530523599,
-  2918365339,
-  1524020338,
-  1518925132,
-  3760827505,
-  3759777254,
-  1202760957,
-  3985898139,
-  3906192525,
-  674977740,
-  4174734889,
-  2031300136,
-  2019492241,
-  3983892565,
-  4153806404,
-  3822280332,
-  352677332,
-  2297720250,
-  60907813,
-  90501309,
-  3286998549,
-  1016092578,
-  2535922412,
-  2839152426,
-  457141659,
-  509813237,
-  4120667899,
-  652014361,
-  1966332200,
-  2975202805,
-  55981186,
-  2327461051,
-  676427537,
-  3255491064,
-  2882294119,
-  3433927263,
-  1307055953,
-  942726286,
-  933058658,
-  2468411793,
-  3933900994,
-  4215176142,
-  1361170020,
-  2001714738,
-  2830558078,
-  3274259782,
-  1222529897,
-  1679025792,
-  2729314320,
-  3714953764,
-  1770335741,
-  151462246,
-  3013232138,
-  1682292957,
-  1483529935,
-  471910574,
-  1539241949,
-  458788160,
-  3436315007,
-  1807016891,
-  3718408830,
-  978976581,
-  1043663428,
-  3165965781,
-  1927990952,
-  4200891579,
-  2372276910,
-  3208408903,
-  3533431907,
-  1412390302,
-  2931980059,
-  4132332400,
-  1947078029,
-  3881505623,
-  4168226417,
-  2941484381,
-  1077988104,
-  1320477388,
-  886195818,
-  18198404,
-  3786409e3,
-  2509781533,
-  112762804,
-  3463356488,
-  1866414978,
-  891333506,
-  18488651,
-  661792760,
-  1628790961,
-  3885187036,
-  3141171499,
-  876946877,
-  2693282273,
-  1372485963,
-  791857591,
-  2686433993,
-  3759982718,
-  3167212022,
-  3472953795,
-  2716379847,
-  445679433,
-  3561995674,
-  3504004811,
-  3574258232,
-  54117162,
-  3331405415,
-  2381918588,
-  3769707343,
-  4154350007,
-  1140177722,
-  4074052095,
-  668550556,
-  3214352940,
-  367459370,
-  261225585,
-  2610173221,
-  4209349473,
-  3468074219,
-  3265815641,
-  314222801,
-  3066103646,
-  3808782860,
-  282218597,
-  3406013506,
-  3773591054,
-  379116347,
-  1285071038,
-  846784868,
-  2669647154,
-  3771962079,
-  3550491691,
-  2305946142,
-  453669953,
-  1268987020,
-  3317592352,
-  3279303384,
-  3744833421,
-  2610507566,
-  3859509063,
-  266596637,
-  3847019092,
-  517658769,
-  3462560207,
-  3443424879,
-  370717030,
-  4247526661,
-  2224018117,
-  4143653529,
-  4112773975,
-  2788324899,
-  2477274417,
-  1456262402,
-  2901442914,
-  1517677493,
-  1846949527,
-  2295493580,
-  3734397586,
-  2176403920,
-  1280348187,
-  1908823572,
-  3871786941,
-  846861322,
-  1172426758,
-  3287448474,
-  3383383037,
-  1655181056,
-  3139813346,
-  901632758,
-  1897031941,
-  2986607138,
-  3066810236,
-  3447102507,
-  1393639104,
-  373351379,
-  950779232,
-  625454576,
-  3124240540,
-  4148612726,
-  2007998917,
-  544563296,
-  2244738638,
-  2330496472,
-  2058025392,
-  1291430526,
-  424198748,
-  50039436,
-  29584100,
-  3605783033,
-  2429876329,
-  2791104160,
-  1057563949,
-  3255363231,
-  3075367218,
-  3463963227,
-  1469046755,
-  985887462
-];
-var C_ORIG = [
-  1332899944,
-  1700884034,
-  1701343084,
-  1684370003,
-  1668446532,
-  1869963892
-];
-function _encipher(lr, off, P, S2) {
-  var n, l = lr[off], r2 = lr[off + 1];
-  l ^= P[0];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[1];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[2];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[3];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[4];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[5];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[6];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[7];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[8];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[9];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[10];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[11];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[12];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[13];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[14];
-  n = S2[l >>> 24];
-  n += S2[256 | l >> 16 & 255];
-  n ^= S2[512 | l >> 8 & 255];
-  n += S2[768 | l & 255];
-  r2 ^= n ^ P[15];
-  n = S2[r2 >>> 24];
-  n += S2[256 | r2 >> 16 & 255];
-  n ^= S2[512 | r2 >> 8 & 255];
-  n += S2[768 | r2 & 255];
-  l ^= n ^ P[16];
-  lr[off] = r2 ^ P[BLOWFISH_NUM_ROUNDS + 1];
-  lr[off + 1] = l;
-  return lr;
-}
-function _streamtoword(data, offp) {
-  for (var i2 = 0, word = 0; i2 < 4; ++i2)
-    word = word << 8 | data[offp] & 255, offp = (offp + 1) % data.length;
-  return { key: word, offp };
-}
-function _key(key, P, S2) {
-  var offset = 0, lr = [0, 0], plen = P.length, slen = S2.length, sw;
-  for (var i2 = 0; i2 < plen; i2++)
-    sw = _streamtoword(key, offset), offset = sw.offp, P[i2] = P[i2] ^ sw.key;
-  for (i2 = 0; i2 < plen; i2 += 2)
-    lr = _encipher(lr, 0, P, S2), P[i2] = lr[0], P[i2 + 1] = lr[1];
-  for (i2 = 0; i2 < slen; i2 += 2)
-    lr = _encipher(lr, 0, P, S2), S2[i2] = lr[0], S2[i2 + 1] = lr[1];
-}
-function _ekskey(data, key, P, S2) {
-  var offp = 0, lr = [0, 0], plen = P.length, slen = S2.length, sw;
-  for (var i2 = 0; i2 < plen; i2++)
-    sw = _streamtoword(key, offp), offp = sw.offp, P[i2] = P[i2] ^ sw.key;
-  offp = 0;
-  for (i2 = 0; i2 < plen; i2 += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S2), P[i2] = lr[0], P[i2 + 1] = lr[1];
-  for (i2 = 0; i2 < slen; i2 += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S2), S2[i2] = lr[0], S2[i2 + 1] = lr[1];
-}
-function _crypt(b, salt, rounds, callback, progressCallback) {
-  var cdata = C_ORIG.slice(), clen = cdata.length, err;
-  if (rounds < 4 || rounds > 31) {
-    err = Error("Illegal number of rounds (4-31): " + rounds);
-    if (callback) {
-      nextTick(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  if (salt.length !== BCRYPT_SALT_LEN) {
-    err = Error(
-      "Illegal salt length: " + salt.length + " != " + BCRYPT_SALT_LEN
-    );
-    if (callback) {
-      nextTick(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  rounds = 1 << rounds >>> 0;
-  var P, S2, i2 = 0, j;
-  if (typeof Int32Array === "function") {
-    P = new Int32Array(P_ORIG);
-    S2 = new Int32Array(S_ORIG);
-  } else {
-    P = P_ORIG.slice();
-    S2 = S_ORIG.slice();
-  }
-  _ekskey(salt, b, P, S2);
-  function next() {
-    if (progressCallback) progressCallback(i2 / rounds);
-    if (i2 < rounds) {
-      var start = Date.now();
-      for (; i2 < rounds; ) {
-        i2 = i2 + 1;
-        _key(b, P, S2);
-        _key(salt, P, S2);
-        if (Date.now() - start > MAX_EXECUTION_TIME) break;
-      }
-    } else {
-      for (i2 = 0; i2 < 64; i2++)
-        for (j = 0; j < clen >> 1; j++) _encipher(cdata, j << 1, P, S2);
-      var ret = [];
-      for (i2 = 0; i2 < clen; i2++)
-        ret.push((cdata[i2] >> 24 & 255) >>> 0), ret.push((cdata[i2] >> 16 & 255) >>> 0), ret.push((cdata[i2] >> 8 & 255) >>> 0), ret.push((cdata[i2] & 255) >>> 0);
-      if (callback) {
-        callback(null, ret);
-        return;
-      } else return ret;
-    }
-    if (callback) nextTick(next);
-  }
-  if (typeof callback !== "undefined") {
-    next();
-  } else {
-    var res;
-    while (true) if (typeof (res = next()) !== "undefined") return res || [];
-  }
-}
-function _hash(password, salt, callback, progressCallback) {
-  var err;
-  if (typeof password !== "string" || typeof salt !== "string") {
-    err = Error("Invalid string / salt: Not a string");
-    if (callback) {
-      nextTick(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  var minor, offset;
-  if (salt.charAt(0) !== "$" || salt.charAt(1) !== "2") {
-    err = Error("Invalid salt version: " + salt.substring(0, 2));
-    if (callback) {
-      nextTick(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  if (salt.charAt(2) === "$") minor = String.fromCharCode(0), offset = 3;
-  else {
-    minor = salt.charAt(2);
-    if (minor !== "a" && minor !== "b" && minor !== "y" || salt.charAt(3) !== "$") {
-      err = Error("Invalid salt revision: " + salt.substring(2, 4));
-      if (callback) {
-        nextTick(callback.bind(this, err));
-        return;
-      } else throw err;
-    }
-    offset = 4;
-  }
-  if (salt.charAt(offset + 2) > "$") {
-    err = Error("Missing salt rounds");
-    if (callback) {
-      nextTick(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  var r1 = parseInt(salt.substring(offset, offset + 1), 10) * 10, r2 = parseInt(salt.substring(offset + 1, offset + 2), 10), rounds = r1 + r2, real_salt = salt.substring(offset + 3, offset + 25);
-  password += minor >= "a" ? "\0" : "";
-  var passwordb = utf8Array(password), saltb = base64_decode(real_salt, BCRYPT_SALT_LEN);
-  function finish(bytes) {
-    var res = [];
-    res.push("$2");
-    if (minor >= "a") res.push(minor);
-    res.push("$");
-    if (rounds < 10) res.push("0");
-    res.push(rounds.toString());
-    res.push("$");
-    res.push(base64_encode(saltb, saltb.length));
-    res.push(base64_encode(bytes, C_ORIG.length * 4 - 1));
-    return res.join("");
-  }
-  if (typeof callback == "undefined")
-    return finish(_crypt(passwordb, saltb, rounds));
-  else {
-    _crypt(
-      passwordb,
-      saltb,
-      rounds,
-      function(err2, bytes) {
-        if (err2) callback(err2, null);
-        else callback(null, finish(bytes));
-      },
-      progressCallback
-    );
-  }
-}
-function encodeBase64(bytes, length) {
-  return base64_encode(bytes, length);
-}
-function decodeBase64(string4, length) {
-  return base64_decode(string4, length);
-}
-var bcryptjs_default = {
-  setRandomFallback,
-  genSaltSync,
-  genSalt,
-  hashSync,
-  hash,
-  compareSync,
-  compare,
-  getRounds,
-  getSalt,
-  truncates,
-  encodeBase64,
-  decodeBase64
-};
-
-// src/routes/auth.ts
-import crypto2 from "node:crypto";
 
 // ../../node_modules/.pnpm/pg@8.20.0/node_modules/pg/esm/index.mjs
 var import_lib = __toESM(require_lib5(), 1);
@@ -69165,35 +61113,35 @@ __export(schema_exports, {
 });
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
-var external_exports2 = {};
-__export(external_exports2, {
+var external_exports = {};
+__export(external_exports, {
   $brand: () => $brand,
   $input: () => $input,
   $output: () => $output,
-  NEVER: () => NEVER2,
+  NEVER: () => NEVER,
   TimePrecision: () => TimePrecision,
-  ZodAny: () => ZodAny2,
-  ZodArray: () => ZodArray2,
+  ZodAny: () => ZodAny,
+  ZodArray: () => ZodArray,
   ZodBase64: () => ZodBase64,
   ZodBase64URL: () => ZodBase64URL,
-  ZodBigInt: () => ZodBigInt2,
+  ZodBigInt: () => ZodBigInt,
   ZodBigIntFormat: () => ZodBigIntFormat,
-  ZodBoolean: () => ZodBoolean2,
+  ZodBoolean: () => ZodBoolean,
   ZodCIDRv4: () => ZodCIDRv4,
   ZodCIDRv6: () => ZodCIDRv6,
   ZodCUID: () => ZodCUID,
   ZodCUID2: () => ZodCUID2,
-  ZodCatch: () => ZodCatch2,
+  ZodCatch: () => ZodCatch,
   ZodCustom: () => ZodCustom,
   ZodCustomStringFormat: () => ZodCustomStringFormat,
-  ZodDate: () => ZodDate2,
-  ZodDefault: () => ZodDefault2,
-  ZodDiscriminatedUnion: () => ZodDiscriminatedUnion2,
+  ZodDate: () => ZodDate,
+  ZodDefault: () => ZodDefault,
+  ZodDiscriminatedUnion: () => ZodDiscriminatedUnion,
   ZodE164: () => ZodE164,
   ZodEmail: () => ZodEmail,
   ZodEmoji: () => ZodEmoji,
-  ZodEnum: () => ZodEnum2,
-  ZodError: () => ZodError2,
+  ZodEnum: () => ZodEnum,
+  ZodError: () => ZodError,
   ZodFile: () => ZodFile,
   ZodGUID: () => ZodGUID,
   ZodIPv4: () => ZodIPv4,
@@ -69202,45 +61150,45 @@ __export(external_exports2, {
   ZodISODateTime: () => ZodISODateTime,
   ZodISODuration: () => ZodISODuration,
   ZodISOTime: () => ZodISOTime,
-  ZodIntersection: () => ZodIntersection2,
-  ZodIssueCode: () => ZodIssueCode2,
+  ZodIntersection: () => ZodIntersection,
+  ZodIssueCode: () => ZodIssueCode,
   ZodJWT: () => ZodJWT,
   ZodKSUID: () => ZodKSUID,
-  ZodLazy: () => ZodLazy2,
-  ZodLiteral: () => ZodLiteral2,
-  ZodMap: () => ZodMap2,
-  ZodNaN: () => ZodNaN2,
+  ZodLazy: () => ZodLazy,
+  ZodLiteral: () => ZodLiteral,
+  ZodMap: () => ZodMap,
+  ZodNaN: () => ZodNaN,
   ZodNanoID: () => ZodNanoID,
-  ZodNever: () => ZodNever2,
+  ZodNever: () => ZodNever,
   ZodNonOptional: () => ZodNonOptional,
-  ZodNull: () => ZodNull2,
-  ZodNullable: () => ZodNullable2,
-  ZodNumber: () => ZodNumber2,
+  ZodNull: () => ZodNull,
+  ZodNullable: () => ZodNullable,
+  ZodNumber: () => ZodNumber,
   ZodNumberFormat: () => ZodNumberFormat,
-  ZodObject: () => ZodObject2,
-  ZodOptional: () => ZodOptional2,
+  ZodObject: () => ZodObject,
+  ZodOptional: () => ZodOptional,
   ZodPipe: () => ZodPipe,
   ZodPrefault: () => ZodPrefault,
-  ZodPromise: () => ZodPromise2,
-  ZodReadonly: () => ZodReadonly2,
+  ZodPromise: () => ZodPromise,
+  ZodReadonly: () => ZodReadonly,
   ZodRealError: () => ZodRealError,
-  ZodRecord: () => ZodRecord2,
-  ZodSet: () => ZodSet2,
-  ZodString: () => ZodString2,
+  ZodRecord: () => ZodRecord,
+  ZodSet: () => ZodSet,
+  ZodString: () => ZodString,
   ZodStringFormat: () => ZodStringFormat,
   ZodSuccess: () => ZodSuccess,
-  ZodSymbol: () => ZodSymbol2,
+  ZodSymbol: () => ZodSymbol,
   ZodTemplateLiteral: () => ZodTemplateLiteral,
   ZodTransform: () => ZodTransform,
-  ZodTuple: () => ZodTuple2,
-  ZodType: () => ZodType2,
+  ZodTuple: () => ZodTuple,
+  ZodType: () => ZodType,
   ZodULID: () => ZodULID,
   ZodURL: () => ZodURL,
   ZodUUID: () => ZodUUID,
-  ZodUndefined: () => ZodUndefined2,
-  ZodUnion: () => ZodUnion2,
-  ZodUnknown: () => ZodUnknown2,
-  ZodVoid: () => ZodVoid2,
+  ZodUndefined: () => ZodUndefined,
+  ZodUnion: () => ZodUnion,
+  ZodUnknown: () => ZodUnknown,
+  ZodVoid: () => ZodVoid,
   ZodXID: () => ZodXID,
   _ZodString: () => _ZodString,
   _default: () => _default2,
@@ -69260,7 +61208,7 @@ __export(external_exports2, {
   core: () => core_exports2,
   cuid: () => cuid3,
   cuid2: () => cuid22,
-  custom: () => custom2,
+  custom: () => custom,
   date: () => date4,
   discriminatedUnion: () => discriminatedUnion,
   e164: () => e1642,
@@ -69274,7 +61222,7 @@ __export(external_exports2, {
   float64: () => float64,
   formatError: () => formatError,
   function: () => _function,
-  getErrorMap: () => getErrorMap2,
+  getErrorMap: () => getErrorMap,
   globalRegistry: () => globalRegistry,
   gt: () => _gt,
   gte: () => _gte,
@@ -69342,7 +61290,7 @@ __export(external_exports2, {
   safeParse: () => safeParse2,
   safeParseAsync: () => safeParseAsync2,
   set: () => set,
-  setErrorMap: () => setErrorMap2,
+  setErrorMap: () => setErrorMap,
   size: () => _size,
   startsWith: () => _startsWith,
   strictObject: () => strictObject,
@@ -69480,7 +61428,7 @@ __export(core_exports2, {
   Doc: () => Doc,
   JSONSchema: () => json_schema_exports,
   JSONSchemaGenerator: () => JSONSchemaGenerator,
-  NEVER: () => NEVER2,
+  NEVER: () => NEVER,
   TimePrecision: () => TimePrecision,
   _any: () => _any,
   _array: () => _array,
@@ -69604,7 +61552,7 @@ __export(core_exports2, {
   globalRegistry: () => globalRegistry,
   isValidBase64: () => isValidBase64,
   isValidBase64URL: () => isValidBase64URL,
-  isValidJWT: () => isValidJWT2,
+  isValidJWT: () => isValidJWT,
   locales: () => locales_exports,
   parse: () => parse,
   parseAsync: () => parseAsync,
@@ -69621,7 +61569,7 @@ __export(core_exports2, {
 });
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/core.js
-var NEVER2 = Object.freeze({
+var NEVER = Object.freeze({
   status: "aborted"
 });
 // @__NO_SIDE_EFFECTS__
@@ -69705,11 +61653,11 @@ __export(util_exports, {
   escapeRegex: () => escapeRegex,
   extend: () => extend,
   finalizeIssue: () => finalizeIssue,
-  floatSafeRemainder: () => floatSafeRemainder2,
+  floatSafeRemainder: () => floatSafeRemainder,
   getElementAtPath: () => getElementAtPath,
   getEnumValues: () => getEnumValues,
   getLengthableOrigin: () => getLengthableOrigin,
-  getParsedType: () => getParsedType2,
+  getParsedType: () => getParsedType,
   getSizableOrigin: () => getSizableOrigin,
   isObject: () => isObject,
   isPlainObject: () => isPlainObject,
@@ -69780,7 +61728,7 @@ function cleanRegex(source) {
   const end = source.endsWith("$") ? source.length - 1 : source.length;
   return source.slice(start, end);
 }
-function floatSafeRemainder2(val, step) {
+function floatSafeRemainder(val, step) {
   const valDecCount = (val.toString().split(".")[1] || "").length;
   const stepDecCount = (step.toString().split(".")[1] || "").length;
   const decCount = valDecCount > stepDecCount ? valDecCount : stepDecCount;
@@ -69883,7 +61831,7 @@ function numKeys(data) {
   }
   return keyCount;
 }
-var getParsedType2 = (data) => {
+var getParsedType = (data) => {
   const t2 = typeof data;
   switch (t2) {
     case "undefined":
@@ -70590,7 +62538,7 @@ var $ZodCheckMultipleOf = /* @__PURE__ */ $constructor("$ZodCheckMultipleOf", (i
   inst._zod.check = (payload) => {
     if (typeof payload.value !== typeof def.value)
       throw new Error("Cannot mix number and bigint in multiple_of check.");
-    const isMultiple = typeof payload.value === "bigint" ? payload.value % def.value === BigInt(0) : floatSafeRemainder2(payload.value, def.value) === 0;
+    const isMultiple = typeof payload.value === "bigint" ? payload.value % def.value === BigInt(0) : floatSafeRemainder(payload.value, def.value) === 0;
     if (isMultiple)
       return;
     payload.issues.push({
@@ -71444,7 +63392,7 @@ var $ZodE164 = /* @__PURE__ */ $constructor("$ZodE164", (inst, def) => {
   def.pattern ?? (def.pattern = e164);
   $ZodStringFormat.init(inst, def);
 });
-function isValidJWT2(token, algorithm = null) {
+function isValidJWT(token, algorithm = null) {
   try {
     const tokensParts = token.split(".");
     if (tokensParts.length !== 3)
@@ -71467,7 +63415,7 @@ function isValidJWT2(token, algorithm = null) {
 var $ZodJWT = /* @__PURE__ */ $constructor("$ZodJWT", (inst, def) => {
   $ZodStringFormat.init(inst, def);
   inst._zod.check = (payload) => {
-    if (isValidJWT2(payload.value, def.alg))
+    if (isValidJWT(payload.value, def.alg))
       return;
     payload.issues.push({
       code: "invalid_format",
@@ -72035,7 +63983,7 @@ var $ZodIntersection = /* @__PURE__ */ $constructor("$ZodIntersection", (inst, d
     return handleIntersectionResults(payload, left, right);
   };
 });
-function mergeValues2(a, b) {
+function mergeValues(a, b) {
   if (a === b) {
     return { valid: true, data: a };
   }
@@ -72047,7 +63995,7 @@ function mergeValues2(a, b) {
     const sharedKeys = Object.keys(a).filter((key) => bKeys.indexOf(key) !== -1);
     const newObj = { ...a, ...b };
     for (const key of sharedKeys) {
-      const sharedValue = mergeValues2(a[key], b[key]);
+      const sharedValue = mergeValues(a[key], b[key]);
       if (!sharedValue.valid) {
         return {
           valid: false,
@@ -72066,7 +64014,7 @@ function mergeValues2(a, b) {
     for (let index2 = 0; index2 < a.length; index2++) {
       const itemA = a[index2];
       const itemB = b[index2];
-      const sharedValue = mergeValues2(itemA, itemB);
+      const sharedValue = mergeValues(itemA, itemB);
       if (!sharedValue.valid) {
         return {
           valid: false,
@@ -72088,7 +64036,7 @@ function handleIntersectionResults(result, left, right) {
   }
   if (aborted(result))
     return result;
-  const merged = mergeValues2(left.value, right.value);
+  const merged = mergeValues(left.value, right.value);
   if (!merged.valid) {
     throw new Error(`Unmergable intersection. Error path: ${JSON.stringify(merged.mergeErrorPath)}`);
   }
@@ -72730,7 +64678,7 @@ __export(locales_exports, {
   ca: () => ca_default,
   cs: () => cs_default,
   de: () => de_default,
-  en: () => en_default2,
+  en: () => en_default,
   eo: () => eo_default,
   es: () => es_default,
   fa: () => fa_default,
@@ -73648,7 +65596,7 @@ var error7 = () => {
     }
   };
 };
-function en_default2() {
+function en_default() {
   return {
     localeError: error7()
   };
@@ -79304,7 +71252,7 @@ var initializer2 = (inst, issues) => {
     }
   });
 };
-var ZodError2 = $constructor("ZodError", initializer2);
+var ZodError = $constructor("ZodError", initializer2);
 var ZodRealError = $constructor("ZodError", initializer2, {
   Parent: Error
 });
@@ -79316,7 +71264,7 @@ var safeParse2 = /* @__PURE__ */ _safeParse(ZodRealError);
 var safeParseAsync2 = /* @__PURE__ */ _safeParseAsync(ZodRealError);
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/schemas.js
-var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
+var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   $ZodType.init(inst, def);
   inst.def = def;
   Object.defineProperty(inst, "_def", { value: def });
@@ -79384,7 +71332,7 @@ var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
 });
 var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
   $ZodString.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   const bag = inst._zod.bag;
   inst.format = bag.format ?? null;
   inst.minLength = bag.minimum ?? null;
@@ -79404,7 +71352,7 @@ var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
   inst.toLowerCase = () => inst.check(_toLowerCase());
   inst.toUpperCase = () => inst.check(_toUpperCase());
 });
-var ZodString2 = /* @__PURE__ */ $constructor("ZodString", (inst, def) => {
+var ZodString = /* @__PURE__ */ $constructor("ZodString", (inst, def) => {
   $ZodString.init(inst, def);
   _ZodString.init(inst, def);
   inst.email = (params) => inst.check(_email(ZodEmail, params));
@@ -79436,7 +71384,7 @@ var ZodString2 = /* @__PURE__ */ $constructor("ZodString", (inst, def) => {
   inst.duration = (params) => inst.check(duration2(params));
 });
 function string2(params) {
-  return _string(ZodString2, params);
+  return _string(ZodString, params);
 }
 var ZodStringFormat = /* @__PURE__ */ $constructor("ZodStringFormat", (inst, def) => {
   $ZodStringFormat.init(inst, def);
@@ -79591,9 +71539,9 @@ var ZodCustomStringFormat = /* @__PURE__ */ $constructor("ZodCustomStringFormat"
 function stringFormat(format, fnOrRegex, _params = {}) {
   return _stringFormat(ZodCustomStringFormat, format, fnOrRegex, _params);
 }
-var ZodNumber2 = /* @__PURE__ */ $constructor("ZodNumber", (inst, def) => {
+var ZodNumber = /* @__PURE__ */ $constructor("ZodNumber", (inst, def) => {
   $ZodNumber.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.gt = (value, params) => inst.check(_gt(value, params));
   inst.gte = (value, params) => inst.check(_gte(value, params));
   inst.min = (value, params) => inst.check(_gte(value, params));
@@ -79617,11 +71565,11 @@ var ZodNumber2 = /* @__PURE__ */ $constructor("ZodNumber", (inst, def) => {
   inst.format = bag.format ?? null;
 });
 function number2(params) {
-  return _number(ZodNumber2, params);
+  return _number(ZodNumber, params);
 }
 var ZodNumberFormat = /* @__PURE__ */ $constructor("ZodNumberFormat", (inst, def) => {
   $ZodNumberFormat.init(inst, def);
-  ZodNumber2.init(inst, def);
+  ZodNumber.init(inst, def);
 });
 function int(params) {
   return _int(ZodNumberFormat, params);
@@ -79638,16 +71586,16 @@ function int32(params) {
 function uint32(params) {
   return _uint32(ZodNumberFormat, params);
 }
-var ZodBoolean2 = /* @__PURE__ */ $constructor("ZodBoolean", (inst, def) => {
+var ZodBoolean = /* @__PURE__ */ $constructor("ZodBoolean", (inst, def) => {
   $ZodBoolean.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function boolean3(params) {
-  return _boolean(ZodBoolean2, params);
+  return _boolean(ZodBoolean, params);
 }
-var ZodBigInt2 = /* @__PURE__ */ $constructor("ZodBigInt", (inst, def) => {
+var ZodBigInt = /* @__PURE__ */ $constructor("ZodBigInt", (inst, def) => {
   $ZodBigInt.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.gte = (value, params) => inst.check(_gte(value, params));
   inst.min = (value, params) => inst.check(_gte(value, params));
   inst.gt = (value, params) => inst.check(_gt(value, params));
@@ -79667,11 +71615,11 @@ var ZodBigInt2 = /* @__PURE__ */ $constructor("ZodBigInt", (inst, def) => {
   inst.format = bag.format ?? null;
 });
 function bigint3(params) {
-  return _bigint(ZodBigInt2, params);
+  return _bigint(ZodBigInt, params);
 }
 var ZodBigIntFormat = /* @__PURE__ */ $constructor("ZodBigIntFormat", (inst, def) => {
   $ZodBigIntFormat.init(inst, def);
-  ZodBigInt2.init(inst, def);
+  ZodBigInt.init(inst, def);
 });
 function int64(params) {
   return _int64(ZodBigIntFormat, params);
@@ -79679,58 +71627,58 @@ function int64(params) {
 function uint64(params) {
   return _uint64(ZodBigIntFormat, params);
 }
-var ZodSymbol2 = /* @__PURE__ */ $constructor("ZodSymbol", (inst, def) => {
+var ZodSymbol = /* @__PURE__ */ $constructor("ZodSymbol", (inst, def) => {
   $ZodSymbol.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function symbol(params) {
-  return _symbol(ZodSymbol2, params);
+  return _symbol(ZodSymbol, params);
 }
-var ZodUndefined2 = /* @__PURE__ */ $constructor("ZodUndefined", (inst, def) => {
+var ZodUndefined = /* @__PURE__ */ $constructor("ZodUndefined", (inst, def) => {
   $ZodUndefined.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function _undefined3(params) {
-  return _undefined2(ZodUndefined2, params);
+  return _undefined2(ZodUndefined, params);
 }
-var ZodNull2 = /* @__PURE__ */ $constructor("ZodNull", (inst, def) => {
+var ZodNull = /* @__PURE__ */ $constructor("ZodNull", (inst, def) => {
   $ZodNull.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function _null3(params) {
-  return _null2(ZodNull2, params);
+  return _null2(ZodNull, params);
 }
-var ZodAny2 = /* @__PURE__ */ $constructor("ZodAny", (inst, def) => {
+var ZodAny = /* @__PURE__ */ $constructor("ZodAny", (inst, def) => {
   $ZodAny.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function any() {
-  return _any(ZodAny2);
+  return _any(ZodAny);
 }
-var ZodUnknown2 = /* @__PURE__ */ $constructor("ZodUnknown", (inst, def) => {
+var ZodUnknown = /* @__PURE__ */ $constructor("ZodUnknown", (inst, def) => {
   $ZodUnknown.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function unknown() {
-  return _unknown(ZodUnknown2);
+  return _unknown(ZodUnknown);
 }
-var ZodNever2 = /* @__PURE__ */ $constructor("ZodNever", (inst, def) => {
+var ZodNever = /* @__PURE__ */ $constructor("ZodNever", (inst, def) => {
   $ZodNever.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function never(params) {
-  return _never(ZodNever2, params);
+  return _never(ZodNever, params);
 }
-var ZodVoid2 = /* @__PURE__ */ $constructor("ZodVoid", (inst, def) => {
+var ZodVoid = /* @__PURE__ */ $constructor("ZodVoid", (inst, def) => {
   $ZodVoid.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function _void2(params) {
-  return _void(ZodVoid2, params);
+  return _void(ZodVoid, params);
 }
-var ZodDate2 = /* @__PURE__ */ $constructor("ZodDate", (inst, def) => {
+var ZodDate = /* @__PURE__ */ $constructor("ZodDate", (inst, def) => {
   $ZodDate.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.min = (value, params) => inst.check(_gte(value, params));
   inst.max = (value, params) => inst.check(_lte(value, params));
   const c = inst._zod.bag;
@@ -79738,11 +71686,11 @@ var ZodDate2 = /* @__PURE__ */ $constructor("ZodDate", (inst, def) => {
   inst.maxDate = c.maximum ? new Date(c.maximum) : null;
 });
 function date4(params) {
-  return _date(ZodDate2, params);
+  return _date(ZodDate, params);
 }
-var ZodArray2 = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
+var ZodArray = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
   $ZodArray.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.element = def.element;
   inst.min = (minLength, params) => inst.check(_minLength(minLength, params));
   inst.nonempty = (params) => inst.check(_minLength(1, params));
@@ -79751,15 +71699,15 @@ var ZodArray2 = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
   inst.unwrap = () => inst.element;
 });
 function array(element, params) {
-  return _array(ZodArray2, element, params);
+  return _array(ZodArray, element, params);
 }
 function keyof(schema) {
   const shape = schema._zod.def.shape;
   return literal(Object.keys(shape));
 }
-var ZodObject2 = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
+var ZodObject = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
   $ZodObject.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   util_exports.defineLazy(inst, "shape", () => def.shape);
   inst.keyof = () => _enum2(Object.keys(inst._zod.def.shape));
   inst.catchall = (catchall) => inst.clone({ ...inst._zod.def, catchall });
@@ -79773,7 +71721,7 @@ var ZodObject2 = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
   inst.merge = (other) => util_exports.merge(inst, other);
   inst.pick = (mask) => util_exports.pick(inst, mask);
   inst.omit = (mask) => util_exports.omit(inst, mask);
-  inst.partial = (...args) => util_exports.partial(ZodOptional2, inst, args[0]);
+  inst.partial = (...args) => util_exports.partial(ZodOptional, inst, args[0]);
   inst.required = (...args) => util_exports.required(ZodNonOptional, inst, args[0]);
 });
 function object(shape, params) {
@@ -79785,10 +71733,10 @@ function object(shape, params) {
     },
     ...util_exports.normalizeParams(params)
   };
-  return new ZodObject2(def);
+  return new ZodObject(def);
 }
 function strictObject(shape, params) {
-  return new ZodObject2({
+  return new ZodObject({
     type: "object",
     get shape() {
       util_exports.assignProp(this, "shape", { ...shape });
@@ -79799,7 +71747,7 @@ function strictObject(shape, params) {
   });
 }
 function looseObject(shape, params) {
-  return new ZodObject2({
+  return new ZodObject({
     type: "object",
     get shape() {
       util_exports.assignProp(this, "shape", { ...shape });
@@ -79809,44 +71757,44 @@ function looseObject(shape, params) {
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodUnion2 = /* @__PURE__ */ $constructor("ZodUnion", (inst, def) => {
+var ZodUnion = /* @__PURE__ */ $constructor("ZodUnion", (inst, def) => {
   $ZodUnion.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.options = def.options;
 });
 function union2(options, params) {
-  return new ZodUnion2({
+  return new ZodUnion({
     type: "union",
     options,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodDiscriminatedUnion2 = /* @__PURE__ */ $constructor("ZodDiscriminatedUnion", (inst, def) => {
-  ZodUnion2.init(inst, def);
+var ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("ZodDiscriminatedUnion", (inst, def) => {
+  ZodUnion.init(inst, def);
   $ZodDiscriminatedUnion.init(inst, def);
 });
 function discriminatedUnion(discriminator, options, params) {
-  return new ZodDiscriminatedUnion2({
+  return new ZodDiscriminatedUnion({
     type: "union",
     options,
     discriminator,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodIntersection2 = /* @__PURE__ */ $constructor("ZodIntersection", (inst, def) => {
+var ZodIntersection = /* @__PURE__ */ $constructor("ZodIntersection", (inst, def) => {
   $ZodIntersection.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function intersection(left, right) {
-  return new ZodIntersection2({
+  return new ZodIntersection({
     type: "intersection",
     left,
     right
   });
 }
-var ZodTuple2 = /* @__PURE__ */ $constructor("ZodTuple", (inst, def) => {
+var ZodTuple = /* @__PURE__ */ $constructor("ZodTuple", (inst, def) => {
   $ZodTuple.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.rest = (rest) => inst.clone({
     ...inst._zod.def,
     rest
@@ -79856,21 +71804,21 @@ function tuple(items, _paramsOrRest, _params) {
   const hasRest = _paramsOrRest instanceof $ZodType;
   const params = hasRest ? _params : _paramsOrRest;
   const rest = hasRest ? _paramsOrRest : null;
-  return new ZodTuple2({
+  return new ZodTuple({
     type: "tuple",
     items,
     rest,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodRecord2 = /* @__PURE__ */ $constructor("ZodRecord", (inst, def) => {
+var ZodRecord = /* @__PURE__ */ $constructor("ZodRecord", (inst, def) => {
   $ZodRecord.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.keyType = def.keyType;
   inst.valueType = def.valueType;
 });
 function record(keyType, valueType, params) {
-  return new ZodRecord2({
+  return new ZodRecord({
     type: "record",
     keyType,
     valueType,
@@ -79878,45 +71826,45 @@ function record(keyType, valueType, params) {
   });
 }
 function partialRecord(keyType, valueType, params) {
-  return new ZodRecord2({
+  return new ZodRecord({
     type: "record",
     keyType: union2([keyType, never()]),
     valueType,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodMap2 = /* @__PURE__ */ $constructor("ZodMap", (inst, def) => {
+var ZodMap = /* @__PURE__ */ $constructor("ZodMap", (inst, def) => {
   $ZodMap.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.keyType = def.keyType;
   inst.valueType = def.valueType;
 });
 function map(keyType, valueType, params) {
-  return new ZodMap2({
+  return new ZodMap({
     type: "map",
     keyType,
     valueType,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodSet2 = /* @__PURE__ */ $constructor("ZodSet", (inst, def) => {
+var ZodSet = /* @__PURE__ */ $constructor("ZodSet", (inst, def) => {
   $ZodSet.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.min = (...args) => inst.check(_minSize(...args));
   inst.nonempty = (params) => inst.check(_minSize(1, params));
   inst.max = (...args) => inst.check(_maxSize(...args));
   inst.size = (...args) => inst.check(_size(...args));
 });
 function set(valueType, params) {
-  return new ZodSet2({
+  return new ZodSet({
     type: "set",
     valueType,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodEnum2 = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
+var ZodEnum = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
   $ZodEnum.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.enum = def.entries;
   inst.options = Object.values(def.entries);
   const keys = new Set(Object.keys(def.entries));
@@ -79928,7 +71876,7 @@ var ZodEnum2 = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
       } else
         throw new Error(`Key ${value} not found in enum`);
     }
-    return new ZodEnum2({
+    return new ZodEnum({
       ...def,
       checks: [],
       ...util_exports.normalizeParams(params),
@@ -79943,7 +71891,7 @@ var ZodEnum2 = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
       } else
         throw new Error(`Key ${value} not found in enum`);
     }
-    return new ZodEnum2({
+    return new ZodEnum({
       ...def,
       checks: [],
       ...util_exports.normalizeParams(params),
@@ -79953,22 +71901,22 @@ var ZodEnum2 = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
 });
 function _enum2(values, params) {
   const entries = Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values;
-  return new ZodEnum2({
+  return new ZodEnum({
     type: "enum",
     entries,
     ...util_exports.normalizeParams(params)
   });
 }
 function nativeEnum(entries, params) {
-  return new ZodEnum2({
+  return new ZodEnum({
     type: "enum",
     entries,
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodLiteral2 = /* @__PURE__ */ $constructor("ZodLiteral", (inst, def) => {
+var ZodLiteral = /* @__PURE__ */ $constructor("ZodLiteral", (inst, def) => {
   $ZodLiteral.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.values = new Set(def.values);
   Object.defineProperty(inst, "value", {
     get() {
@@ -79980,7 +71928,7 @@ var ZodLiteral2 = /* @__PURE__ */ $constructor("ZodLiteral", (inst, def) => {
   });
 });
 function literal(value, params) {
-  return new ZodLiteral2({
+  return new ZodLiteral({
     type: "literal",
     values: Array.isArray(value) ? value : [value],
     ...util_exports.normalizeParams(params)
@@ -79988,7 +71936,7 @@ function literal(value, params) {
 }
 var ZodFile = /* @__PURE__ */ $constructor("ZodFile", (inst, def) => {
   $ZodFile.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.min = (size, params) => inst.check(_minSize(size, params));
   inst.max = (size, params) => inst.check(_maxSize(size, params));
   inst.mime = (types5, params) => inst.check(_mime(Array.isArray(types5) ? types5 : [types5], params));
@@ -79998,7 +71946,7 @@ function file(params) {
 }
 var ZodTransform = /* @__PURE__ */ $constructor("ZodTransform", (inst, def) => {
   $ZodTransform.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst._zod.parse = (payload, _ctx) => {
     payload.addIssue = (issue2) => {
       if (typeof issue2 === "string") {
@@ -80031,24 +71979,24 @@ function transform(fn) {
     transform: fn
   });
 }
-var ZodOptional2 = /* @__PURE__ */ $constructor("ZodOptional", (inst, def) => {
+var ZodOptional = /* @__PURE__ */ $constructor("ZodOptional", (inst, def) => {
   $ZodOptional.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function optional(innerType) {
-  return new ZodOptional2({
+  return new ZodOptional({
     type: "optional",
     innerType
   });
 }
-var ZodNullable2 = /* @__PURE__ */ $constructor("ZodNullable", (inst, def) => {
+var ZodNullable = /* @__PURE__ */ $constructor("ZodNullable", (inst, def) => {
   $ZodNullable.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function nullable(innerType) {
-  return new ZodNullable2({
+  return new ZodNullable({
     type: "nullable",
     innerType
   });
@@ -80056,14 +72004,14 @@ function nullable(innerType) {
 function nullish2(innerType) {
   return optional(nullable(innerType));
 }
-var ZodDefault2 = /* @__PURE__ */ $constructor("ZodDefault", (inst, def) => {
+var ZodDefault = /* @__PURE__ */ $constructor("ZodDefault", (inst, def) => {
   $ZodDefault.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
   inst.removeDefault = inst.unwrap;
 });
 function _default2(innerType, defaultValue) {
-  return new ZodDefault2({
+  return new ZodDefault({
     type: "default",
     innerType,
     get defaultValue() {
@@ -80073,7 +72021,7 @@ function _default2(innerType, defaultValue) {
 }
 var ZodPrefault = /* @__PURE__ */ $constructor("ZodPrefault", (inst, def) => {
   $ZodPrefault.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function prefault(innerType, defaultValue) {
@@ -80087,7 +72035,7 @@ function prefault(innerType, defaultValue) {
 }
 var ZodNonOptional = /* @__PURE__ */ $constructor("ZodNonOptional", (inst, def) => {
   $ZodNonOptional.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function nonoptional(innerType, params) {
@@ -80099,7 +72047,7 @@ function nonoptional(innerType, params) {
 }
 var ZodSuccess = /* @__PURE__ */ $constructor("ZodSuccess", (inst, def) => {
   $ZodSuccess.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function success(innerType) {
@@ -80108,29 +72056,29 @@ function success(innerType) {
     innerType
   });
 }
-var ZodCatch2 = /* @__PURE__ */ $constructor("ZodCatch", (inst, def) => {
+var ZodCatch = /* @__PURE__ */ $constructor("ZodCatch", (inst, def) => {
   $ZodCatch.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
   inst.removeCatch = inst.unwrap;
 });
 function _catch2(innerType, catchValue) {
-  return new ZodCatch2({
+  return new ZodCatch({
     type: "catch",
     innerType,
     catchValue: typeof catchValue === "function" ? catchValue : () => catchValue
   });
 }
-var ZodNaN2 = /* @__PURE__ */ $constructor("ZodNaN", (inst, def) => {
+var ZodNaN = /* @__PURE__ */ $constructor("ZodNaN", (inst, def) => {
   $ZodNaN.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function nan(params) {
-  return _nan(ZodNaN2, params);
+  return _nan(ZodNaN, params);
 }
 var ZodPipe = /* @__PURE__ */ $constructor("ZodPipe", (inst, def) => {
   $ZodPipe.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.in = def.in;
   inst.out = def.out;
 });
@@ -80142,19 +72090,19 @@ function pipe(in_, out) {
     // ...util.normalizeParams(params),
   });
 }
-var ZodReadonly2 = /* @__PURE__ */ $constructor("ZodReadonly", (inst, def) => {
+var ZodReadonly = /* @__PURE__ */ $constructor("ZodReadonly", (inst, def) => {
   $ZodReadonly.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function readonly(innerType) {
-  return new ZodReadonly2({
+  return new ZodReadonly({
     type: "readonly",
     innerType
   });
 }
 var ZodTemplateLiteral = /* @__PURE__ */ $constructor("ZodTemplateLiteral", (inst, def) => {
   $ZodTemplateLiteral.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function templateLiteral(parts, params) {
   return new ZodTemplateLiteral({
@@ -80163,31 +72111,31 @@ function templateLiteral(parts, params) {
     ...util_exports.normalizeParams(params)
   });
 }
-var ZodLazy2 = /* @__PURE__ */ $constructor("ZodLazy", (inst, def) => {
+var ZodLazy = /* @__PURE__ */ $constructor("ZodLazy", (inst, def) => {
   $ZodLazy.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.getter();
 });
 function lazy(getter) {
-  return new ZodLazy2({
+  return new ZodLazy({
     type: "lazy",
     getter
   });
 }
-var ZodPromise2 = /* @__PURE__ */ $constructor("ZodPromise", (inst, def) => {
+var ZodPromise = /* @__PURE__ */ $constructor("ZodPromise", (inst, def) => {
   $ZodPromise.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function promise(innerType) {
-  return new ZodPromise2({
+  return new ZodPromise({
     type: "promise",
     innerType
   });
 }
 var ZodCustom = /* @__PURE__ */ $constructor("ZodCustom", (inst, def) => {
   $ZodCustom.init(inst, def);
-  ZodType2.init(inst, def);
+  ZodType.init(inst, def);
 });
 function check(fn) {
   const ch = new $ZodCheck({
@@ -80197,7 +72145,7 @@ function check(fn) {
   ch._zod.check = fn;
   return ch;
 }
-function custom2(fn, _params) {
+function custom(fn, _params) {
   return _custom(ZodCustom, fn ?? (() => true), _params);
 }
 function refine(fn, _params = {}) {
@@ -80238,8 +72186,8 @@ function _instanceof(cls, params = {
 }
 var stringbool = (...args) => _stringbool({
   Pipe: ZodPipe,
-  Boolean: ZodBoolean2,
-  String: ZodString2,
+  Boolean: ZodBoolean,
+  String: ZodString,
   Transform: ZodTransform
 }, ...args);
 function json2(params) {
@@ -80253,7 +72201,7 @@ function preprocess(fn, schema) {
 }
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/compat.js
-var ZodIssueCode2 = {
+var ZodIssueCode = {
   invalid_type: "invalid_type",
   too_big: "too_big",
   too_small: "too_small",
@@ -80266,12 +72214,12 @@ var ZodIssueCode2 = {
   invalid_value: "invalid_value",
   custom: "custom"
 };
-function setErrorMap2(map2) {
+function setErrorMap(map2) {
   config({
     customError: map2
   });
 }
-function getErrorMap2() {
+function getErrorMap() {
   return config().customError;
 }
 
@@ -80285,23 +72233,23 @@ __export(coerce_exports, {
   string: () => string3
 });
 function string3(params) {
-  return _coercedString(ZodString2, params);
+  return _coercedString(ZodString, params);
 }
 function number3(params) {
-  return _coercedNumber(ZodNumber2, params);
+  return _coercedNumber(ZodNumber, params);
 }
 function boolean4(params) {
-  return _coercedBoolean(ZodBoolean2, params);
+  return _coercedBoolean(ZodBoolean, params);
 }
 function bigint4(params) {
-  return _coercedBigint(ZodBigInt2, params);
+  return _coercedBigint(ZodBigInt, params);
 }
 function date5(params) {
-  return _coercedDate(ZodDate2, params);
+  return _coercedDate(ZodDate, params);
 }
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
-config(en_default2());
+config(en_default());
 
 // ../../node_modules/.pnpm/drizzle-zod@0.8.3_drizzle-orm@0.45.2_@types+pg@8.18.0_pg@8.20.0__zod@3.25.76/node_modules/drizzle-zod/index.mjs
 var CONSTANTS = {
@@ -80330,15 +72278,15 @@ function isColumnType(column, columnTypes) {
 function isWithEnum(column) {
   return "enumValues" in column && Array.isArray(column.enumValues) && column.enumValues.length > 0;
 }
-var literalSchema = external_exports2.union([external_exports2.string(), external_exports2.number(), external_exports2.boolean(), external_exports2.null()]);
-var jsonSchema = external_exports2.union([
+var literalSchema = external_exports.union([external_exports.string(), external_exports.number(), external_exports.boolean(), external_exports.null()]);
+var jsonSchema = external_exports.union([
   literalSchema,
-  external_exports2.record(external_exports2.string(), external_exports2.any()),
-  external_exports2.array(external_exports2.any())
+  external_exports.record(external_exports.string(), external_exports.any()),
+  external_exports.array(external_exports.any())
 ]);
-var bufferSchema = external_exports2.custom((v) => v instanceof Buffer);
+var bufferSchema = external_exports.custom((v) => v instanceof Buffer);
 function columnToSchema(column, factory) {
-  const z$1 = factory?.zodInstance ?? external_exports2;
+  const z$1 = factory?.zodInstance ?? external_exports;
   const coerce2 = factory?.coerce ?? {};
   let schema;
   if (isWithEnum(column)) {
@@ -80522,7 +72470,7 @@ function handleColumns(columns, refinements, conditions, factory) {
       continue;
     }
     const column = is(selected, Column) ? selected : void 0;
-    const schema = column ? columnToSchema(column, factory) : external_exports2.any();
+    const schema = column ? columnToSchema(column, factory) : external_exports.any();
     const refined = typeof refinement === "function" ? refinement(schema) : schema;
     if (conditions.never(column)) {
       continue;
@@ -80538,7 +72486,7 @@ function handleColumns(columns, refinements, conditions, factory) {
       }
     }
   }
-  return external_exports2.object(columnSchemas);
+  return external_exports.object(columnSchemas);
 }
 var insertConditions = {
   never: (column) => column?.generated?.type === "always" || column?.generatedIdentity?.type === "always",
@@ -80941,12 +72889,8161 @@ var url2 = process.env.DATABASE_URL;
 var needsSsl = !!url2 && (url2.includes("sslmode=require") || url2.includes("neon.tech") || url2.includes("render.com") || url2.includes("supabase"));
 var pool = new Pool3({
   connectionString: url2,
-  ssl: needsSsl ? { rejectUnauthorized: false } : void 0
+  ssl: needsSsl ? { rejectUnauthorized: false } : void 0,
+  max: 10,
+  idleTimeoutMillis: 3e4,
+  connectionTimeoutMillis: 1e4
 });
 pool.on("error", (err) => {
   console.error("[DB POOL ERROR]", err);
 });
 var db = drizzle(pool, { schema: schema_exports });
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
+var external_exports2 = {};
+__export(external_exports2, {
+  BRAND: () => BRAND,
+  DIRTY: () => DIRTY,
+  EMPTY_PATH: () => EMPTY_PATH,
+  INVALID: () => INVALID,
+  NEVER: () => NEVER2,
+  OK: () => OK,
+  ParseStatus: () => ParseStatus,
+  Schema: () => ZodType2,
+  ZodAny: () => ZodAny2,
+  ZodArray: () => ZodArray2,
+  ZodBigInt: () => ZodBigInt2,
+  ZodBoolean: () => ZodBoolean2,
+  ZodBranded: () => ZodBranded,
+  ZodCatch: () => ZodCatch2,
+  ZodDate: () => ZodDate2,
+  ZodDefault: () => ZodDefault2,
+  ZodDiscriminatedUnion: () => ZodDiscriminatedUnion2,
+  ZodEffects: () => ZodEffects,
+  ZodEnum: () => ZodEnum2,
+  ZodError: () => ZodError2,
+  ZodFirstPartyTypeKind: () => ZodFirstPartyTypeKind,
+  ZodFunction: () => ZodFunction,
+  ZodIntersection: () => ZodIntersection2,
+  ZodIssueCode: () => ZodIssueCode2,
+  ZodLazy: () => ZodLazy2,
+  ZodLiteral: () => ZodLiteral2,
+  ZodMap: () => ZodMap2,
+  ZodNaN: () => ZodNaN2,
+  ZodNativeEnum: () => ZodNativeEnum,
+  ZodNever: () => ZodNever2,
+  ZodNull: () => ZodNull2,
+  ZodNullable: () => ZodNullable2,
+  ZodNumber: () => ZodNumber2,
+  ZodObject: () => ZodObject2,
+  ZodOptional: () => ZodOptional2,
+  ZodParsedType: () => ZodParsedType,
+  ZodPipeline: () => ZodPipeline,
+  ZodPromise: () => ZodPromise2,
+  ZodReadonly: () => ZodReadonly2,
+  ZodRecord: () => ZodRecord2,
+  ZodSchema: () => ZodType2,
+  ZodSet: () => ZodSet2,
+  ZodString: () => ZodString2,
+  ZodSymbol: () => ZodSymbol2,
+  ZodTransformer: () => ZodEffects,
+  ZodTuple: () => ZodTuple2,
+  ZodType: () => ZodType2,
+  ZodUndefined: () => ZodUndefined2,
+  ZodUnion: () => ZodUnion2,
+  ZodUnknown: () => ZodUnknown2,
+  ZodVoid: () => ZodVoid2,
+  addIssueToContext: () => addIssueToContext,
+  any: () => anyType,
+  array: () => arrayType,
+  bigint: () => bigIntType,
+  boolean: () => booleanType,
+  coerce: () => coerce,
+  custom: () => custom2,
+  date: () => dateType,
+  datetimeRegex: () => datetimeRegex,
+  defaultErrorMap: () => en_default2,
+  discriminatedUnion: () => discriminatedUnionType,
+  effect: () => effectsType,
+  enum: () => enumType,
+  function: () => functionType,
+  getErrorMap: () => getErrorMap2,
+  getParsedType: () => getParsedType2,
+  instanceof: () => instanceOfType,
+  intersection: () => intersectionType,
+  isAborted: () => isAborted,
+  isAsync: () => isAsync,
+  isDirty: () => isDirty,
+  isValid: () => isValid,
+  late: () => late,
+  lazy: () => lazyType,
+  literal: () => literalType,
+  makeIssue: () => makeIssue,
+  map: () => mapType,
+  nan: () => nanType,
+  nativeEnum: () => nativeEnumType,
+  never: () => neverType,
+  null: () => nullType,
+  nullable: () => nullableType,
+  number: () => numberType,
+  object: () => objectType,
+  objectUtil: () => objectUtil,
+  oboolean: () => oboolean,
+  onumber: () => onumber,
+  optional: () => optionalType,
+  ostring: () => ostring,
+  pipeline: () => pipelineType,
+  preprocess: () => preprocessType,
+  promise: () => promiseType,
+  quotelessJson: () => quotelessJson,
+  record: () => recordType,
+  set: () => setType,
+  setErrorMap: () => setErrorMap2,
+  strictObject: () => strictObjectType,
+  string: () => stringType,
+  symbol: () => symbolType,
+  transformer: () => effectsType,
+  tuple: () => tupleType,
+  undefined: () => undefinedType,
+  union: () => unionType,
+  unknown: () => unknownType,
+  util: () => util,
+  void: () => voidType
+});
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
+var util;
+(function(util2) {
+  util2.assertEqual = (_) => {
+  };
+  function assertIs2(_arg) {
+  }
+  util2.assertIs = assertIs2;
+  function assertNever2(_x) {
+    throw new Error();
+  }
+  util2.assertNever = assertNever2;
+  util2.arrayToEnum = (items) => {
+    const obj = {};
+    for (const item of items) {
+      obj[item] = item;
+    }
+    return obj;
+  };
+  util2.getValidEnumValues = (obj) => {
+    const validKeys = util2.objectKeys(obj).filter((k) => typeof obj[obj[k]] !== "number");
+    const filtered = {};
+    for (const k of validKeys) {
+      filtered[k] = obj[k];
+    }
+    return util2.objectValues(filtered);
+  };
+  util2.objectValues = (obj) => {
+    return util2.objectKeys(obj).map(function(e2) {
+      return obj[e2];
+    });
+  };
+  util2.objectKeys = typeof Object.keys === "function" ? (obj) => Object.keys(obj) : (object2) => {
+    const keys = [];
+    for (const key in object2) {
+      if (Object.prototype.hasOwnProperty.call(object2, key)) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  };
+  util2.find = (arr, checker) => {
+    for (const item of arr) {
+      if (checker(item))
+        return item;
+    }
+    return void 0;
+  };
+  util2.isInteger = typeof Number.isInteger === "function" ? (val) => Number.isInteger(val) : (val) => typeof val === "number" && Number.isFinite(val) && Math.floor(val) === val;
+  function joinValues2(array2, separator = " | ") {
+    return array2.map((val) => typeof val === "string" ? `'${val}'` : val).join(separator);
+  }
+  util2.joinValues = joinValues2;
+  util2.jsonStringifyReplacer = (_, value) => {
+    if (typeof value === "bigint") {
+      return value.toString();
+    }
+    return value;
+  };
+})(util || (util = {}));
+var objectUtil;
+(function(objectUtil2) {
+  objectUtil2.mergeShapes = (first, second) => {
+    return {
+      ...first,
+      ...second
+      // second overwrites first
+    };
+  };
+})(objectUtil || (objectUtil = {}));
+var ZodParsedType = util.arrayToEnum([
+  "string",
+  "nan",
+  "number",
+  "integer",
+  "float",
+  "boolean",
+  "date",
+  "bigint",
+  "symbol",
+  "function",
+  "undefined",
+  "null",
+  "array",
+  "object",
+  "unknown",
+  "promise",
+  "void",
+  "never",
+  "map",
+  "set"
+]);
+var getParsedType2 = (data) => {
+  const t2 = typeof data;
+  switch (t2) {
+    case "undefined":
+      return ZodParsedType.undefined;
+    case "string":
+      return ZodParsedType.string;
+    case "number":
+      return Number.isNaN(data) ? ZodParsedType.nan : ZodParsedType.number;
+    case "boolean":
+      return ZodParsedType.boolean;
+    case "function":
+      return ZodParsedType.function;
+    case "bigint":
+      return ZodParsedType.bigint;
+    case "symbol":
+      return ZodParsedType.symbol;
+    case "object":
+      if (Array.isArray(data)) {
+        return ZodParsedType.array;
+      }
+      if (data === null) {
+        return ZodParsedType.null;
+      }
+      if (data.then && typeof data.then === "function" && data.catch && typeof data.catch === "function") {
+        return ZodParsedType.promise;
+      }
+      if (typeof Map !== "undefined" && data instanceof Map) {
+        return ZodParsedType.map;
+      }
+      if (typeof Set !== "undefined" && data instanceof Set) {
+        return ZodParsedType.set;
+      }
+      if (typeof Date !== "undefined" && data instanceof Date) {
+        return ZodParsedType.date;
+      }
+      return ZodParsedType.object;
+    default:
+      return ZodParsedType.unknown;
+  }
+};
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
+var ZodIssueCode2 = util.arrayToEnum([
+  "invalid_type",
+  "invalid_literal",
+  "custom",
+  "invalid_union",
+  "invalid_union_discriminator",
+  "invalid_enum_value",
+  "unrecognized_keys",
+  "invalid_arguments",
+  "invalid_return_type",
+  "invalid_date",
+  "invalid_string",
+  "too_small",
+  "too_big",
+  "invalid_intersection_types",
+  "not_multiple_of",
+  "not_finite"
+]);
+var quotelessJson = (obj) => {
+  const json3 = JSON.stringify(obj, null, 2);
+  return json3.replace(/"([^"]+)":/g, "$1:");
+};
+var ZodError2 = class _ZodError extends Error {
+  get errors() {
+    return this.issues;
+  }
+  constructor(issues) {
+    super();
+    this.issues = [];
+    this.addIssue = (sub) => {
+      this.issues = [...this.issues, sub];
+    };
+    this.addIssues = (subs = []) => {
+      this.issues = [...this.issues, ...subs];
+    };
+    const actualProto = new.target.prototype;
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(this, actualProto);
+    } else {
+      this.__proto__ = actualProto;
+    }
+    this.name = "ZodError";
+    this.issues = issues;
+  }
+  format(_mapper) {
+    const mapper = _mapper || function(issue2) {
+      return issue2.message;
+    };
+    const fieldErrors = { _errors: [] };
+    const processError = (error40) => {
+      for (const issue2 of error40.issues) {
+        if (issue2.code === "invalid_union") {
+          issue2.unionErrors.map(processError);
+        } else if (issue2.code === "invalid_return_type") {
+          processError(issue2.returnTypeError);
+        } else if (issue2.code === "invalid_arguments") {
+          processError(issue2.argumentsError);
+        } else if (issue2.path.length === 0) {
+          fieldErrors._errors.push(mapper(issue2));
+        } else {
+          let curr = fieldErrors;
+          let i2 = 0;
+          while (i2 < issue2.path.length) {
+            const el = issue2.path[i2];
+            const terminal = i2 === issue2.path.length - 1;
+            if (!terminal) {
+              curr[el] = curr[el] || { _errors: [] };
+            } else {
+              curr[el] = curr[el] || { _errors: [] };
+              curr[el]._errors.push(mapper(issue2));
+            }
+            curr = curr[el];
+            i2++;
+          }
+        }
+      }
+    };
+    processError(this);
+    return fieldErrors;
+  }
+  static assert(value) {
+    if (!(value instanceof _ZodError)) {
+      throw new Error(`Not a ZodError: ${value}`);
+    }
+  }
+  toString() {
+    return this.message;
+  }
+  get message() {
+    return JSON.stringify(this.issues, util.jsonStringifyReplacer, 2);
+  }
+  get isEmpty() {
+    return this.issues.length === 0;
+  }
+  flatten(mapper = (issue2) => issue2.message) {
+    const fieldErrors = {};
+    const formErrors = [];
+    for (const sub of this.issues) {
+      if (sub.path.length > 0) {
+        const firstEl = sub.path[0];
+        fieldErrors[firstEl] = fieldErrors[firstEl] || [];
+        fieldErrors[firstEl].push(mapper(sub));
+      } else {
+        formErrors.push(mapper(sub));
+      }
+    }
+    return { formErrors, fieldErrors };
+  }
+  get formErrors() {
+    return this.flatten();
+  }
+};
+ZodError2.create = (issues) => {
+  const error40 = new ZodError2(issues);
+  return error40;
+};
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
+var errorMap = (issue2, _ctx) => {
+  let message;
+  switch (issue2.code) {
+    case ZodIssueCode2.invalid_type:
+      if (issue2.received === ZodParsedType.undefined) {
+        message = "Required";
+      } else {
+        message = `Expected ${issue2.expected}, received ${issue2.received}`;
+      }
+      break;
+    case ZodIssueCode2.invalid_literal:
+      message = `Invalid literal value, expected ${JSON.stringify(issue2.expected, util.jsonStringifyReplacer)}`;
+      break;
+    case ZodIssueCode2.unrecognized_keys:
+      message = `Unrecognized key(s) in object: ${util.joinValues(issue2.keys, ", ")}`;
+      break;
+    case ZodIssueCode2.invalid_union:
+      message = `Invalid input`;
+      break;
+    case ZodIssueCode2.invalid_union_discriminator:
+      message = `Invalid discriminator value. Expected ${util.joinValues(issue2.options)}`;
+      break;
+    case ZodIssueCode2.invalid_enum_value:
+      message = `Invalid enum value. Expected ${util.joinValues(issue2.options)}, received '${issue2.received}'`;
+      break;
+    case ZodIssueCode2.invalid_arguments:
+      message = `Invalid function arguments`;
+      break;
+    case ZodIssueCode2.invalid_return_type:
+      message = `Invalid function return type`;
+      break;
+    case ZodIssueCode2.invalid_date:
+      message = `Invalid date`;
+      break;
+    case ZodIssueCode2.invalid_string:
+      if (typeof issue2.validation === "object") {
+        if ("includes" in issue2.validation) {
+          message = `Invalid input: must include "${issue2.validation.includes}"`;
+          if (typeof issue2.validation.position === "number") {
+            message = `${message} at one or more positions greater than or equal to ${issue2.validation.position}`;
+          }
+        } else if ("startsWith" in issue2.validation) {
+          message = `Invalid input: must start with "${issue2.validation.startsWith}"`;
+        } else if ("endsWith" in issue2.validation) {
+          message = `Invalid input: must end with "${issue2.validation.endsWith}"`;
+        } else {
+          util.assertNever(issue2.validation);
+        }
+      } else if (issue2.validation !== "regex") {
+        message = `Invalid ${issue2.validation}`;
+      } else {
+        message = "Invalid";
+      }
+      break;
+    case ZodIssueCode2.too_small:
+      if (issue2.type === "array")
+        message = `Array must contain ${issue2.exact ? "exactly" : issue2.inclusive ? `at least` : `more than`} ${issue2.minimum} element(s)`;
+      else if (issue2.type === "string")
+        message = `String must contain ${issue2.exact ? "exactly" : issue2.inclusive ? `at least` : `over`} ${issue2.minimum} character(s)`;
+      else if (issue2.type === "number")
+        message = `Number must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${issue2.minimum}`;
+      else if (issue2.type === "bigint")
+        message = `Number must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${issue2.minimum}`;
+      else if (issue2.type === "date")
+        message = `Date must be ${issue2.exact ? `exactly equal to ` : issue2.inclusive ? `greater than or equal to ` : `greater than `}${new Date(Number(issue2.minimum))}`;
+      else
+        message = "Invalid input";
+      break;
+    case ZodIssueCode2.too_big:
+      if (issue2.type === "array")
+        message = `Array must contain ${issue2.exact ? `exactly` : issue2.inclusive ? `at most` : `less than`} ${issue2.maximum} element(s)`;
+      else if (issue2.type === "string")
+        message = `String must contain ${issue2.exact ? `exactly` : issue2.inclusive ? `at most` : `under`} ${issue2.maximum} character(s)`;
+      else if (issue2.type === "number")
+        message = `Number must be ${issue2.exact ? `exactly` : issue2.inclusive ? `less than or equal to` : `less than`} ${issue2.maximum}`;
+      else if (issue2.type === "bigint")
+        message = `BigInt must be ${issue2.exact ? `exactly` : issue2.inclusive ? `less than or equal to` : `less than`} ${issue2.maximum}`;
+      else if (issue2.type === "date")
+        message = `Date must be ${issue2.exact ? `exactly` : issue2.inclusive ? `smaller than or equal to` : `smaller than`} ${new Date(Number(issue2.maximum))}`;
+      else
+        message = "Invalid input";
+      break;
+    case ZodIssueCode2.custom:
+      message = `Invalid input`;
+      break;
+    case ZodIssueCode2.invalid_intersection_types:
+      message = `Intersection results could not be merged`;
+      break;
+    case ZodIssueCode2.not_multiple_of:
+      message = `Number must be a multiple of ${issue2.multipleOf}`;
+      break;
+    case ZodIssueCode2.not_finite:
+      message = "Number must be finite";
+      break;
+    default:
+      message = _ctx.defaultError;
+      util.assertNever(issue2);
+  }
+  return { message };
+};
+var en_default2 = errorMap;
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
+var overrideErrorMap = en_default2;
+function setErrorMap2(map2) {
+  overrideErrorMap = map2;
+}
+function getErrorMap2() {
+  return overrideErrorMap;
+}
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
+var makeIssue = (params) => {
+  const { data, path, errorMaps, issueData } = params;
+  const fullPath = [...path, ...issueData.path || []];
+  const fullIssue = {
+    ...issueData,
+    path: fullPath
+  };
+  if (issueData.message !== void 0) {
+    return {
+      ...issueData,
+      path: fullPath,
+      message: issueData.message
+    };
+  }
+  let errorMessage = "";
+  const maps = errorMaps.filter((m2) => !!m2).slice().reverse();
+  for (const map2 of maps) {
+    errorMessage = map2(fullIssue, { data, defaultError: errorMessage }).message;
+  }
+  return {
+    ...issueData,
+    path: fullPath,
+    message: errorMessage
+  };
+};
+var EMPTY_PATH = [];
+function addIssueToContext(ctx, issueData) {
+  const overrideMap = getErrorMap2();
+  const issue2 = makeIssue({
+    issueData,
+    data: ctx.data,
+    path: ctx.path,
+    errorMaps: [
+      ctx.common.contextualErrorMap,
+      // contextual error map is first priority
+      ctx.schemaErrorMap,
+      // then schema-bound map if available
+      overrideMap,
+      // then global override map
+      overrideMap === en_default2 ? void 0 : en_default2
+      // then global default map
+    ].filter((x2) => !!x2)
+  });
+  ctx.common.issues.push(issue2);
+}
+var ParseStatus = class _ParseStatus {
+  constructor() {
+    this.value = "valid";
+  }
+  dirty() {
+    if (this.value === "valid")
+      this.value = "dirty";
+  }
+  abort() {
+    if (this.value !== "aborted")
+      this.value = "aborted";
+  }
+  static mergeArray(status, results) {
+    const arrayValue = [];
+    for (const s2 of results) {
+      if (s2.status === "aborted")
+        return INVALID;
+      if (s2.status === "dirty")
+        status.dirty();
+      arrayValue.push(s2.value);
+    }
+    return { status: status.value, value: arrayValue };
+  }
+  static async mergeObjectAsync(status, pairs) {
+    const syncPairs = [];
+    for (const pair of pairs) {
+      const key = await pair.key;
+      const value = await pair.value;
+      syncPairs.push({
+        key,
+        value
+      });
+    }
+    return _ParseStatus.mergeObjectSync(status, syncPairs);
+  }
+  static mergeObjectSync(status, pairs) {
+    const finalObject = {};
+    for (const pair of pairs) {
+      const { key, value } = pair;
+      if (key.status === "aborted")
+        return INVALID;
+      if (value.status === "aborted")
+        return INVALID;
+      if (key.status === "dirty")
+        status.dirty();
+      if (value.status === "dirty")
+        status.dirty();
+      if (key.value !== "__proto__" && (typeof value.value !== "undefined" || pair.alwaysSet)) {
+        finalObject[key.value] = value.value;
+      }
+    }
+    return { status: status.value, value: finalObject };
+  }
+};
+var INVALID = Object.freeze({
+  status: "aborted"
+});
+var DIRTY = (value) => ({ status: "dirty", value });
+var OK = (value) => ({ status: "valid", value });
+var isAborted = (x2) => x2.status === "aborted";
+var isDirty = (x2) => x2.status === "dirty";
+var isValid = (x2) => x2.status === "valid";
+var isAsync = (x2) => typeof Promise !== "undefined" && x2 instanceof Promise;
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
+var errorUtil;
+(function(errorUtil2) {
+  errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
+  errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
+})(errorUtil || (errorUtil = {}));
+
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
+var ParseInputLazyPath = class {
+  constructor(parent, value, path, key) {
+    this._cachedPath = [];
+    this.parent = parent;
+    this.data = value;
+    this._path = path;
+    this._key = key;
+  }
+  get path() {
+    if (!this._cachedPath.length) {
+      if (Array.isArray(this._key)) {
+        this._cachedPath.push(...this._path, ...this._key);
+      } else {
+        this._cachedPath.push(...this._path, this._key);
+      }
+    }
+    return this._cachedPath;
+  }
+};
+var handleResult = (ctx, result) => {
+  if (isValid(result)) {
+    return { success: true, data: result.value };
+  } else {
+    if (!ctx.common.issues.length) {
+      throw new Error("Validation failed but no issues detected.");
+    }
+    return {
+      success: false,
+      get error() {
+        if (this._error)
+          return this._error;
+        const error40 = new ZodError2(ctx.common.issues);
+        this._error = error40;
+        return this._error;
+      }
+    };
+  }
+};
+function processCreateParams(params) {
+  if (!params)
+    return {};
+  const { errorMap: errorMap2, invalid_type_error, required_error, description } = params;
+  if (errorMap2 && (invalid_type_error || required_error)) {
+    throw new Error(`Can't use "invalid_type_error" or "required_error" in conjunction with custom error map.`);
+  }
+  if (errorMap2)
+    return { errorMap: errorMap2, description };
+  const customMap = (iss, ctx) => {
+    const { message } = params;
+    if (iss.code === "invalid_enum_value") {
+      return { message: message ?? ctx.defaultError };
+    }
+    if (typeof ctx.data === "undefined") {
+      return { message: message ?? required_error ?? ctx.defaultError };
+    }
+    if (iss.code !== "invalid_type")
+      return { message: ctx.defaultError };
+    return { message: message ?? invalid_type_error ?? ctx.defaultError };
+  };
+  return { errorMap: customMap, description };
+}
+var ZodType2 = class {
+  get description() {
+    return this._def.description;
+  }
+  _getType(input) {
+    return getParsedType2(input.data);
+  }
+  _getOrReturnCtx(input, ctx) {
+    return ctx || {
+      common: input.parent.common,
+      data: input.data,
+      parsedType: getParsedType2(input.data),
+      schemaErrorMap: this._def.errorMap,
+      path: input.path,
+      parent: input.parent
+    };
+  }
+  _processInputParams(input) {
+    return {
+      status: new ParseStatus(),
+      ctx: {
+        common: input.parent.common,
+        data: input.data,
+        parsedType: getParsedType2(input.data),
+        schemaErrorMap: this._def.errorMap,
+        path: input.path,
+        parent: input.parent
+      }
+    };
+  }
+  _parseSync(input) {
+    const result = this._parse(input);
+    if (isAsync(result)) {
+      throw new Error("Synchronous parse encountered promise.");
+    }
+    return result;
+  }
+  _parseAsync(input) {
+    const result = this._parse(input);
+    return Promise.resolve(result);
+  }
+  parse(data, params) {
+    const result = this.safeParse(data, params);
+    if (result.success)
+      return result.data;
+    throw result.error;
+  }
+  safeParse(data, params) {
+    const ctx = {
+      common: {
+        issues: [],
+        async: params?.async ?? false,
+        contextualErrorMap: params?.errorMap
+      },
+      path: params?.path || [],
+      schemaErrorMap: this._def.errorMap,
+      parent: null,
+      data,
+      parsedType: getParsedType2(data)
+    };
+    const result = this._parseSync({ data, path: ctx.path, parent: ctx });
+    return handleResult(ctx, result);
+  }
+  "~validate"(data) {
+    const ctx = {
+      common: {
+        issues: [],
+        async: !!this["~standard"].async
+      },
+      path: [],
+      schemaErrorMap: this._def.errorMap,
+      parent: null,
+      data,
+      parsedType: getParsedType2(data)
+    };
+    if (!this["~standard"].async) {
+      try {
+        const result = this._parseSync({ data, path: [], parent: ctx });
+        return isValid(result) ? {
+          value: result.value
+        } : {
+          issues: ctx.common.issues
+        };
+      } catch (err) {
+        if (err?.message?.toLowerCase()?.includes("encountered")) {
+          this["~standard"].async = true;
+        }
+        ctx.common = {
+          issues: [],
+          async: true
+        };
+      }
+    }
+    return this._parseAsync({ data, path: [], parent: ctx }).then((result) => isValid(result) ? {
+      value: result.value
+    } : {
+      issues: ctx.common.issues
+    });
+  }
+  async parseAsync(data, params) {
+    const result = await this.safeParseAsync(data, params);
+    if (result.success)
+      return result.data;
+    throw result.error;
+  }
+  async safeParseAsync(data, params) {
+    const ctx = {
+      common: {
+        issues: [],
+        contextualErrorMap: params?.errorMap,
+        async: true
+      },
+      path: params?.path || [],
+      schemaErrorMap: this._def.errorMap,
+      parent: null,
+      data,
+      parsedType: getParsedType2(data)
+    };
+    const maybeAsyncResult = this._parse({ data, path: ctx.path, parent: ctx });
+    const result = await (isAsync(maybeAsyncResult) ? maybeAsyncResult : Promise.resolve(maybeAsyncResult));
+    return handleResult(ctx, result);
+  }
+  refine(check2, message) {
+    const getIssueProperties = (val) => {
+      if (typeof message === "string" || typeof message === "undefined") {
+        return { message };
+      } else if (typeof message === "function") {
+        return message(val);
+      } else {
+        return message;
+      }
+    };
+    return this._refinement((val, ctx) => {
+      const result = check2(val);
+      const setError = () => ctx.addIssue({
+        code: ZodIssueCode2.custom,
+        ...getIssueProperties(val)
+      });
+      if (typeof Promise !== "undefined" && result instanceof Promise) {
+        return result.then((data) => {
+          if (!data) {
+            setError();
+            return false;
+          } else {
+            return true;
+          }
+        });
+      }
+      if (!result) {
+        setError();
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
+  refinement(check2, refinementData) {
+    return this._refinement((val, ctx) => {
+      if (!check2(val)) {
+        ctx.addIssue(typeof refinementData === "function" ? refinementData(val, ctx) : refinementData);
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
+  _refinement(refinement) {
+    return new ZodEffects({
+      schema: this,
+      typeName: ZodFirstPartyTypeKind.ZodEffects,
+      effect: { type: "refinement", refinement }
+    });
+  }
+  superRefine(refinement) {
+    return this._refinement(refinement);
+  }
+  constructor(def) {
+    this.spa = this.safeParseAsync;
+    this._def = def;
+    this.parse = this.parse.bind(this);
+    this.safeParse = this.safeParse.bind(this);
+    this.parseAsync = this.parseAsync.bind(this);
+    this.safeParseAsync = this.safeParseAsync.bind(this);
+    this.spa = this.spa.bind(this);
+    this.refine = this.refine.bind(this);
+    this.refinement = this.refinement.bind(this);
+    this.superRefine = this.superRefine.bind(this);
+    this.optional = this.optional.bind(this);
+    this.nullable = this.nullable.bind(this);
+    this.nullish = this.nullish.bind(this);
+    this.array = this.array.bind(this);
+    this.promise = this.promise.bind(this);
+    this.or = this.or.bind(this);
+    this.and = this.and.bind(this);
+    this.transform = this.transform.bind(this);
+    this.brand = this.brand.bind(this);
+    this.default = this.default.bind(this);
+    this.catch = this.catch.bind(this);
+    this.describe = this.describe.bind(this);
+    this.pipe = this.pipe.bind(this);
+    this.readonly = this.readonly.bind(this);
+    this.isNullable = this.isNullable.bind(this);
+    this.isOptional = this.isOptional.bind(this);
+    this["~standard"] = {
+      version: 1,
+      vendor: "zod",
+      validate: (data) => this["~validate"](data)
+    };
+  }
+  optional() {
+    return ZodOptional2.create(this, this._def);
+  }
+  nullable() {
+    return ZodNullable2.create(this, this._def);
+  }
+  nullish() {
+    return this.nullable().optional();
+  }
+  array() {
+    return ZodArray2.create(this);
+  }
+  promise() {
+    return ZodPromise2.create(this, this._def);
+  }
+  or(option) {
+    return ZodUnion2.create([this, option], this._def);
+  }
+  and(incoming) {
+    return ZodIntersection2.create(this, incoming, this._def);
+  }
+  transform(transform2) {
+    return new ZodEffects({
+      ...processCreateParams(this._def),
+      schema: this,
+      typeName: ZodFirstPartyTypeKind.ZodEffects,
+      effect: { type: "transform", transform: transform2 }
+    });
+  }
+  default(def) {
+    const defaultValueFunc = typeof def === "function" ? def : () => def;
+    return new ZodDefault2({
+      ...processCreateParams(this._def),
+      innerType: this,
+      defaultValue: defaultValueFunc,
+      typeName: ZodFirstPartyTypeKind.ZodDefault
+    });
+  }
+  brand() {
+    return new ZodBranded({
+      typeName: ZodFirstPartyTypeKind.ZodBranded,
+      type: this,
+      ...processCreateParams(this._def)
+    });
+  }
+  catch(def) {
+    const catchValueFunc = typeof def === "function" ? def : () => def;
+    return new ZodCatch2({
+      ...processCreateParams(this._def),
+      innerType: this,
+      catchValue: catchValueFunc,
+      typeName: ZodFirstPartyTypeKind.ZodCatch
+    });
+  }
+  describe(description) {
+    const This = this.constructor;
+    return new This({
+      ...this._def,
+      description
+    });
+  }
+  pipe(target) {
+    return ZodPipeline.create(this, target);
+  }
+  readonly() {
+    return ZodReadonly2.create(this);
+  }
+  isOptional() {
+    return this.safeParse(void 0).success;
+  }
+  isNullable() {
+    return this.safeParse(null).success;
+  }
+};
+var cuidRegex = /^c[^\s-]{8,}$/i;
+var cuid2Regex = /^[0-9a-z]+$/;
+var ulidRegex = /^[0-9A-HJKMNP-TV-Z]{26}$/i;
+var uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/i;
+var nanoidRegex = /^[a-z0-9_-]{21}$/i;
+var jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/;
+var durationRegex = /^[-+]?P(?!$)(?:(?:[-+]?\d+Y)|(?:[-+]?\d+[.,]\d+Y$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:(?:[-+]?\d+W)|(?:[-+]?\d+[.,]\d+W$))?(?:(?:[-+]?\d+D)|(?:[-+]?\d+[.,]\d+D$))?(?:T(?=[\d+-])(?:(?:[-+]?\d+H)|(?:[-+]?\d+[.,]\d+H$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:[-+]?\d+(?:[.,]\d+)?S)?)??$/;
+var emailRegex = /^(?!\.)(?!.*\.\.)([A-Z0-9_'+\-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
+var _emojiRegex = `^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$`;
+var emojiRegex;
+var ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
+var ipv4CidrRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/(3[0-2]|[12]?[0-9])$/;
+var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
+var ipv6CidrRegex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/;
+var base64Regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+var base64urlRegex = /^([0-9a-zA-Z-_]{4})*(([0-9a-zA-Z-_]{2}(==)?)|([0-9a-zA-Z-_]{3}(=)?))?$/;
+var dateRegexSource = `((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))`;
+var dateRegex = new RegExp(`^${dateRegexSource}$`);
+function timeRegexSource(args) {
+  let secondsRegexSource = `[0-5]\\d`;
+  if (args.precision) {
+    secondsRegexSource = `${secondsRegexSource}\\.\\d{${args.precision}}`;
+  } else if (args.precision == null) {
+    secondsRegexSource = `${secondsRegexSource}(\\.\\d+)?`;
+  }
+  const secondsQuantifier = args.precision ? "+" : "?";
+  return `([01]\\d|2[0-3]):[0-5]\\d(:${secondsRegexSource})${secondsQuantifier}`;
+}
+function timeRegex(args) {
+  return new RegExp(`^${timeRegexSource(args)}$`);
+}
+function datetimeRegex(args) {
+  let regex = `${dateRegexSource}T${timeRegexSource(args)}`;
+  const opts = [];
+  opts.push(args.local ? `Z?` : `Z`);
+  if (args.offset)
+    opts.push(`([+-]\\d{2}:?\\d{2})`);
+  regex = `${regex}(${opts.join("|")})`;
+  return new RegExp(`^${regex}$`);
+}
+function isValidIP(ip, version3) {
+  if ((version3 === "v4" || !version3) && ipv4Regex.test(ip)) {
+    return true;
+  }
+  if ((version3 === "v6" || !version3) && ipv6Regex.test(ip)) {
+    return true;
+  }
+  return false;
+}
+function isValidJWT2(jwt3, alg) {
+  if (!jwtRegex.test(jwt3))
+    return false;
+  try {
+    const [header] = jwt3.split(".");
+    if (!header)
+      return false;
+    const base643 = header.replace(/-/g, "+").replace(/_/g, "/").padEnd(header.length + (4 - header.length % 4) % 4, "=");
+    const decoded = JSON.parse(atob(base643));
+    if (typeof decoded !== "object" || decoded === null)
+      return false;
+    if ("typ" in decoded && decoded?.typ !== "JWT")
+      return false;
+    if (!decoded.alg)
+      return false;
+    if (alg && decoded.alg !== alg)
+      return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+function isValidCidr(ip, version3) {
+  if ((version3 === "v4" || !version3) && ipv4CidrRegex.test(ip)) {
+    return true;
+  }
+  if ((version3 === "v6" || !version3) && ipv6CidrRegex.test(ip)) {
+    return true;
+  }
+  return false;
+}
+var ZodString2 = class _ZodString2 extends ZodType2 {
+  _parse(input) {
+    if (this._def.coerce) {
+      input.data = String(input.data);
+    }
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.string) {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.string,
+        received: ctx2.parsedType
+      });
+      return INVALID;
+    }
+    const status = new ParseStatus();
+    let ctx = void 0;
+    for (const check2 of this._def.checks) {
+      if (check2.kind === "min") {
+        if (input.data.length < check2.value) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_small,
+            minimum: check2.value,
+            type: "string",
+            inclusive: true,
+            exact: false,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "max") {
+        if (input.data.length > check2.value) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_big,
+            maximum: check2.value,
+            type: "string",
+            inclusive: true,
+            exact: false,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "length") {
+        const tooBig = input.data.length > check2.value;
+        const tooSmall = input.data.length < check2.value;
+        if (tooBig || tooSmall) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          if (tooBig) {
+            addIssueToContext(ctx, {
+              code: ZodIssueCode2.too_big,
+              maximum: check2.value,
+              type: "string",
+              inclusive: true,
+              exact: true,
+              message: check2.message
+            });
+          } else if (tooSmall) {
+            addIssueToContext(ctx, {
+              code: ZodIssueCode2.too_small,
+              minimum: check2.value,
+              type: "string",
+              inclusive: true,
+              exact: true,
+              message: check2.message
+            });
+          }
+          status.dirty();
+        }
+      } else if (check2.kind === "email") {
+        if (!emailRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "email",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "emoji") {
+        if (!emojiRegex) {
+          emojiRegex = new RegExp(_emojiRegex, "u");
+        }
+        if (!emojiRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "emoji",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "uuid") {
+        if (!uuidRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "uuid",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "nanoid") {
+        if (!nanoidRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "nanoid",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "cuid") {
+        if (!cuidRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "cuid",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "cuid2") {
+        if (!cuid2Regex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "cuid2",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "ulid") {
+        if (!ulidRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "ulid",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "url") {
+        try {
+          new URL(input.data);
+        } catch {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "url",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "regex") {
+        check2.regex.lastIndex = 0;
+        const testResult = check2.regex.test(input.data);
+        if (!testResult) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "regex",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "trim") {
+        input.data = input.data.trim();
+      } else if (check2.kind === "includes") {
+        if (!input.data.includes(check2.value, check2.position)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: { includes: check2.value, position: check2.position },
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "toLowerCase") {
+        input.data = input.data.toLowerCase();
+      } else if (check2.kind === "toUpperCase") {
+        input.data = input.data.toUpperCase();
+      } else if (check2.kind === "startsWith") {
+        if (!input.data.startsWith(check2.value)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: { startsWith: check2.value },
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "endsWith") {
+        if (!input.data.endsWith(check2.value)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: { endsWith: check2.value },
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "datetime") {
+        const regex = datetimeRegex(check2);
+        if (!regex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: "datetime",
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "date") {
+        const regex = dateRegex;
+        if (!regex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: "date",
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "time") {
+        const regex = timeRegex(check2);
+        if (!regex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_string,
+            validation: "time",
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "duration") {
+        if (!durationRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "duration",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "ip") {
+        if (!isValidIP(input.data, check2.version)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "ip",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "jwt") {
+        if (!isValidJWT2(input.data, check2.alg)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "jwt",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "cidr") {
+        if (!isValidCidr(input.data, check2.version)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "cidr",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "base64") {
+        if (!base64Regex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "base64",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "base64url") {
+        if (!base64urlRegex.test(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            validation: "base64url",
+            code: ZodIssueCode2.invalid_string,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else {
+        util.assertNever(check2);
+      }
+    }
+    return { status: status.value, value: input.data };
+  }
+  _regex(regex, validation, message) {
+    return this.refinement((data) => regex.test(data), {
+      validation,
+      code: ZodIssueCode2.invalid_string,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  _addCheck(check2) {
+    return new _ZodString2({
+      ...this._def,
+      checks: [...this._def.checks, check2]
+    });
+  }
+  email(message) {
+    return this._addCheck({ kind: "email", ...errorUtil.errToObj(message) });
+  }
+  url(message) {
+    return this._addCheck({ kind: "url", ...errorUtil.errToObj(message) });
+  }
+  emoji(message) {
+    return this._addCheck({ kind: "emoji", ...errorUtil.errToObj(message) });
+  }
+  uuid(message) {
+    return this._addCheck({ kind: "uuid", ...errorUtil.errToObj(message) });
+  }
+  nanoid(message) {
+    return this._addCheck({ kind: "nanoid", ...errorUtil.errToObj(message) });
+  }
+  cuid(message) {
+    return this._addCheck({ kind: "cuid", ...errorUtil.errToObj(message) });
+  }
+  cuid2(message) {
+    return this._addCheck({ kind: "cuid2", ...errorUtil.errToObj(message) });
+  }
+  ulid(message) {
+    return this._addCheck({ kind: "ulid", ...errorUtil.errToObj(message) });
+  }
+  base64(message) {
+    return this._addCheck({ kind: "base64", ...errorUtil.errToObj(message) });
+  }
+  base64url(message) {
+    return this._addCheck({
+      kind: "base64url",
+      ...errorUtil.errToObj(message)
+    });
+  }
+  jwt(options) {
+    return this._addCheck({ kind: "jwt", ...errorUtil.errToObj(options) });
+  }
+  ip(options) {
+    return this._addCheck({ kind: "ip", ...errorUtil.errToObj(options) });
+  }
+  cidr(options) {
+    return this._addCheck({ kind: "cidr", ...errorUtil.errToObj(options) });
+  }
+  datetime(options) {
+    if (typeof options === "string") {
+      return this._addCheck({
+        kind: "datetime",
+        precision: null,
+        offset: false,
+        local: false,
+        message: options
+      });
+    }
+    return this._addCheck({
+      kind: "datetime",
+      precision: typeof options?.precision === "undefined" ? null : options?.precision,
+      offset: options?.offset ?? false,
+      local: options?.local ?? false,
+      ...errorUtil.errToObj(options?.message)
+    });
+  }
+  date(message) {
+    return this._addCheck({ kind: "date", message });
+  }
+  time(options) {
+    if (typeof options === "string") {
+      return this._addCheck({
+        kind: "time",
+        precision: null,
+        message: options
+      });
+    }
+    return this._addCheck({
+      kind: "time",
+      precision: typeof options?.precision === "undefined" ? null : options?.precision,
+      ...errorUtil.errToObj(options?.message)
+    });
+  }
+  duration(message) {
+    return this._addCheck({ kind: "duration", ...errorUtil.errToObj(message) });
+  }
+  regex(regex, message) {
+    return this._addCheck({
+      kind: "regex",
+      regex,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  includes(value, options) {
+    return this._addCheck({
+      kind: "includes",
+      value,
+      position: options?.position,
+      ...errorUtil.errToObj(options?.message)
+    });
+  }
+  startsWith(value, message) {
+    return this._addCheck({
+      kind: "startsWith",
+      value,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  endsWith(value, message) {
+    return this._addCheck({
+      kind: "endsWith",
+      value,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  min(minLength, message) {
+    return this._addCheck({
+      kind: "min",
+      value: minLength,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  max(maxLength, message) {
+    return this._addCheck({
+      kind: "max",
+      value: maxLength,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  length(len, message) {
+    return this._addCheck({
+      kind: "length",
+      value: len,
+      ...errorUtil.errToObj(message)
+    });
+  }
+  /**
+   * Equivalent to `.min(1)`
+   */
+  nonempty(message) {
+    return this.min(1, errorUtil.errToObj(message));
+  }
+  trim() {
+    return new _ZodString2({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "trim" }]
+    });
+  }
+  toLowerCase() {
+    return new _ZodString2({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "toLowerCase" }]
+    });
+  }
+  toUpperCase() {
+    return new _ZodString2({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "toUpperCase" }]
+    });
+  }
+  get isDatetime() {
+    return !!this._def.checks.find((ch) => ch.kind === "datetime");
+  }
+  get isDate() {
+    return !!this._def.checks.find((ch) => ch.kind === "date");
+  }
+  get isTime() {
+    return !!this._def.checks.find((ch) => ch.kind === "time");
+  }
+  get isDuration() {
+    return !!this._def.checks.find((ch) => ch.kind === "duration");
+  }
+  get isEmail() {
+    return !!this._def.checks.find((ch) => ch.kind === "email");
+  }
+  get isURL() {
+    return !!this._def.checks.find((ch) => ch.kind === "url");
+  }
+  get isEmoji() {
+    return !!this._def.checks.find((ch) => ch.kind === "emoji");
+  }
+  get isUUID() {
+    return !!this._def.checks.find((ch) => ch.kind === "uuid");
+  }
+  get isNANOID() {
+    return !!this._def.checks.find((ch) => ch.kind === "nanoid");
+  }
+  get isCUID() {
+    return !!this._def.checks.find((ch) => ch.kind === "cuid");
+  }
+  get isCUID2() {
+    return !!this._def.checks.find((ch) => ch.kind === "cuid2");
+  }
+  get isULID() {
+    return !!this._def.checks.find((ch) => ch.kind === "ulid");
+  }
+  get isIP() {
+    return !!this._def.checks.find((ch) => ch.kind === "ip");
+  }
+  get isCIDR() {
+    return !!this._def.checks.find((ch) => ch.kind === "cidr");
+  }
+  get isBase64() {
+    return !!this._def.checks.find((ch) => ch.kind === "base64");
+  }
+  get isBase64url() {
+    return !!this._def.checks.find((ch) => ch.kind === "base64url");
+  }
+  get minLength() {
+    let min = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "min") {
+        if (min === null || ch.value > min)
+          min = ch.value;
+      }
+    }
+    return min;
+  }
+  get maxLength() {
+    let max = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "max") {
+        if (max === null || ch.value < max)
+          max = ch.value;
+      }
+    }
+    return max;
+  }
+};
+ZodString2.create = (params) => {
+  return new ZodString2({
+    checks: [],
+    typeName: ZodFirstPartyTypeKind.ZodString,
+    coerce: params?.coerce ?? false,
+    ...processCreateParams(params)
+  });
+};
+function floatSafeRemainder2(val, step) {
+  const valDecCount = (val.toString().split(".")[1] || "").length;
+  const stepDecCount = (step.toString().split(".")[1] || "").length;
+  const decCount = valDecCount > stepDecCount ? valDecCount : stepDecCount;
+  const valInt = Number.parseInt(val.toFixed(decCount).replace(".", ""));
+  const stepInt = Number.parseInt(step.toFixed(decCount).replace(".", ""));
+  return valInt % stepInt / 10 ** decCount;
+}
+var ZodNumber2 = class _ZodNumber extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this.min = this.gte;
+    this.max = this.lte;
+    this.step = this.multipleOf;
+  }
+  _parse(input) {
+    if (this._def.coerce) {
+      input.data = Number(input.data);
+    }
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.number) {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.number,
+        received: ctx2.parsedType
+      });
+      return INVALID;
+    }
+    let ctx = void 0;
+    const status = new ParseStatus();
+    for (const check2 of this._def.checks) {
+      if (check2.kind === "int") {
+        if (!util.isInteger(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.invalid_type,
+            expected: "integer",
+            received: "float",
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "min") {
+        const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
+        if (tooSmall) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_small,
+            minimum: check2.value,
+            type: "number",
+            inclusive: check2.inclusive,
+            exact: false,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "max") {
+        const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
+        if (tooBig) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_big,
+            maximum: check2.value,
+            type: "number",
+            inclusive: check2.inclusive,
+            exact: false,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "multipleOf") {
+        if (floatSafeRemainder2(input.data, check2.value) !== 0) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.not_multiple_of,
+            multipleOf: check2.value,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "finite") {
+        if (!Number.isFinite(input.data)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.not_finite,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else {
+        util.assertNever(check2);
+      }
+    }
+    return { status: status.value, value: input.data };
+  }
+  gte(value, message) {
+    return this.setLimit("min", value, true, errorUtil.toString(message));
+  }
+  gt(value, message) {
+    return this.setLimit("min", value, false, errorUtil.toString(message));
+  }
+  lte(value, message) {
+    return this.setLimit("max", value, true, errorUtil.toString(message));
+  }
+  lt(value, message) {
+    return this.setLimit("max", value, false, errorUtil.toString(message));
+  }
+  setLimit(kind, value, inclusive, message) {
+    return new _ZodNumber({
+      ...this._def,
+      checks: [
+        ...this._def.checks,
+        {
+          kind,
+          value,
+          inclusive,
+          message: errorUtil.toString(message)
+        }
+      ]
+    });
+  }
+  _addCheck(check2) {
+    return new _ZodNumber({
+      ...this._def,
+      checks: [...this._def.checks, check2]
+    });
+  }
+  int(message) {
+    return this._addCheck({
+      kind: "int",
+      message: errorUtil.toString(message)
+    });
+  }
+  positive(message) {
+    return this._addCheck({
+      kind: "min",
+      value: 0,
+      inclusive: false,
+      message: errorUtil.toString(message)
+    });
+  }
+  negative(message) {
+    return this._addCheck({
+      kind: "max",
+      value: 0,
+      inclusive: false,
+      message: errorUtil.toString(message)
+    });
+  }
+  nonpositive(message) {
+    return this._addCheck({
+      kind: "max",
+      value: 0,
+      inclusive: true,
+      message: errorUtil.toString(message)
+    });
+  }
+  nonnegative(message) {
+    return this._addCheck({
+      kind: "min",
+      value: 0,
+      inclusive: true,
+      message: errorUtil.toString(message)
+    });
+  }
+  multipleOf(value, message) {
+    return this._addCheck({
+      kind: "multipleOf",
+      value,
+      message: errorUtil.toString(message)
+    });
+  }
+  finite(message) {
+    return this._addCheck({
+      kind: "finite",
+      message: errorUtil.toString(message)
+    });
+  }
+  safe(message) {
+    return this._addCheck({
+      kind: "min",
+      inclusive: true,
+      value: Number.MIN_SAFE_INTEGER,
+      message: errorUtil.toString(message)
+    })._addCheck({
+      kind: "max",
+      inclusive: true,
+      value: Number.MAX_SAFE_INTEGER,
+      message: errorUtil.toString(message)
+    });
+  }
+  get minValue() {
+    let min = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "min") {
+        if (min === null || ch.value > min)
+          min = ch.value;
+      }
+    }
+    return min;
+  }
+  get maxValue() {
+    let max = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "max") {
+        if (max === null || ch.value < max)
+          max = ch.value;
+      }
+    }
+    return max;
+  }
+  get isInt() {
+    return !!this._def.checks.find((ch) => ch.kind === "int" || ch.kind === "multipleOf" && util.isInteger(ch.value));
+  }
+  get isFinite() {
+    let max = null;
+    let min = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "finite" || ch.kind === "int" || ch.kind === "multipleOf") {
+        return true;
+      } else if (ch.kind === "min") {
+        if (min === null || ch.value > min)
+          min = ch.value;
+      } else if (ch.kind === "max") {
+        if (max === null || ch.value < max)
+          max = ch.value;
+      }
+    }
+    return Number.isFinite(min) && Number.isFinite(max);
+  }
+};
+ZodNumber2.create = (params) => {
+  return new ZodNumber2({
+    checks: [],
+    typeName: ZodFirstPartyTypeKind.ZodNumber,
+    coerce: params?.coerce || false,
+    ...processCreateParams(params)
+  });
+};
+var ZodBigInt2 = class _ZodBigInt extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this.min = this.gte;
+    this.max = this.lte;
+  }
+  _parse(input) {
+    if (this._def.coerce) {
+      try {
+        input.data = BigInt(input.data);
+      } catch {
+        return this._getInvalidInput(input);
+      }
+    }
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.bigint) {
+      return this._getInvalidInput(input);
+    }
+    let ctx = void 0;
+    const status = new ParseStatus();
+    for (const check2 of this._def.checks) {
+      if (check2.kind === "min") {
+        const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
+        if (tooSmall) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_small,
+            type: "bigint",
+            minimum: check2.value,
+            inclusive: check2.inclusive,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "max") {
+        const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
+        if (tooBig) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_big,
+            type: "bigint",
+            maximum: check2.value,
+            inclusive: check2.inclusive,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "multipleOf") {
+        if (input.data % check2.value !== BigInt(0)) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.not_multiple_of,
+            multipleOf: check2.value,
+            message: check2.message
+          });
+          status.dirty();
+        }
+      } else {
+        util.assertNever(check2);
+      }
+    }
+    return { status: status.value, value: input.data };
+  }
+  _getInvalidInput(input) {
+    const ctx = this._getOrReturnCtx(input);
+    addIssueToContext(ctx, {
+      code: ZodIssueCode2.invalid_type,
+      expected: ZodParsedType.bigint,
+      received: ctx.parsedType
+    });
+    return INVALID;
+  }
+  gte(value, message) {
+    return this.setLimit("min", value, true, errorUtil.toString(message));
+  }
+  gt(value, message) {
+    return this.setLimit("min", value, false, errorUtil.toString(message));
+  }
+  lte(value, message) {
+    return this.setLimit("max", value, true, errorUtil.toString(message));
+  }
+  lt(value, message) {
+    return this.setLimit("max", value, false, errorUtil.toString(message));
+  }
+  setLimit(kind, value, inclusive, message) {
+    return new _ZodBigInt({
+      ...this._def,
+      checks: [
+        ...this._def.checks,
+        {
+          kind,
+          value,
+          inclusive,
+          message: errorUtil.toString(message)
+        }
+      ]
+    });
+  }
+  _addCheck(check2) {
+    return new _ZodBigInt({
+      ...this._def,
+      checks: [...this._def.checks, check2]
+    });
+  }
+  positive(message) {
+    return this._addCheck({
+      kind: "min",
+      value: BigInt(0),
+      inclusive: false,
+      message: errorUtil.toString(message)
+    });
+  }
+  negative(message) {
+    return this._addCheck({
+      kind: "max",
+      value: BigInt(0),
+      inclusive: false,
+      message: errorUtil.toString(message)
+    });
+  }
+  nonpositive(message) {
+    return this._addCheck({
+      kind: "max",
+      value: BigInt(0),
+      inclusive: true,
+      message: errorUtil.toString(message)
+    });
+  }
+  nonnegative(message) {
+    return this._addCheck({
+      kind: "min",
+      value: BigInt(0),
+      inclusive: true,
+      message: errorUtil.toString(message)
+    });
+  }
+  multipleOf(value, message) {
+    return this._addCheck({
+      kind: "multipleOf",
+      value,
+      message: errorUtil.toString(message)
+    });
+  }
+  get minValue() {
+    let min = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "min") {
+        if (min === null || ch.value > min)
+          min = ch.value;
+      }
+    }
+    return min;
+  }
+  get maxValue() {
+    let max = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "max") {
+        if (max === null || ch.value < max)
+          max = ch.value;
+      }
+    }
+    return max;
+  }
+};
+ZodBigInt2.create = (params) => {
+  return new ZodBigInt2({
+    checks: [],
+    typeName: ZodFirstPartyTypeKind.ZodBigInt,
+    coerce: params?.coerce ?? false,
+    ...processCreateParams(params)
+  });
+};
+var ZodBoolean2 = class extends ZodType2 {
+  _parse(input) {
+    if (this._def.coerce) {
+      input.data = Boolean(input.data);
+    }
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.boolean) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.boolean,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+};
+ZodBoolean2.create = (params) => {
+  return new ZodBoolean2({
+    typeName: ZodFirstPartyTypeKind.ZodBoolean,
+    coerce: params?.coerce || false,
+    ...processCreateParams(params)
+  });
+};
+var ZodDate2 = class _ZodDate extends ZodType2 {
+  _parse(input) {
+    if (this._def.coerce) {
+      input.data = new Date(input.data);
+    }
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.date) {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.date,
+        received: ctx2.parsedType
+      });
+      return INVALID;
+    }
+    if (Number.isNaN(input.data.getTime())) {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        code: ZodIssueCode2.invalid_date
+      });
+      return INVALID;
+    }
+    const status = new ParseStatus();
+    let ctx = void 0;
+    for (const check2 of this._def.checks) {
+      if (check2.kind === "min") {
+        if (input.data.getTime() < check2.value) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_small,
+            message: check2.message,
+            inclusive: true,
+            exact: false,
+            minimum: check2.value,
+            type: "date"
+          });
+          status.dirty();
+        }
+      } else if (check2.kind === "max") {
+        if (input.data.getTime() > check2.value) {
+          ctx = this._getOrReturnCtx(input, ctx);
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.too_big,
+            message: check2.message,
+            inclusive: true,
+            exact: false,
+            maximum: check2.value,
+            type: "date"
+          });
+          status.dirty();
+        }
+      } else {
+        util.assertNever(check2);
+      }
+    }
+    return {
+      status: status.value,
+      value: new Date(input.data.getTime())
+    };
+  }
+  _addCheck(check2) {
+    return new _ZodDate({
+      ...this._def,
+      checks: [...this._def.checks, check2]
+    });
+  }
+  min(minDate, message) {
+    return this._addCheck({
+      kind: "min",
+      value: minDate.getTime(),
+      message: errorUtil.toString(message)
+    });
+  }
+  max(maxDate, message) {
+    return this._addCheck({
+      kind: "max",
+      value: maxDate.getTime(),
+      message: errorUtil.toString(message)
+    });
+  }
+  get minDate() {
+    let min = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "min") {
+        if (min === null || ch.value > min)
+          min = ch.value;
+      }
+    }
+    return min != null ? new Date(min) : null;
+  }
+  get maxDate() {
+    let max = null;
+    for (const ch of this._def.checks) {
+      if (ch.kind === "max") {
+        if (max === null || ch.value < max)
+          max = ch.value;
+      }
+    }
+    return max != null ? new Date(max) : null;
+  }
+};
+ZodDate2.create = (params) => {
+  return new ZodDate2({
+    checks: [],
+    coerce: params?.coerce || false,
+    typeName: ZodFirstPartyTypeKind.ZodDate,
+    ...processCreateParams(params)
+  });
+};
+var ZodSymbol2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.symbol) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.symbol,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+};
+ZodSymbol2.create = (params) => {
+  return new ZodSymbol2({
+    typeName: ZodFirstPartyTypeKind.ZodSymbol,
+    ...processCreateParams(params)
+  });
+};
+var ZodUndefined2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.undefined) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.undefined,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+};
+ZodUndefined2.create = (params) => {
+  return new ZodUndefined2({
+    typeName: ZodFirstPartyTypeKind.ZodUndefined,
+    ...processCreateParams(params)
+  });
+};
+var ZodNull2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.null) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.null,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+};
+ZodNull2.create = (params) => {
+  return new ZodNull2({
+    typeName: ZodFirstPartyTypeKind.ZodNull,
+    ...processCreateParams(params)
+  });
+};
+var ZodAny2 = class extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this._any = true;
+  }
+  _parse(input) {
+    return OK(input.data);
+  }
+};
+ZodAny2.create = (params) => {
+  return new ZodAny2({
+    typeName: ZodFirstPartyTypeKind.ZodAny,
+    ...processCreateParams(params)
+  });
+};
+var ZodUnknown2 = class extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this._unknown = true;
+  }
+  _parse(input) {
+    return OK(input.data);
+  }
+};
+ZodUnknown2.create = (params) => {
+  return new ZodUnknown2({
+    typeName: ZodFirstPartyTypeKind.ZodUnknown,
+    ...processCreateParams(params)
+  });
+};
+var ZodNever2 = class extends ZodType2 {
+  _parse(input) {
+    const ctx = this._getOrReturnCtx(input);
+    addIssueToContext(ctx, {
+      code: ZodIssueCode2.invalid_type,
+      expected: ZodParsedType.never,
+      received: ctx.parsedType
+    });
+    return INVALID;
+  }
+};
+ZodNever2.create = (params) => {
+  return new ZodNever2({
+    typeName: ZodFirstPartyTypeKind.ZodNever,
+    ...processCreateParams(params)
+  });
+};
+var ZodVoid2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.undefined) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.void,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+};
+ZodVoid2.create = (params) => {
+  return new ZodVoid2({
+    typeName: ZodFirstPartyTypeKind.ZodVoid,
+    ...processCreateParams(params)
+  });
+};
+var ZodArray2 = class _ZodArray extends ZodType2 {
+  _parse(input) {
+    const { ctx, status } = this._processInputParams(input);
+    const def = this._def;
+    if (ctx.parsedType !== ZodParsedType.array) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.array,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    if (def.exactLength !== null) {
+      const tooBig = ctx.data.length > def.exactLength.value;
+      const tooSmall = ctx.data.length < def.exactLength.value;
+      if (tooBig || tooSmall) {
+        addIssueToContext(ctx, {
+          code: tooBig ? ZodIssueCode2.too_big : ZodIssueCode2.too_small,
+          minimum: tooSmall ? def.exactLength.value : void 0,
+          maximum: tooBig ? def.exactLength.value : void 0,
+          type: "array",
+          inclusive: true,
+          exact: true,
+          message: def.exactLength.message
+        });
+        status.dirty();
+      }
+    }
+    if (def.minLength !== null) {
+      if (ctx.data.length < def.minLength.value) {
+        addIssueToContext(ctx, {
+          code: ZodIssueCode2.too_small,
+          minimum: def.minLength.value,
+          type: "array",
+          inclusive: true,
+          exact: false,
+          message: def.minLength.message
+        });
+        status.dirty();
+      }
+    }
+    if (def.maxLength !== null) {
+      if (ctx.data.length > def.maxLength.value) {
+        addIssueToContext(ctx, {
+          code: ZodIssueCode2.too_big,
+          maximum: def.maxLength.value,
+          type: "array",
+          inclusive: true,
+          exact: false,
+          message: def.maxLength.message
+        });
+        status.dirty();
+      }
+    }
+    if (ctx.common.async) {
+      return Promise.all([...ctx.data].map((item, i2) => {
+        return def.type._parseAsync(new ParseInputLazyPath(ctx, item, ctx.path, i2));
+      })).then((result2) => {
+        return ParseStatus.mergeArray(status, result2);
+      });
+    }
+    const result = [...ctx.data].map((item, i2) => {
+      return def.type._parseSync(new ParseInputLazyPath(ctx, item, ctx.path, i2));
+    });
+    return ParseStatus.mergeArray(status, result);
+  }
+  get element() {
+    return this._def.type;
+  }
+  min(minLength, message) {
+    return new _ZodArray({
+      ...this._def,
+      minLength: { value: minLength, message: errorUtil.toString(message) }
+    });
+  }
+  max(maxLength, message) {
+    return new _ZodArray({
+      ...this._def,
+      maxLength: { value: maxLength, message: errorUtil.toString(message) }
+    });
+  }
+  length(len, message) {
+    return new _ZodArray({
+      ...this._def,
+      exactLength: { value: len, message: errorUtil.toString(message) }
+    });
+  }
+  nonempty(message) {
+    return this.min(1, message);
+  }
+};
+ZodArray2.create = (schema, params) => {
+  return new ZodArray2({
+    type: schema,
+    minLength: null,
+    maxLength: null,
+    exactLength: null,
+    typeName: ZodFirstPartyTypeKind.ZodArray,
+    ...processCreateParams(params)
+  });
+};
+function deepPartialify(schema) {
+  if (schema instanceof ZodObject2) {
+    const newShape = {};
+    for (const key in schema.shape) {
+      const fieldSchema = schema.shape[key];
+      newShape[key] = ZodOptional2.create(deepPartialify(fieldSchema));
+    }
+    return new ZodObject2({
+      ...schema._def,
+      shape: () => newShape
+    });
+  } else if (schema instanceof ZodArray2) {
+    return new ZodArray2({
+      ...schema._def,
+      type: deepPartialify(schema.element)
+    });
+  } else if (schema instanceof ZodOptional2) {
+    return ZodOptional2.create(deepPartialify(schema.unwrap()));
+  } else if (schema instanceof ZodNullable2) {
+    return ZodNullable2.create(deepPartialify(schema.unwrap()));
+  } else if (schema instanceof ZodTuple2) {
+    return ZodTuple2.create(schema.items.map((item) => deepPartialify(item)));
+  } else {
+    return schema;
+  }
+}
+var ZodObject2 = class _ZodObject extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this._cached = null;
+    this.nonstrict = this.passthrough;
+    this.augment = this.extend;
+  }
+  _getCached() {
+    if (this._cached !== null)
+      return this._cached;
+    const shape = this._def.shape();
+    const keys = util.objectKeys(shape);
+    this._cached = { shape, keys };
+    return this._cached;
+  }
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.object) {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.object,
+        received: ctx2.parsedType
+      });
+      return INVALID;
+    }
+    const { status, ctx } = this._processInputParams(input);
+    const { shape, keys: shapeKeys } = this._getCached();
+    const extraKeys = [];
+    if (!(this._def.catchall instanceof ZodNever2 && this._def.unknownKeys === "strip")) {
+      for (const key in ctx.data) {
+        if (!shapeKeys.includes(key)) {
+          extraKeys.push(key);
+        }
+      }
+    }
+    const pairs = [];
+    for (const key of shapeKeys) {
+      const keyValidator = shape[key];
+      const value = ctx.data[key];
+      pairs.push({
+        key: { status: "valid", value: key },
+        value: keyValidator._parse(new ParseInputLazyPath(ctx, value, ctx.path, key)),
+        alwaysSet: key in ctx.data
+      });
+    }
+    if (this._def.catchall instanceof ZodNever2) {
+      const unknownKeys = this._def.unknownKeys;
+      if (unknownKeys === "passthrough") {
+        for (const key of extraKeys) {
+          pairs.push({
+            key: { status: "valid", value: key },
+            value: { status: "valid", value: ctx.data[key] }
+          });
+        }
+      } else if (unknownKeys === "strict") {
+        if (extraKeys.length > 0) {
+          addIssueToContext(ctx, {
+            code: ZodIssueCode2.unrecognized_keys,
+            keys: extraKeys
+          });
+          status.dirty();
+        }
+      } else if (unknownKeys === "strip") {
+      } else {
+        throw new Error(`Internal ZodObject error: invalid unknownKeys value.`);
+      }
+    } else {
+      const catchall = this._def.catchall;
+      for (const key of extraKeys) {
+        const value = ctx.data[key];
+        pairs.push({
+          key: { status: "valid", value: key },
+          value: catchall._parse(
+            new ParseInputLazyPath(ctx, value, ctx.path, key)
+            //, ctx.child(key), value, getParsedType(value)
+          ),
+          alwaysSet: key in ctx.data
+        });
+      }
+    }
+    if (ctx.common.async) {
+      return Promise.resolve().then(async () => {
+        const syncPairs = [];
+        for (const pair of pairs) {
+          const key = await pair.key;
+          const value = await pair.value;
+          syncPairs.push({
+            key,
+            value,
+            alwaysSet: pair.alwaysSet
+          });
+        }
+        return syncPairs;
+      }).then((syncPairs) => {
+        return ParseStatus.mergeObjectSync(status, syncPairs);
+      });
+    } else {
+      return ParseStatus.mergeObjectSync(status, pairs);
+    }
+  }
+  get shape() {
+    return this._def.shape();
+  }
+  strict(message) {
+    errorUtil.errToObj;
+    return new _ZodObject({
+      ...this._def,
+      unknownKeys: "strict",
+      ...message !== void 0 ? {
+        errorMap: (issue2, ctx) => {
+          const defaultError = this._def.errorMap?.(issue2, ctx).message ?? ctx.defaultError;
+          if (issue2.code === "unrecognized_keys")
+            return {
+              message: errorUtil.errToObj(message).message ?? defaultError
+            };
+          return {
+            message: defaultError
+          };
+        }
+      } : {}
+    });
+  }
+  strip() {
+    return new _ZodObject({
+      ...this._def,
+      unknownKeys: "strip"
+    });
+  }
+  passthrough() {
+    return new _ZodObject({
+      ...this._def,
+      unknownKeys: "passthrough"
+    });
+  }
+  // const AugmentFactory =
+  //   <Def extends ZodObjectDef>(def: Def) =>
+  //   <Augmentation extends ZodRawShape>(
+  //     augmentation: Augmentation
+  //   ): ZodObject<
+  //     extendShape<ReturnType<Def["shape"]>, Augmentation>,
+  //     Def["unknownKeys"],
+  //     Def["catchall"]
+  //   > => {
+  //     return new ZodObject({
+  //       ...def,
+  //       shape: () => ({
+  //         ...def.shape(),
+  //         ...augmentation,
+  //       }),
+  //     }) as any;
+  //   };
+  extend(augmentation) {
+    return new _ZodObject({
+      ...this._def,
+      shape: () => ({
+        ...this._def.shape(),
+        ...augmentation
+      })
+    });
+  }
+  /**
+   * Prior to zod@1.0.12 there was a bug in the
+   * inferred type of merged objects. Please
+   * upgrade if you are experiencing issues.
+   */
+  merge(merging) {
+    const merged = new _ZodObject({
+      unknownKeys: merging._def.unknownKeys,
+      catchall: merging._def.catchall,
+      shape: () => ({
+        ...this._def.shape(),
+        ...merging._def.shape()
+      }),
+      typeName: ZodFirstPartyTypeKind.ZodObject
+    });
+    return merged;
+  }
+  // merge<
+  //   Incoming extends AnyZodObject,
+  //   Augmentation extends Incoming["shape"],
+  //   NewOutput extends {
+  //     [k in keyof Augmentation | keyof Output]: k extends keyof Augmentation
+  //       ? Augmentation[k]["_output"]
+  //       : k extends keyof Output
+  //       ? Output[k]
+  //       : never;
+  //   },
+  //   NewInput extends {
+  //     [k in keyof Augmentation | keyof Input]: k extends keyof Augmentation
+  //       ? Augmentation[k]["_input"]
+  //       : k extends keyof Input
+  //       ? Input[k]
+  //       : never;
+  //   }
+  // >(
+  //   merging: Incoming
+  // ): ZodObject<
+  //   extendShape<T, ReturnType<Incoming["_def"]["shape"]>>,
+  //   Incoming["_def"]["unknownKeys"],
+  //   Incoming["_def"]["catchall"],
+  //   NewOutput,
+  //   NewInput
+  // > {
+  //   const merged: any = new ZodObject({
+  //     unknownKeys: merging._def.unknownKeys,
+  //     catchall: merging._def.catchall,
+  //     shape: () =>
+  //       objectUtil.mergeShapes(this._def.shape(), merging._def.shape()),
+  //     typeName: ZodFirstPartyTypeKind.ZodObject,
+  //   }) as any;
+  //   return merged;
+  // }
+  setKey(key, schema) {
+    return this.augment({ [key]: schema });
+  }
+  // merge<Incoming extends AnyZodObject>(
+  //   merging: Incoming
+  // ): //ZodObject<T & Incoming["_shape"], UnknownKeys, Catchall> = (merging) => {
+  // ZodObject<
+  //   extendShape<T, ReturnType<Incoming["_def"]["shape"]>>,
+  //   Incoming["_def"]["unknownKeys"],
+  //   Incoming["_def"]["catchall"]
+  // > {
+  //   // const mergedShape = objectUtil.mergeShapes(
+  //   //   this._def.shape(),
+  //   //   merging._def.shape()
+  //   // );
+  //   const merged: any = new ZodObject({
+  //     unknownKeys: merging._def.unknownKeys,
+  //     catchall: merging._def.catchall,
+  //     shape: () =>
+  //       objectUtil.mergeShapes(this._def.shape(), merging._def.shape()),
+  //     typeName: ZodFirstPartyTypeKind.ZodObject,
+  //   }) as any;
+  //   return merged;
+  // }
+  catchall(index2) {
+    return new _ZodObject({
+      ...this._def,
+      catchall: index2
+    });
+  }
+  pick(mask) {
+    const shape = {};
+    for (const key of util.objectKeys(mask)) {
+      if (mask[key] && this.shape[key]) {
+        shape[key] = this.shape[key];
+      }
+    }
+    return new _ZodObject({
+      ...this._def,
+      shape: () => shape
+    });
+  }
+  omit(mask) {
+    const shape = {};
+    for (const key of util.objectKeys(this.shape)) {
+      if (!mask[key]) {
+        shape[key] = this.shape[key];
+      }
+    }
+    return new _ZodObject({
+      ...this._def,
+      shape: () => shape
+    });
+  }
+  /**
+   * @deprecated
+   */
+  deepPartial() {
+    return deepPartialify(this);
+  }
+  partial(mask) {
+    const newShape = {};
+    for (const key of util.objectKeys(this.shape)) {
+      const fieldSchema = this.shape[key];
+      if (mask && !mask[key]) {
+        newShape[key] = fieldSchema;
+      } else {
+        newShape[key] = fieldSchema.optional();
+      }
+    }
+    return new _ZodObject({
+      ...this._def,
+      shape: () => newShape
+    });
+  }
+  required(mask) {
+    const newShape = {};
+    for (const key of util.objectKeys(this.shape)) {
+      if (mask && !mask[key]) {
+        newShape[key] = this.shape[key];
+      } else {
+        const fieldSchema = this.shape[key];
+        let newField = fieldSchema;
+        while (newField instanceof ZodOptional2) {
+          newField = newField._def.innerType;
+        }
+        newShape[key] = newField;
+      }
+    }
+    return new _ZodObject({
+      ...this._def,
+      shape: () => newShape
+    });
+  }
+  keyof() {
+    return createZodEnum(util.objectKeys(this.shape));
+  }
+};
+ZodObject2.create = (shape, params) => {
+  return new ZodObject2({
+    shape: () => shape,
+    unknownKeys: "strip",
+    catchall: ZodNever2.create(),
+    typeName: ZodFirstPartyTypeKind.ZodObject,
+    ...processCreateParams(params)
+  });
+};
+ZodObject2.strictCreate = (shape, params) => {
+  return new ZodObject2({
+    shape: () => shape,
+    unknownKeys: "strict",
+    catchall: ZodNever2.create(),
+    typeName: ZodFirstPartyTypeKind.ZodObject,
+    ...processCreateParams(params)
+  });
+};
+ZodObject2.lazycreate = (shape, params) => {
+  return new ZodObject2({
+    shape,
+    unknownKeys: "strip",
+    catchall: ZodNever2.create(),
+    typeName: ZodFirstPartyTypeKind.ZodObject,
+    ...processCreateParams(params)
+  });
+};
+var ZodUnion2 = class extends ZodType2 {
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    const options = this._def.options;
+    function handleResults(results) {
+      for (const result of results) {
+        if (result.result.status === "valid") {
+          return result.result;
+        }
+      }
+      for (const result of results) {
+        if (result.result.status === "dirty") {
+          ctx.common.issues.push(...result.ctx.common.issues);
+          return result.result;
+        }
+      }
+      const unionErrors = results.map((result) => new ZodError2(result.ctx.common.issues));
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_union,
+        unionErrors
+      });
+      return INVALID;
+    }
+    if (ctx.common.async) {
+      return Promise.all(options.map(async (option) => {
+        const childCtx = {
+          ...ctx,
+          common: {
+            ...ctx.common,
+            issues: []
+          },
+          parent: null
+        };
+        return {
+          result: await option._parseAsync({
+            data: ctx.data,
+            path: ctx.path,
+            parent: childCtx
+          }),
+          ctx: childCtx
+        };
+      })).then(handleResults);
+    } else {
+      let dirty = void 0;
+      const issues = [];
+      for (const option of options) {
+        const childCtx = {
+          ...ctx,
+          common: {
+            ...ctx.common,
+            issues: []
+          },
+          parent: null
+        };
+        const result = option._parseSync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: childCtx
+        });
+        if (result.status === "valid") {
+          return result;
+        } else if (result.status === "dirty" && !dirty) {
+          dirty = { result, ctx: childCtx };
+        }
+        if (childCtx.common.issues.length) {
+          issues.push(childCtx.common.issues);
+        }
+      }
+      if (dirty) {
+        ctx.common.issues.push(...dirty.ctx.common.issues);
+        return dirty.result;
+      }
+      const unionErrors = issues.map((issues2) => new ZodError2(issues2));
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_union,
+        unionErrors
+      });
+      return INVALID;
+    }
+  }
+  get options() {
+    return this._def.options;
+  }
+};
+ZodUnion2.create = (types5, params) => {
+  return new ZodUnion2({
+    options: types5,
+    typeName: ZodFirstPartyTypeKind.ZodUnion,
+    ...processCreateParams(params)
+  });
+};
+var getDiscriminator = (type) => {
+  if (type instanceof ZodLazy2) {
+    return getDiscriminator(type.schema);
+  } else if (type instanceof ZodEffects) {
+    return getDiscriminator(type.innerType());
+  } else if (type instanceof ZodLiteral2) {
+    return [type.value];
+  } else if (type instanceof ZodEnum2) {
+    return type.options;
+  } else if (type instanceof ZodNativeEnum) {
+    return util.objectValues(type.enum);
+  } else if (type instanceof ZodDefault2) {
+    return getDiscriminator(type._def.innerType);
+  } else if (type instanceof ZodUndefined2) {
+    return [void 0];
+  } else if (type instanceof ZodNull2) {
+    return [null];
+  } else if (type instanceof ZodOptional2) {
+    return [void 0, ...getDiscriminator(type.unwrap())];
+  } else if (type instanceof ZodNullable2) {
+    return [null, ...getDiscriminator(type.unwrap())];
+  } else if (type instanceof ZodBranded) {
+    return getDiscriminator(type.unwrap());
+  } else if (type instanceof ZodReadonly2) {
+    return getDiscriminator(type.unwrap());
+  } else if (type instanceof ZodCatch2) {
+    return getDiscriminator(type._def.innerType);
+  } else {
+    return [];
+  }
+};
+var ZodDiscriminatedUnion2 = class _ZodDiscriminatedUnion extends ZodType2 {
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.object) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.object,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    const discriminator = this.discriminator;
+    const discriminatorValue = ctx.data[discriminator];
+    const option = this.optionsMap.get(discriminatorValue);
+    if (!option) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_union_discriminator,
+        options: Array.from(this.optionsMap.keys()),
+        path: [discriminator]
+      });
+      return INVALID;
+    }
+    if (ctx.common.async) {
+      return option._parseAsync({
+        data: ctx.data,
+        path: ctx.path,
+        parent: ctx
+      });
+    } else {
+      return option._parseSync({
+        data: ctx.data,
+        path: ctx.path,
+        parent: ctx
+      });
+    }
+  }
+  get discriminator() {
+    return this._def.discriminator;
+  }
+  get options() {
+    return this._def.options;
+  }
+  get optionsMap() {
+    return this._def.optionsMap;
+  }
+  /**
+   * The constructor of the discriminated union schema. Its behaviour is very similar to that of the normal z.union() constructor.
+   * However, it only allows a union of objects, all of which need to share a discriminator property. This property must
+   * have a different value for each object in the union.
+   * @param discriminator the name of the discriminator property
+   * @param types an array of object schemas
+   * @param params
+   */
+  static create(discriminator, options, params) {
+    const optionsMap = /* @__PURE__ */ new Map();
+    for (const type of options) {
+      const discriminatorValues = getDiscriminator(type.shape[discriminator]);
+      if (!discriminatorValues.length) {
+        throw new Error(`A discriminator value for key \`${discriminator}\` could not be extracted from all schema options`);
+      }
+      for (const value of discriminatorValues) {
+        if (optionsMap.has(value)) {
+          throw new Error(`Discriminator property ${String(discriminator)} has duplicate value ${String(value)}`);
+        }
+        optionsMap.set(value, type);
+      }
+    }
+    return new _ZodDiscriminatedUnion({
+      typeName: ZodFirstPartyTypeKind.ZodDiscriminatedUnion,
+      discriminator,
+      options,
+      optionsMap,
+      ...processCreateParams(params)
+    });
+  }
+};
+function mergeValues2(a, b) {
+  const aType = getParsedType2(a);
+  const bType = getParsedType2(b);
+  if (a === b) {
+    return { valid: true, data: a };
+  } else if (aType === ZodParsedType.object && bType === ZodParsedType.object) {
+    const bKeys = util.objectKeys(b);
+    const sharedKeys = util.objectKeys(a).filter((key) => bKeys.indexOf(key) !== -1);
+    const newObj = { ...a, ...b };
+    for (const key of sharedKeys) {
+      const sharedValue = mergeValues2(a[key], b[key]);
+      if (!sharedValue.valid) {
+        return { valid: false };
+      }
+      newObj[key] = sharedValue.data;
+    }
+    return { valid: true, data: newObj };
+  } else if (aType === ZodParsedType.array && bType === ZodParsedType.array) {
+    if (a.length !== b.length) {
+      return { valid: false };
+    }
+    const newArray = [];
+    for (let index2 = 0; index2 < a.length; index2++) {
+      const itemA = a[index2];
+      const itemB = b[index2];
+      const sharedValue = mergeValues2(itemA, itemB);
+      if (!sharedValue.valid) {
+        return { valid: false };
+      }
+      newArray.push(sharedValue.data);
+    }
+    return { valid: true, data: newArray };
+  } else if (aType === ZodParsedType.date && bType === ZodParsedType.date && +a === +b) {
+    return { valid: true, data: a };
+  } else {
+    return { valid: false };
+  }
+}
+var ZodIntersection2 = class extends ZodType2 {
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    const handleParsed = (parsedLeft, parsedRight) => {
+      if (isAborted(parsedLeft) || isAborted(parsedRight)) {
+        return INVALID;
+      }
+      const merged = mergeValues2(parsedLeft.value, parsedRight.value);
+      if (!merged.valid) {
+        addIssueToContext(ctx, {
+          code: ZodIssueCode2.invalid_intersection_types
+        });
+        return INVALID;
+      }
+      if (isDirty(parsedLeft) || isDirty(parsedRight)) {
+        status.dirty();
+      }
+      return { status: status.value, value: merged.data };
+    };
+    if (ctx.common.async) {
+      return Promise.all([
+        this._def.left._parseAsync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: ctx
+        }),
+        this._def.right._parseAsync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: ctx
+        })
+      ]).then(([left, right]) => handleParsed(left, right));
+    } else {
+      return handleParsed(this._def.left._parseSync({
+        data: ctx.data,
+        path: ctx.path,
+        parent: ctx
+      }), this._def.right._parseSync({
+        data: ctx.data,
+        path: ctx.path,
+        parent: ctx
+      }));
+    }
+  }
+};
+ZodIntersection2.create = (left, right, params) => {
+  return new ZodIntersection2({
+    left,
+    right,
+    typeName: ZodFirstPartyTypeKind.ZodIntersection,
+    ...processCreateParams(params)
+  });
+};
+var ZodTuple2 = class _ZodTuple extends ZodType2 {
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.array) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.array,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    if (ctx.data.length < this._def.items.length) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.too_small,
+        minimum: this._def.items.length,
+        inclusive: true,
+        exact: false,
+        type: "array"
+      });
+      return INVALID;
+    }
+    const rest = this._def.rest;
+    if (!rest && ctx.data.length > this._def.items.length) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.too_big,
+        maximum: this._def.items.length,
+        inclusive: true,
+        exact: false,
+        type: "array"
+      });
+      status.dirty();
+    }
+    const items = [...ctx.data].map((item, itemIndex) => {
+      const schema = this._def.items[itemIndex] || this._def.rest;
+      if (!schema)
+        return null;
+      return schema._parse(new ParseInputLazyPath(ctx, item, ctx.path, itemIndex));
+    }).filter((x2) => !!x2);
+    if (ctx.common.async) {
+      return Promise.all(items).then((results) => {
+        return ParseStatus.mergeArray(status, results);
+      });
+    } else {
+      return ParseStatus.mergeArray(status, items);
+    }
+  }
+  get items() {
+    return this._def.items;
+  }
+  rest(rest) {
+    return new _ZodTuple({
+      ...this._def,
+      rest
+    });
+  }
+};
+ZodTuple2.create = (schemas, params) => {
+  if (!Array.isArray(schemas)) {
+    throw new Error("You must pass an array of schemas to z.tuple([ ... ])");
+  }
+  return new ZodTuple2({
+    items: schemas,
+    typeName: ZodFirstPartyTypeKind.ZodTuple,
+    rest: null,
+    ...processCreateParams(params)
+  });
+};
+var ZodRecord2 = class _ZodRecord extends ZodType2 {
+  get keySchema() {
+    return this._def.keyType;
+  }
+  get valueSchema() {
+    return this._def.valueType;
+  }
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.object) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.object,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    const pairs = [];
+    const keyType = this._def.keyType;
+    const valueType = this._def.valueType;
+    for (const key in ctx.data) {
+      pairs.push({
+        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, key)),
+        value: valueType._parse(new ParseInputLazyPath(ctx, ctx.data[key], ctx.path, key)),
+        alwaysSet: key in ctx.data
+      });
+    }
+    if (ctx.common.async) {
+      return ParseStatus.mergeObjectAsync(status, pairs);
+    } else {
+      return ParseStatus.mergeObjectSync(status, pairs);
+    }
+  }
+  get element() {
+    return this._def.valueType;
+  }
+  static create(first, second, third) {
+    if (second instanceof ZodType2) {
+      return new _ZodRecord({
+        keyType: first,
+        valueType: second,
+        typeName: ZodFirstPartyTypeKind.ZodRecord,
+        ...processCreateParams(third)
+      });
+    }
+    return new _ZodRecord({
+      keyType: ZodString2.create(),
+      valueType: first,
+      typeName: ZodFirstPartyTypeKind.ZodRecord,
+      ...processCreateParams(second)
+    });
+  }
+};
+var ZodMap2 = class extends ZodType2 {
+  get keySchema() {
+    return this._def.keyType;
+  }
+  get valueSchema() {
+    return this._def.valueType;
+  }
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.map) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.map,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    const keyType = this._def.keyType;
+    const valueType = this._def.valueType;
+    const pairs = [...ctx.data.entries()].map(([key, value], index2) => {
+      return {
+        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, [index2, "key"])),
+        value: valueType._parse(new ParseInputLazyPath(ctx, value, ctx.path, [index2, "value"]))
+      };
+    });
+    if (ctx.common.async) {
+      const finalMap = /* @__PURE__ */ new Map();
+      return Promise.resolve().then(async () => {
+        for (const pair of pairs) {
+          const key = await pair.key;
+          const value = await pair.value;
+          if (key.status === "aborted" || value.status === "aborted") {
+            return INVALID;
+          }
+          if (key.status === "dirty" || value.status === "dirty") {
+            status.dirty();
+          }
+          finalMap.set(key.value, value.value);
+        }
+        return { status: status.value, value: finalMap };
+      });
+    } else {
+      const finalMap = /* @__PURE__ */ new Map();
+      for (const pair of pairs) {
+        const key = pair.key;
+        const value = pair.value;
+        if (key.status === "aborted" || value.status === "aborted") {
+          return INVALID;
+        }
+        if (key.status === "dirty" || value.status === "dirty") {
+          status.dirty();
+        }
+        finalMap.set(key.value, value.value);
+      }
+      return { status: status.value, value: finalMap };
+    }
+  }
+};
+ZodMap2.create = (keyType, valueType, params) => {
+  return new ZodMap2({
+    valueType,
+    keyType,
+    typeName: ZodFirstPartyTypeKind.ZodMap,
+    ...processCreateParams(params)
+  });
+};
+var ZodSet2 = class _ZodSet extends ZodType2 {
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.set) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.set,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    const def = this._def;
+    if (def.minSize !== null) {
+      if (ctx.data.size < def.minSize.value) {
+        addIssueToContext(ctx, {
+          code: ZodIssueCode2.too_small,
+          minimum: def.minSize.value,
+          type: "set",
+          inclusive: true,
+          exact: false,
+          message: def.minSize.message
+        });
+        status.dirty();
+      }
+    }
+    if (def.maxSize !== null) {
+      if (ctx.data.size > def.maxSize.value) {
+        addIssueToContext(ctx, {
+          code: ZodIssueCode2.too_big,
+          maximum: def.maxSize.value,
+          type: "set",
+          inclusive: true,
+          exact: false,
+          message: def.maxSize.message
+        });
+        status.dirty();
+      }
+    }
+    const valueType = this._def.valueType;
+    function finalizeSet(elements2) {
+      const parsedSet = /* @__PURE__ */ new Set();
+      for (const element of elements2) {
+        if (element.status === "aborted")
+          return INVALID;
+        if (element.status === "dirty")
+          status.dirty();
+        parsedSet.add(element.value);
+      }
+      return { status: status.value, value: parsedSet };
+    }
+    const elements = [...ctx.data.values()].map((item, i2) => valueType._parse(new ParseInputLazyPath(ctx, item, ctx.path, i2)));
+    if (ctx.common.async) {
+      return Promise.all(elements).then((elements2) => finalizeSet(elements2));
+    } else {
+      return finalizeSet(elements);
+    }
+  }
+  min(minSize, message) {
+    return new _ZodSet({
+      ...this._def,
+      minSize: { value: minSize, message: errorUtil.toString(message) }
+    });
+  }
+  max(maxSize, message) {
+    return new _ZodSet({
+      ...this._def,
+      maxSize: { value: maxSize, message: errorUtil.toString(message) }
+    });
+  }
+  size(size, message) {
+    return this.min(size, message).max(size, message);
+  }
+  nonempty(message) {
+    return this.min(1, message);
+  }
+};
+ZodSet2.create = (valueType, params) => {
+  return new ZodSet2({
+    valueType,
+    minSize: null,
+    maxSize: null,
+    typeName: ZodFirstPartyTypeKind.ZodSet,
+    ...processCreateParams(params)
+  });
+};
+var ZodFunction = class _ZodFunction extends ZodType2 {
+  constructor() {
+    super(...arguments);
+    this.validate = this.implement;
+  }
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.function) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.function,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    function makeArgsIssue(args, error40) {
+      return makeIssue({
+        data: args,
+        path: ctx.path,
+        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap2(), en_default2].filter((x2) => !!x2),
+        issueData: {
+          code: ZodIssueCode2.invalid_arguments,
+          argumentsError: error40
+        }
+      });
+    }
+    function makeReturnsIssue(returns, error40) {
+      return makeIssue({
+        data: returns,
+        path: ctx.path,
+        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap2(), en_default2].filter((x2) => !!x2),
+        issueData: {
+          code: ZodIssueCode2.invalid_return_type,
+          returnTypeError: error40
+        }
+      });
+    }
+    const params = { errorMap: ctx.common.contextualErrorMap };
+    const fn = ctx.data;
+    if (this._def.returns instanceof ZodPromise2) {
+      const me = this;
+      return OK(async function(...args) {
+        const error40 = new ZodError2([]);
+        const parsedArgs = await me._def.args.parseAsync(args, params).catch((e2) => {
+          error40.addIssue(makeArgsIssue(args, e2));
+          throw error40;
+        });
+        const result = await Reflect.apply(fn, this, parsedArgs);
+        const parsedReturns = await me._def.returns._def.type.parseAsync(result, params).catch((e2) => {
+          error40.addIssue(makeReturnsIssue(result, e2));
+          throw error40;
+        });
+        return parsedReturns;
+      });
+    } else {
+      const me = this;
+      return OK(function(...args) {
+        const parsedArgs = me._def.args.safeParse(args, params);
+        if (!parsedArgs.success) {
+          throw new ZodError2([makeArgsIssue(args, parsedArgs.error)]);
+        }
+        const result = Reflect.apply(fn, this, parsedArgs.data);
+        const parsedReturns = me._def.returns.safeParse(result, params);
+        if (!parsedReturns.success) {
+          throw new ZodError2([makeReturnsIssue(result, parsedReturns.error)]);
+        }
+        return parsedReturns.data;
+      });
+    }
+  }
+  parameters() {
+    return this._def.args;
+  }
+  returnType() {
+    return this._def.returns;
+  }
+  args(...items) {
+    return new _ZodFunction({
+      ...this._def,
+      args: ZodTuple2.create(items).rest(ZodUnknown2.create())
+    });
+  }
+  returns(returnType) {
+    return new _ZodFunction({
+      ...this._def,
+      returns: returnType
+    });
+  }
+  implement(func) {
+    const validatedFunc = this.parse(func);
+    return validatedFunc;
+  }
+  strictImplement(func) {
+    const validatedFunc = this.parse(func);
+    return validatedFunc;
+  }
+  static create(args, returns, params) {
+    return new _ZodFunction({
+      args: args ? args : ZodTuple2.create([]).rest(ZodUnknown2.create()),
+      returns: returns || ZodUnknown2.create(),
+      typeName: ZodFirstPartyTypeKind.ZodFunction,
+      ...processCreateParams(params)
+    });
+  }
+};
+var ZodLazy2 = class extends ZodType2 {
+  get schema() {
+    return this._def.getter();
+  }
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    const lazySchema = this._def.getter();
+    return lazySchema._parse({ data: ctx.data, path: ctx.path, parent: ctx });
+  }
+};
+ZodLazy2.create = (getter, params) => {
+  return new ZodLazy2({
+    getter,
+    typeName: ZodFirstPartyTypeKind.ZodLazy,
+    ...processCreateParams(params)
+  });
+};
+var ZodLiteral2 = class extends ZodType2 {
+  _parse(input) {
+    if (input.data !== this._def.value) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        received: ctx.data,
+        code: ZodIssueCode2.invalid_literal,
+        expected: this._def.value
+      });
+      return INVALID;
+    }
+    return { status: "valid", value: input.data };
+  }
+  get value() {
+    return this._def.value;
+  }
+};
+ZodLiteral2.create = (value, params) => {
+  return new ZodLiteral2({
+    value,
+    typeName: ZodFirstPartyTypeKind.ZodLiteral,
+    ...processCreateParams(params)
+  });
+};
+function createZodEnum(values, params) {
+  return new ZodEnum2({
+    values,
+    typeName: ZodFirstPartyTypeKind.ZodEnum,
+    ...processCreateParams(params)
+  });
+}
+var ZodEnum2 = class _ZodEnum extends ZodType2 {
+  _parse(input) {
+    if (typeof input.data !== "string") {
+      const ctx = this._getOrReturnCtx(input);
+      const expectedValues = this._def.values;
+      addIssueToContext(ctx, {
+        expected: util.joinValues(expectedValues),
+        received: ctx.parsedType,
+        code: ZodIssueCode2.invalid_type
+      });
+      return INVALID;
+    }
+    if (!this._cache) {
+      this._cache = new Set(this._def.values);
+    }
+    if (!this._cache.has(input.data)) {
+      const ctx = this._getOrReturnCtx(input);
+      const expectedValues = this._def.values;
+      addIssueToContext(ctx, {
+        received: ctx.data,
+        code: ZodIssueCode2.invalid_enum_value,
+        options: expectedValues
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+  get options() {
+    return this._def.values;
+  }
+  get enum() {
+    const enumValues = {};
+    for (const val of this._def.values) {
+      enumValues[val] = val;
+    }
+    return enumValues;
+  }
+  get Values() {
+    const enumValues = {};
+    for (const val of this._def.values) {
+      enumValues[val] = val;
+    }
+    return enumValues;
+  }
+  get Enum() {
+    const enumValues = {};
+    for (const val of this._def.values) {
+      enumValues[val] = val;
+    }
+    return enumValues;
+  }
+  extract(values, newDef = this._def) {
+    return _ZodEnum.create(values, {
+      ...this._def,
+      ...newDef
+    });
+  }
+  exclude(values, newDef = this._def) {
+    return _ZodEnum.create(this.options.filter((opt) => !values.includes(opt)), {
+      ...this._def,
+      ...newDef
+    });
+  }
+};
+ZodEnum2.create = createZodEnum;
+var ZodNativeEnum = class extends ZodType2 {
+  _parse(input) {
+    const nativeEnumValues = util.getValidEnumValues(this._def.values);
+    const ctx = this._getOrReturnCtx(input);
+    if (ctx.parsedType !== ZodParsedType.string && ctx.parsedType !== ZodParsedType.number) {
+      const expectedValues = util.objectValues(nativeEnumValues);
+      addIssueToContext(ctx, {
+        expected: util.joinValues(expectedValues),
+        received: ctx.parsedType,
+        code: ZodIssueCode2.invalid_type
+      });
+      return INVALID;
+    }
+    if (!this._cache) {
+      this._cache = new Set(util.getValidEnumValues(this._def.values));
+    }
+    if (!this._cache.has(input.data)) {
+      const expectedValues = util.objectValues(nativeEnumValues);
+      addIssueToContext(ctx, {
+        received: ctx.data,
+        code: ZodIssueCode2.invalid_enum_value,
+        options: expectedValues
+      });
+      return INVALID;
+    }
+    return OK(input.data);
+  }
+  get enum() {
+    return this._def.values;
+  }
+};
+ZodNativeEnum.create = (values, params) => {
+  return new ZodNativeEnum({
+    values,
+    typeName: ZodFirstPartyTypeKind.ZodNativeEnum,
+    ...processCreateParams(params)
+  });
+};
+var ZodPromise2 = class extends ZodType2 {
+  unwrap() {
+    return this._def.type;
+  }
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    if (ctx.parsedType !== ZodParsedType.promise && ctx.common.async === false) {
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.promise,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    const promisified = ctx.parsedType === ZodParsedType.promise ? ctx.data : Promise.resolve(ctx.data);
+    return OK(promisified.then((data) => {
+      return this._def.type.parseAsync(data, {
+        path: ctx.path,
+        errorMap: ctx.common.contextualErrorMap
+      });
+    }));
+  }
+};
+ZodPromise2.create = (schema, params) => {
+  return new ZodPromise2({
+    type: schema,
+    typeName: ZodFirstPartyTypeKind.ZodPromise,
+    ...processCreateParams(params)
+  });
+};
+var ZodEffects = class extends ZodType2 {
+  innerType() {
+    return this._def.schema;
+  }
+  sourceType() {
+    return this._def.schema._def.typeName === ZodFirstPartyTypeKind.ZodEffects ? this._def.schema.sourceType() : this._def.schema;
+  }
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    const effect = this._def.effect || null;
+    const checkCtx = {
+      addIssue: (arg) => {
+        addIssueToContext(ctx, arg);
+        if (arg.fatal) {
+          status.abort();
+        } else {
+          status.dirty();
+        }
+      },
+      get path() {
+        return ctx.path;
+      }
+    };
+    checkCtx.addIssue = checkCtx.addIssue.bind(checkCtx);
+    if (effect.type === "preprocess") {
+      const processed = effect.transform(ctx.data, checkCtx);
+      if (ctx.common.async) {
+        return Promise.resolve(processed).then(async (processed2) => {
+          if (status.value === "aborted")
+            return INVALID;
+          const result = await this._def.schema._parseAsync({
+            data: processed2,
+            path: ctx.path,
+            parent: ctx
+          });
+          if (result.status === "aborted")
+            return INVALID;
+          if (result.status === "dirty")
+            return DIRTY(result.value);
+          if (status.value === "dirty")
+            return DIRTY(result.value);
+          return result;
+        });
+      } else {
+        if (status.value === "aborted")
+          return INVALID;
+        const result = this._def.schema._parseSync({
+          data: processed,
+          path: ctx.path,
+          parent: ctx
+        });
+        if (result.status === "aborted")
+          return INVALID;
+        if (result.status === "dirty")
+          return DIRTY(result.value);
+        if (status.value === "dirty")
+          return DIRTY(result.value);
+        return result;
+      }
+    }
+    if (effect.type === "refinement") {
+      const executeRefinement = (acc) => {
+        const result = effect.refinement(acc, checkCtx);
+        if (ctx.common.async) {
+          return Promise.resolve(result);
+        }
+        if (result instanceof Promise) {
+          throw new Error("Async refinement encountered during synchronous parse operation. Use .parseAsync instead.");
+        }
+        return acc;
+      };
+      if (ctx.common.async === false) {
+        const inner = this._def.schema._parseSync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: ctx
+        });
+        if (inner.status === "aborted")
+          return INVALID;
+        if (inner.status === "dirty")
+          status.dirty();
+        executeRefinement(inner.value);
+        return { status: status.value, value: inner.value };
+      } else {
+        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((inner) => {
+          if (inner.status === "aborted")
+            return INVALID;
+          if (inner.status === "dirty")
+            status.dirty();
+          return executeRefinement(inner.value).then(() => {
+            return { status: status.value, value: inner.value };
+          });
+        });
+      }
+    }
+    if (effect.type === "transform") {
+      if (ctx.common.async === false) {
+        const base = this._def.schema._parseSync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: ctx
+        });
+        if (!isValid(base))
+          return INVALID;
+        const result = effect.transform(base.value, checkCtx);
+        if (result instanceof Promise) {
+          throw new Error(`Asynchronous transform encountered during synchronous parse operation. Use .parseAsync instead.`);
+        }
+        return { status: status.value, value: result };
+      } else {
+        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((base) => {
+          if (!isValid(base))
+            return INVALID;
+          return Promise.resolve(effect.transform(base.value, checkCtx)).then((result) => ({
+            status: status.value,
+            value: result
+          }));
+        });
+      }
+    }
+    util.assertNever(effect);
+  }
+};
+ZodEffects.create = (schema, effect, params) => {
+  return new ZodEffects({
+    schema,
+    typeName: ZodFirstPartyTypeKind.ZodEffects,
+    effect,
+    ...processCreateParams(params)
+  });
+};
+ZodEffects.createWithPreprocess = (preprocess2, schema, params) => {
+  return new ZodEffects({
+    schema,
+    effect: { type: "preprocess", transform: preprocess2 },
+    typeName: ZodFirstPartyTypeKind.ZodEffects,
+    ...processCreateParams(params)
+  });
+};
+var ZodOptional2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 === ZodParsedType.undefined) {
+      return OK(void 0);
+    }
+    return this._def.innerType._parse(input);
+  }
+  unwrap() {
+    return this._def.innerType;
+  }
+};
+ZodOptional2.create = (type, params) => {
+  return new ZodOptional2({
+    innerType: type,
+    typeName: ZodFirstPartyTypeKind.ZodOptional,
+    ...processCreateParams(params)
+  });
+};
+var ZodNullable2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 === ZodParsedType.null) {
+      return OK(null);
+    }
+    return this._def.innerType._parse(input);
+  }
+  unwrap() {
+    return this._def.innerType;
+  }
+};
+ZodNullable2.create = (type, params) => {
+  return new ZodNullable2({
+    innerType: type,
+    typeName: ZodFirstPartyTypeKind.ZodNullable,
+    ...processCreateParams(params)
+  });
+};
+var ZodDefault2 = class extends ZodType2 {
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    let data = ctx.data;
+    if (ctx.parsedType === ZodParsedType.undefined) {
+      data = this._def.defaultValue();
+    }
+    return this._def.innerType._parse({
+      data,
+      path: ctx.path,
+      parent: ctx
+    });
+  }
+  removeDefault() {
+    return this._def.innerType;
+  }
+};
+ZodDefault2.create = (type, params) => {
+  return new ZodDefault2({
+    innerType: type,
+    typeName: ZodFirstPartyTypeKind.ZodDefault,
+    defaultValue: typeof params.default === "function" ? params.default : () => params.default,
+    ...processCreateParams(params)
+  });
+};
+var ZodCatch2 = class extends ZodType2 {
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    const newCtx = {
+      ...ctx,
+      common: {
+        ...ctx.common,
+        issues: []
+      }
+    };
+    const result = this._def.innerType._parse({
+      data: newCtx.data,
+      path: newCtx.path,
+      parent: {
+        ...newCtx
+      }
+    });
+    if (isAsync(result)) {
+      return result.then((result2) => {
+        return {
+          status: "valid",
+          value: result2.status === "valid" ? result2.value : this._def.catchValue({
+            get error() {
+              return new ZodError2(newCtx.common.issues);
+            },
+            input: newCtx.data
+          })
+        };
+      });
+    } else {
+      return {
+        status: "valid",
+        value: result.status === "valid" ? result.value : this._def.catchValue({
+          get error() {
+            return new ZodError2(newCtx.common.issues);
+          },
+          input: newCtx.data
+        })
+      };
+    }
+  }
+  removeCatch() {
+    return this._def.innerType;
+  }
+};
+ZodCatch2.create = (type, params) => {
+  return new ZodCatch2({
+    innerType: type,
+    typeName: ZodFirstPartyTypeKind.ZodCatch,
+    catchValue: typeof params.catch === "function" ? params.catch : () => params.catch,
+    ...processCreateParams(params)
+  });
+};
+var ZodNaN2 = class extends ZodType2 {
+  _parse(input) {
+    const parsedType4 = this._getType(input);
+    if (parsedType4 !== ZodParsedType.nan) {
+      const ctx = this._getOrReturnCtx(input);
+      addIssueToContext(ctx, {
+        code: ZodIssueCode2.invalid_type,
+        expected: ZodParsedType.nan,
+        received: ctx.parsedType
+      });
+      return INVALID;
+    }
+    return { status: "valid", value: input.data };
+  }
+};
+ZodNaN2.create = (params) => {
+  return new ZodNaN2({
+    typeName: ZodFirstPartyTypeKind.ZodNaN,
+    ...processCreateParams(params)
+  });
+};
+var BRAND = /* @__PURE__ */ Symbol("zod_brand");
+var ZodBranded = class extends ZodType2 {
+  _parse(input) {
+    const { ctx } = this._processInputParams(input);
+    const data = ctx.data;
+    return this._def.type._parse({
+      data,
+      path: ctx.path,
+      parent: ctx
+    });
+  }
+  unwrap() {
+    return this._def.type;
+  }
+};
+var ZodPipeline = class _ZodPipeline extends ZodType2 {
+  _parse(input) {
+    const { status, ctx } = this._processInputParams(input);
+    if (ctx.common.async) {
+      const handleAsync = async () => {
+        const inResult = await this._def.in._parseAsync({
+          data: ctx.data,
+          path: ctx.path,
+          parent: ctx
+        });
+        if (inResult.status === "aborted")
+          return INVALID;
+        if (inResult.status === "dirty") {
+          status.dirty();
+          return DIRTY(inResult.value);
+        } else {
+          return this._def.out._parseAsync({
+            data: inResult.value,
+            path: ctx.path,
+            parent: ctx
+          });
+        }
+      };
+      return handleAsync();
+    } else {
+      const inResult = this._def.in._parseSync({
+        data: ctx.data,
+        path: ctx.path,
+        parent: ctx
+      });
+      if (inResult.status === "aborted")
+        return INVALID;
+      if (inResult.status === "dirty") {
+        status.dirty();
+        return {
+          status: "dirty",
+          value: inResult.value
+        };
+      } else {
+        return this._def.out._parseSync({
+          data: inResult.value,
+          path: ctx.path,
+          parent: ctx
+        });
+      }
+    }
+  }
+  static create(a, b) {
+    return new _ZodPipeline({
+      in: a,
+      out: b,
+      typeName: ZodFirstPartyTypeKind.ZodPipeline
+    });
+  }
+};
+var ZodReadonly2 = class extends ZodType2 {
+  _parse(input) {
+    const result = this._def.innerType._parse(input);
+    const freeze = (data) => {
+      if (isValid(data)) {
+        data.value = Object.freeze(data.value);
+      }
+      return data;
+    };
+    return isAsync(result) ? result.then((data) => freeze(data)) : freeze(result);
+  }
+  unwrap() {
+    return this._def.innerType;
+  }
+};
+ZodReadonly2.create = (type, params) => {
+  return new ZodReadonly2({
+    innerType: type,
+    typeName: ZodFirstPartyTypeKind.ZodReadonly,
+    ...processCreateParams(params)
+  });
+};
+function cleanParams(params, data) {
+  const p = typeof params === "function" ? params(data) : typeof params === "string" ? { message: params } : params;
+  const p2 = typeof p === "string" ? { message: p } : p;
+  return p2;
+}
+function custom2(check2, _params = {}, fatal) {
+  if (check2)
+    return ZodAny2.create().superRefine((data, ctx) => {
+      const r2 = check2(data);
+      if (r2 instanceof Promise) {
+        return r2.then((r3) => {
+          if (!r3) {
+            const params = cleanParams(_params, data);
+            const _fatal = params.fatal ?? fatal ?? true;
+            ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
+          }
+        });
+      }
+      if (!r2) {
+        const params = cleanParams(_params, data);
+        const _fatal = params.fatal ?? fatal ?? true;
+        ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
+      }
+      return;
+    });
+  return ZodAny2.create();
+}
+var late = {
+  object: ZodObject2.lazycreate
+};
+var ZodFirstPartyTypeKind;
+(function(ZodFirstPartyTypeKind2) {
+  ZodFirstPartyTypeKind2["ZodString"] = "ZodString";
+  ZodFirstPartyTypeKind2["ZodNumber"] = "ZodNumber";
+  ZodFirstPartyTypeKind2["ZodNaN"] = "ZodNaN";
+  ZodFirstPartyTypeKind2["ZodBigInt"] = "ZodBigInt";
+  ZodFirstPartyTypeKind2["ZodBoolean"] = "ZodBoolean";
+  ZodFirstPartyTypeKind2["ZodDate"] = "ZodDate";
+  ZodFirstPartyTypeKind2["ZodSymbol"] = "ZodSymbol";
+  ZodFirstPartyTypeKind2["ZodUndefined"] = "ZodUndefined";
+  ZodFirstPartyTypeKind2["ZodNull"] = "ZodNull";
+  ZodFirstPartyTypeKind2["ZodAny"] = "ZodAny";
+  ZodFirstPartyTypeKind2["ZodUnknown"] = "ZodUnknown";
+  ZodFirstPartyTypeKind2["ZodNever"] = "ZodNever";
+  ZodFirstPartyTypeKind2["ZodVoid"] = "ZodVoid";
+  ZodFirstPartyTypeKind2["ZodArray"] = "ZodArray";
+  ZodFirstPartyTypeKind2["ZodObject"] = "ZodObject";
+  ZodFirstPartyTypeKind2["ZodUnion"] = "ZodUnion";
+  ZodFirstPartyTypeKind2["ZodDiscriminatedUnion"] = "ZodDiscriminatedUnion";
+  ZodFirstPartyTypeKind2["ZodIntersection"] = "ZodIntersection";
+  ZodFirstPartyTypeKind2["ZodTuple"] = "ZodTuple";
+  ZodFirstPartyTypeKind2["ZodRecord"] = "ZodRecord";
+  ZodFirstPartyTypeKind2["ZodMap"] = "ZodMap";
+  ZodFirstPartyTypeKind2["ZodSet"] = "ZodSet";
+  ZodFirstPartyTypeKind2["ZodFunction"] = "ZodFunction";
+  ZodFirstPartyTypeKind2["ZodLazy"] = "ZodLazy";
+  ZodFirstPartyTypeKind2["ZodLiteral"] = "ZodLiteral";
+  ZodFirstPartyTypeKind2["ZodEnum"] = "ZodEnum";
+  ZodFirstPartyTypeKind2["ZodEffects"] = "ZodEffects";
+  ZodFirstPartyTypeKind2["ZodNativeEnum"] = "ZodNativeEnum";
+  ZodFirstPartyTypeKind2["ZodOptional"] = "ZodOptional";
+  ZodFirstPartyTypeKind2["ZodNullable"] = "ZodNullable";
+  ZodFirstPartyTypeKind2["ZodDefault"] = "ZodDefault";
+  ZodFirstPartyTypeKind2["ZodCatch"] = "ZodCatch";
+  ZodFirstPartyTypeKind2["ZodPromise"] = "ZodPromise";
+  ZodFirstPartyTypeKind2["ZodBranded"] = "ZodBranded";
+  ZodFirstPartyTypeKind2["ZodPipeline"] = "ZodPipeline";
+  ZodFirstPartyTypeKind2["ZodReadonly"] = "ZodReadonly";
+})(ZodFirstPartyTypeKind || (ZodFirstPartyTypeKind = {}));
+var instanceOfType = (cls, params = {
+  message: `Input not instance of ${cls.name}`
+}) => custom2((data) => data instanceof cls, params);
+var stringType = ZodString2.create;
+var numberType = ZodNumber2.create;
+var nanType = ZodNaN2.create;
+var bigIntType = ZodBigInt2.create;
+var booleanType = ZodBoolean2.create;
+var dateType = ZodDate2.create;
+var symbolType = ZodSymbol2.create;
+var undefinedType = ZodUndefined2.create;
+var nullType = ZodNull2.create;
+var anyType = ZodAny2.create;
+var unknownType = ZodUnknown2.create;
+var neverType = ZodNever2.create;
+var voidType = ZodVoid2.create;
+var arrayType = ZodArray2.create;
+var objectType = ZodObject2.create;
+var strictObjectType = ZodObject2.strictCreate;
+var unionType = ZodUnion2.create;
+var discriminatedUnionType = ZodDiscriminatedUnion2.create;
+var intersectionType = ZodIntersection2.create;
+var tupleType = ZodTuple2.create;
+var recordType = ZodRecord2.create;
+var mapType = ZodMap2.create;
+var setType = ZodSet2.create;
+var functionType = ZodFunction.create;
+var lazyType = ZodLazy2.create;
+var literalType = ZodLiteral2.create;
+var enumType = ZodEnum2.create;
+var nativeEnumType = ZodNativeEnum.create;
+var promiseType = ZodPromise2.create;
+var effectsType = ZodEffects.create;
+var optionalType = ZodOptional2.create;
+var nullableType = ZodNullable2.create;
+var preprocessType = ZodEffects.createWithPreprocess;
+var pipelineType = ZodPipeline.create;
+var ostring = () => stringType().optional();
+var onumber = () => numberType().optional();
+var oboolean = () => booleanType().optional();
+var coerce = {
+  string: ((arg) => ZodString2.create({ ...arg, coerce: true })),
+  number: ((arg) => ZodNumber2.create({ ...arg, coerce: true })),
+  boolean: ((arg) => ZodBoolean2.create({
+    ...arg,
+    coerce: true
+  })),
+  bigint: ((arg) => ZodBigInt2.create({ ...arg, coerce: true })),
+  date: ((arg) => ZodDate2.create({ ...arg, coerce: true }))
+};
+var NEVER2 = INVALID;
+
+// ../../lib/api-zod/src/generated/api.ts
+var HealthCheckResponse = objectType({
+  status: stringType()
+});
+var RegisterBody = objectType({
+  name: stringType(),
+  email: stringType(),
+  password: stringType(),
+  phone: stringType().nullish(),
+  role: enumType(["customer", "vendor", "delivery_partner", "admin"])
+});
+var LoginBody = objectType({
+  email: stringType(),
+  password: stringType()
+});
+var LoginResponse = objectType({
+  token: stringType(),
+  user: objectType({
+    id: numberType(),
+    name: stringType(),
+    email: stringType(),
+    phone: stringType().nullish(),
+    role: enumType([
+      "customer",
+      "vendor",
+      "delivery_partner",
+      "admin",
+      "super_admin",
+      "city_admin"
+    ]),
+    avatar: stringType().nullish(),
+    walletBalance: numberType().optional(),
+    isActive: booleanType().optional(),
+    cityId: numberType().nullish(),
+    lat: numberType().nullish(),
+    lng: numberType().nullish(),
+    city: stringType().nullish(),
+    state: stringType().nullish(),
+    pincode: stringType().nullish(),
+    area: stringType().nullish(),
+    permissions: arrayType(stringType()).nullish(),
+    createdAt: stringType()
+  })
+});
+var GoogleAuthBody = objectType({
+  credential: stringType().describe("Google ID token (JWT) returned by Google Identity Services"),
+  role: enumType(["customer", "vendor", "delivery_partner"]).optional(),
+  cityId: numberType().nullish()
+});
+var GoogleAuthResponse = objectType({
+  token: stringType(),
+  user: objectType({
+    id: numberType(),
+    name: stringType(),
+    email: stringType(),
+    phone: stringType().nullish(),
+    role: enumType([
+      "customer",
+      "vendor",
+      "delivery_partner",
+      "admin",
+      "super_admin",
+      "city_admin"
+    ]),
+    avatar: stringType().nullish(),
+    walletBalance: numberType().optional(),
+    isActive: booleanType().optional(),
+    cityId: numberType().nullish(),
+    lat: numberType().nullish(),
+    lng: numberType().nullish(),
+    city: stringType().nullish(),
+    state: stringType().nullish(),
+    pincode: stringType().nullish(),
+    area: stringType().nullish(),
+    permissions: arrayType(stringType()).nullish(),
+    createdAt: stringType()
+  })
+});
+var GetMeResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var ListUsersQueryParams = objectType({
+  role: coerce.string().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListUsersResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      name: stringType(),
+      email: stringType(),
+      phone: stringType().nullish(),
+      role: enumType([
+        "customer",
+        "vendor",
+        "delivery_partner",
+        "admin",
+        "super_admin",
+        "city_admin"
+      ]),
+      avatar: stringType().nullish(),
+      walletBalance: numberType().optional(),
+      isActive: booleanType().optional(),
+      cityId: numberType().nullish(),
+      lat: numberType().nullish(),
+      lng: numberType().nullish(),
+      city: stringType().nullish(),
+      state: stringType().nullish(),
+      pincode: stringType().nullish(),
+      area: stringType().nullish(),
+      permissions: arrayType(stringType()).nullish(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var UpdateMyLocationBody = objectType({
+  lat: numberType(),
+  lng: numberType(),
+  city: stringType().optional(),
+  state: stringType().optional(),
+  pincode: stringType().optional(),
+  area: stringType().optional()
+});
+var UpdateMyLocationResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var GetUserParams = objectType({
+  id: coerce.number()
+});
+var GetUserResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var UpdateUserParams = objectType({
+  id: coerce.number()
+});
+var UpdateUserBody = objectType({
+  name: stringType().optional(),
+  phone: stringType().optional(),
+  avatar: stringType().optional(),
+  isActive: booleanType().optional()
+});
+var UpdateUserResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var DeleteUserParams = objectType({
+  id: coerce.number()
+});
+var ListCategoriesResponseItem = objectType({
+  id: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  icon: stringType().nullish(),
+  image: stringType().nullish(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var ListCategoriesResponse = arrayType(ListCategoriesResponseItem);
+var CreateCategoryBody = objectType({
+  name: stringType(),
+  slug: stringType(),
+  icon: stringType().optional(),
+  image: stringType().optional(),
+  sortOrder: numberType().optional()
+});
+var UpdateCategoryParams = objectType({
+  id: coerce.number()
+});
+var UpdateCategoryBody = objectType({
+  name: stringType().optional(),
+  slug: stringType().optional(),
+  icon: stringType().optional(),
+  image: stringType().optional(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var UpdateCategoryResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  icon: stringType().nullish(),
+  image: stringType().nullish(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var DeleteCategoryParams = objectType({
+  id: coerce.number()
+});
+var ListSubcategoriesQueryParams = objectType({
+  categoryId: coerce.number().optional()
+});
+var ListSubcategoriesResponseItem = objectType({
+  id: numberType(),
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var ListSubcategoriesResponse = arrayType(
+  ListSubcategoriesResponseItem
+);
+var CreateSubcategoryBody = objectType({
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  sortOrder: numberType().optional()
+});
+var UpdateSubcategoryParams = objectType({
+  id: coerce.number()
+});
+var UpdateSubcategoryBody = objectType({
+  name: stringType().optional(),
+  slug: stringType().optional(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var UpdateSubcategoryResponse = objectType({
+  id: numberType(),
+  categoryId: numberType(),
+  name: stringType(),
+  slug: stringType(),
+  isActive: booleanType().optional(),
+  sortOrder: numberType().optional()
+});
+var DeleteSubcategoryParams = objectType({
+  id: coerce.number()
+});
+var ListVendorsQueryParams = objectType({
+  status: coerce.string().optional(),
+  category: coerce.string().optional(),
+  city: coerce.string().optional(),
+  userId: coerce.number().optional(),
+  featured: coerce.boolean().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListVendorsResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      userId: numberType(),
+      cityId: numberType().nullish(),
+      shopName: stringType(),
+      categoryId: numberType(),
+      categoryName: stringType().nullish(),
+      description: stringType().nullish(),
+      logo: stringType().nullish(),
+      coverImage: stringType().nullish(),
+      address: stringType().nullish(),
+      city: stringType().nullish(),
+      lat: numberType().nullish(),
+      lng: numberType().nullish(),
+      deliveryRadiusKm: numberType().optional(),
+      distanceKm: numberType().nullish(),
+      phone: stringType().nullish(),
+      status: enumType(["pending", "approved", "rejected", "suspended"]),
+      commissionRate: numberType().optional(),
+      rating: numberType().optional(),
+      totalOrders: numberType().optional(),
+      isOpen: booleanType().optional(),
+      isFeatured: booleanType().optional(),
+      openTime: stringType().nullish(),
+      closeTime: stringType().nullish(),
+      payoutMethod: stringType().nullish(),
+      bankAccountNumber: stringType().nullish(),
+      bankIfsc: stringType().nullish(),
+      bankName: stringType().nullish(),
+      upiId: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var CreateVendorBody = objectType({
+  shopName: stringType(),
+  categoryId: numberType().optional(),
+  cityId: numberType().optional(),
+  description: stringType().optional(),
+  logo: stringType().optional(),
+  address: stringType(),
+  city: stringType(),
+  lat: numberType().optional(),
+  lng: numberType().optional(),
+  deliveryRadiusKm: numberType().optional(),
+  phone: stringType(),
+  openTime: stringType().optional(),
+  closeTime: stringType().optional(),
+  payoutMethod: stringType().optional(),
+  upiId: stringType().optional(),
+  bankName: stringType().optional(),
+  bankAccountNumber: stringType().optional(),
+  bankIfsc: stringType().optional()
+});
+var ListNearbyVendorsQueryParams = objectType({
+  city: coerce.string().optional(),
+  lat: coerce.number().optional(),
+  lng: coerce.number().optional(),
+  radius: coerce.number().optional(),
+  category: coerce.string().optional()
+});
+var ListNearbyVendorsResponseItem = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var ListNearbyVendorsResponse = arrayType(
+  ListNearbyVendorsResponseItem
+);
+var GetVendorParams = objectType({
+  id: coerce.number()
+});
+var GetVendorResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var UpdateVendorParams = objectType({
+  id: coerce.number()
+});
+var UpdateVendorBody = objectType({
+  shopName: stringType().optional(),
+  payoutMethod: stringType().optional(),
+  bankAccountNumber: stringType().optional(),
+  bankIfsc: stringType().optional(),
+  bankName: stringType().optional(),
+  upiId: stringType().optional(),
+  description: stringType().optional(),
+  logo: stringType().optional(),
+  coverImage: stringType().optional(),
+  address: stringType().optional(),
+  city: stringType().optional(),
+  lat: numberType().optional(),
+  lng: numberType().optional(),
+  deliveryRadiusKm: numberType().optional(),
+  phone: stringType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().optional(),
+  closeTime: stringType().optional()
+});
+var UpdateVendorResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var ApproveVendorParams = objectType({
+  id: coerce.number()
+});
+var ApproveVendorResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var RejectVendorParams = objectType({
+  id: coerce.number()
+});
+var RejectVendorResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var GetVendorStatsParams = objectType({
+  id: coerce.number()
+});
+var GetVendorStatsResponse = objectType({
+  totalEarnings: numberType(),
+  totalOrders: numberType(),
+  pendingOrders: numberType(),
+  completedOrders: numberType(),
+  thisMonthEarnings: numberType(),
+  averageRating: numberType().optional()
+});
+var ListProductsQueryParams = objectType({
+  vendorId: coerce.number().optional(),
+  categoryId: coerce.number().optional(),
+  subcategoryId: coerce.number().optional(),
+  search: coerce.string().optional(),
+  includePending: coerce.boolean().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListProductsResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      vendorId: numberType(),
+      vendorName: stringType().nullish(),
+      categoryId: numberType(),
+      categoryName: stringType().nullish(),
+      subcategoryId: numberType().nullish(),
+      subcategoryName: stringType().nullish(),
+      name: stringType(),
+      description: stringType().nullish(),
+      price: numberType(),
+      mrp: numberType().nullish(),
+      images: arrayType(stringType()).optional(),
+      stock: numberType(),
+      unit: stringType().nullish(),
+      isAvailable: booleanType(),
+      isApproved: booleanType().optional(),
+      rejectionReason: stringType().nullish(),
+      rating: numberType().optional(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var CreateProductBody = objectType({
+  vendorId: numberType(),
+  categoryId: numberType(),
+  subcategoryId: numberType().optional(),
+  name: stringType(),
+  description: stringType().optional(),
+  price: numberType(),
+  mrp: numberType().optional(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType(),
+  unit: stringType().optional()
+});
+var GetProductParams = objectType({
+  id: coerce.number()
+});
+var GetProductResponse = objectType({
+  id: numberType(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  mrp: numberType().nullish(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType(),
+  unit: stringType().nullish(),
+  isAvailable: booleanType(),
+  isApproved: booleanType().optional(),
+  rejectionReason: stringType().nullish(),
+  rating: numberType().optional(),
+  createdAt: stringType()
+});
+var UpdateProductParams = objectType({
+  id: coerce.number()
+});
+var UpdateProductBody = objectType({
+  categoryId: numberType().optional(),
+  subcategoryId: numberType().optional(),
+  name: stringType().optional(),
+  description: stringType().optional(),
+  price: numberType().optional(),
+  mrp: numberType().optional(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType().optional(),
+  unit: stringType().optional(),
+  isAvailable: booleanType().optional()
+});
+var UpdateProductResponse = objectType({
+  id: numberType(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  mrp: numberType().nullish(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType(),
+  unit: stringType().nullish(),
+  isAvailable: booleanType(),
+  isApproved: booleanType().optional(),
+  rejectionReason: stringType().nullish(),
+  rating: numberType().optional(),
+  createdAt: stringType()
+});
+var DeleteProductParams = objectType({
+  id: coerce.number()
+});
+var ListPendingProductsResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      vendorId: numberType(),
+      vendorName: stringType().nullish(),
+      categoryId: numberType(),
+      categoryName: stringType().nullish(),
+      subcategoryId: numberType().nullish(),
+      subcategoryName: stringType().nullish(),
+      name: stringType(),
+      description: stringType().nullish(),
+      price: numberType(),
+      mrp: numberType().nullish(),
+      images: arrayType(stringType()).optional(),
+      stock: numberType(),
+      unit: stringType().nullish(),
+      isAvailable: booleanType(),
+      isApproved: booleanType().optional(),
+      rejectionReason: stringType().nullish(),
+      rating: numberType().optional(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var ApproveProductParams = objectType({
+  id: coerce.number()
+});
+var ApproveProductResponse = objectType({
+  id: numberType(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  mrp: numberType().nullish(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType(),
+  unit: stringType().nullish(),
+  isAvailable: booleanType(),
+  isApproved: booleanType().optional(),
+  rejectionReason: stringType().nullish(),
+  rating: numberType().optional(),
+  createdAt: stringType()
+});
+var RejectProductParams = objectType({
+  id: coerce.number()
+});
+var RejectProductResponse = objectType({
+  id: numberType(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  subcategoryId: numberType().nullish(),
+  subcategoryName: stringType().nullish(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  mrp: numberType().nullish(),
+  images: arrayType(stringType()).optional(),
+  stock: numberType(),
+  unit: stringType().nullish(),
+  isAvailable: booleanType(),
+  isApproved: booleanType().optional(),
+  rejectionReason: stringType().nullish(),
+  rating: numberType().optional(),
+  createdAt: stringType()
+});
+var GetCartResponse = objectType({
+  vendorId: numberType().nullish(),
+  vendorName: stringType().nullish(),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  itemCount: numberType()
+});
+var AddCartItemBody = objectType({
+  productId: numberType(),
+  quantity: numberType()
+});
+var AddCartItemResponse = objectType({
+  vendorId: numberType().nullish(),
+  vendorName: stringType().nullish(),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  itemCount: numberType()
+});
+var UpdateCartItemParams = objectType({
+  productId: coerce.number()
+});
+var UpdateCartItemBody = objectType({
+  quantity: numberType()
+});
+var UpdateCartItemResponse = objectType({
+  vendorId: numberType().nullish(),
+  vendorName: stringType().nullish(),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  itemCount: numberType()
+});
+var RemoveCartItemParams = objectType({
+  productId: coerce.number()
+});
+var RemoveCartItemResponse = objectType({
+  vendorId: numberType().nullish(),
+  vendorName: stringType().nullish(),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  itemCount: numberType()
+});
+var ListOrdersQueryParams = objectType({
+  status: coerce.string().optional(),
+  vendorId: coerce.number().optional(),
+  customerId: coerce.number().optional(),
+  deliveryPartnerId: coerce.number().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListOrdersResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      cityId: numberType().nullish(),
+      customerId: numberType(),
+      customerName: stringType().nullish(),
+      vendorId: numberType(),
+      vendorName: stringType().nullish(),
+      deliveryPartnerId: numberType().nullish(),
+      deliveryPartnerName: stringType().nullish(),
+      status: enumType([
+        "pending",
+        "confirmed",
+        "preparing",
+        "ready",
+        "picked_up",
+        "delivered",
+        "cancelled"
+      ]),
+      items: arrayType(
+        objectType({
+          productId: numberType(),
+          name: stringType(),
+          image: stringType().nullish(),
+          price: numberType(),
+          quantity: numberType(),
+          subtotal: numberType()
+        })
+      ),
+      deliveryAddress: stringType().optional(),
+      deliveryLat: numberType().nullish(),
+      deliveryLng: numberType().nullish(),
+      subtotal: numberType().optional(),
+      deliveryFee: numberType().optional(),
+      discount: numberType().optional(),
+      total: numberType(),
+      paymentMethod: enumType(["cod", "wallet", "online"]),
+      paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+      couponCode: stringType().nullish(),
+      notes: stringType().nullish(),
+      estimatedDeliveryTime: stringType().nullish(),
+      deliveredAt: stringType().nullish(),
+      customerPhone: stringType().nullish(),
+      vendorPhone: stringType().nullish(),
+      deliveryPartnerPhone: stringType().nullish(),
+      deliveryPartnerLat: numberType().nullish(),
+      deliveryPartnerLng: numberType().nullish(),
+      deliveryOtp: stringType().nullish(),
+      vendorRating: numberType().nullish(),
+      vendorRatingComment: stringType().nullish(),
+      deliveryRating: numberType().nullish(),
+      deliveryRatingComment: stringType().nullish(),
+      razorpayPaymentId: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var CreateOrderBody = objectType({
+  vendorId: numberType(),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      quantity: numberType()
+    })
+  ),
+  deliveryAddress: stringType(),
+  customerName: stringType().optional().describe(
+    "Recipient name for this delivery. Snapshotted on the order and saved to the customer's profile for future orders."
+  ),
+  customerPhone: stringType().optional().describe(
+    "Recipient contact number the rider can call. Snapshotted on the order and saved to the customer's profile for future orders."
+  ),
+  deliveryLat: numberType().optional(),
+  deliveryLng: numberType().optional(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  couponCode: stringType().optional(),
+  notes: stringType().optional(),
+  clientOrderId: stringType().optional().describe(
+    "Client-generated idempotency key (UUID). Resubmitting the same key returns the existing order instead of creating a duplicate."
+  )
+});
+var GetPaymentConfigResponse = objectType({
+  upiEnabled: booleanType(),
+  upiId: stringType().nullish(),
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish()
+});
+var GetPublicSettingsResponse = objectType({
+  currency: stringType(),
+  supportEmail: stringType().nullish(),
+  supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
+  upiId: stringType().nullish(),
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish()
+});
+var SubmitOrderPaymentUtrParams = objectType({
+  id: coerce.number()
+});
+var SubmitOrderPaymentUtrBody = objectType({
+  utr: stringType().describe(
+    "UPI transaction reference number (UTR / transaction ID) the customer sees after paying"
+  )
+});
+var SubmitOrderPaymentUtrResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var GetOrderParams = objectType({
+  id: coerce.number()
+});
+var GetOrderResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var UpdateOrderStatusParams = objectType({
+  id: coerce.number()
+});
+var UpdateOrderStatusBody = objectType({
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ])
+});
+var UpdateOrderStatusResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var UpdateOrderPaymentStatusParams = objectType({
+  id: coerce.number()
+});
+var UpdateOrderPaymentStatusBody = objectType({
+  paymentStatus: enumType(["paid", "failed"])
+});
+var UpdateOrderPaymentStatusResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var AssignDeliveryParams = objectType({
+  id: coerce.number()
+});
+var AssignDeliveryBody = objectType({
+  deliveryPartnerId: numberType()
+});
+var AssignDeliveryResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var VerifyDeliveryOtpParams = objectType({
+  id: coerce.number()
+});
+var VerifyDeliveryOtpBody = objectType({
+  otp: stringType()
+});
+var VerifyDeliveryOtpResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var RateOrderParams = objectType({
+  id: coerce.number()
+});
+var rateOrderBodyVendorRatingMax = 5;
+var rateOrderBodyDeliveryRatingMax = 5;
+var RateOrderBody = objectType({
+  vendorRating: numberType().min(1).max(rateOrderBodyVendorRatingMax).optional(),
+  vendorRatingComment: stringType().optional(),
+  deliveryRating: numberType().min(1).max(rateOrderBodyDeliveryRatingMax).optional(),
+  deliveryRatingComment: stringType().optional()
+});
+var RateOrderResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  customerId: numberType(),
+  customerName: stringType().nullish(),
+  vendorId: numberType(),
+  vendorName: stringType().nullish(),
+  deliveryPartnerId: numberType().nullish(),
+  deliveryPartnerName: stringType().nullish(),
+  status: enumType([
+    "pending",
+    "confirmed",
+    "preparing",
+    "ready",
+    "picked_up",
+    "delivered",
+    "cancelled"
+  ]),
+  items: arrayType(
+    objectType({
+      productId: numberType(),
+      name: stringType(),
+      image: stringType().nullish(),
+      price: numberType(),
+      quantity: numberType(),
+      subtotal: numberType()
+    })
+  ),
+  deliveryAddress: stringType().optional(),
+  deliveryLat: numberType().nullish(),
+  deliveryLng: numberType().nullish(),
+  subtotal: numberType().optional(),
+  deliveryFee: numberType().optional(),
+  discount: numberType().optional(),
+  total: numberType(),
+  paymentMethod: enumType(["cod", "wallet", "online"]),
+  paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+  couponCode: stringType().nullish(),
+  notes: stringType().nullish(),
+  estimatedDeliveryTime: stringType().nullish(),
+  deliveredAt: stringType().nullish(),
+  customerPhone: stringType().nullish(),
+  vendorPhone: stringType().nullish(),
+  deliveryPartnerPhone: stringType().nullish(),
+  deliveryPartnerLat: numberType().nullish(),
+  deliveryPartnerLng: numberType().nullish(),
+  deliveryOtp: stringType().nullish(),
+  vendorRating: numberType().nullish(),
+  vendorRatingComment: stringType().nullish(),
+  deliveryRating: numberType().nullish(),
+  deliveryRatingComment: stringType().nullish(),
+  razorpayPaymentId: stringType().nullish(),
+  createdAt: stringType()
+});
+var AutoAssignDeliveryParams = objectType({
+  id: coerce.number()
+});
+var AutoAssignDeliveryResponse = objectType({
+  orderId: numberType(),
+  deliveryPartnerId: numberType(),
+  deliveryPartnerName: stringType(),
+  distanceKm: numberType().nullish()
+});
+var ListDeliveryPartnersQueryParams = objectType({
+  status: coerce.string().optional(),
+  isOnline: coerce.boolean().optional(),
+  userId: coerce.number().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListDeliveryPartnersResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      userId: numberType(),
+      cityId: numberType().nullish(),
+      name: stringType().nullish(),
+      phone: stringType().nullish(),
+      vehicle: stringType().nullish(),
+      vehicleNumber: stringType().nullish(),
+      avatar: stringType().nullish(),
+      status: enumType(["pending", "approved", "rejected", "suspended"]),
+      isOnline: booleanType().optional(),
+      currentLat: numberType().nullish(),
+      currentLng: numberType().nullish(),
+      rating: numberType().optional(),
+      totalDeliveries: numberType().optional(),
+      totalEarnings: numberType().optional(),
+      walletBalance: numberType().optional(),
+      cashInHand: numberType().optional(),
+      payoutMethod: stringType().nullish(),
+      bankAccountNumber: stringType().nullish(),
+      bankIfsc: stringType().nullish(),
+      bankName: stringType().nullish(),
+      upiId: stringType().nullish(),
+      photoUrl: stringType().nullish(),
+      aadhaarNumber: stringType().nullish(),
+      aadhaarUrl: stringType().nullish(),
+      licenseNumber: stringType().nullish(),
+      licenseUrl: stringType().nullish(),
+      kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+      kycNote: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var CreateDeliveryPartnerBody = objectType({
+  phone: stringType(),
+  vehicle: stringType(),
+  vehicleNumber: stringType()
+});
+var AdminCreateDeliveryPartnerBody = objectType({
+  name: stringType(),
+  email: stringType(),
+  password: stringType(),
+  phone: stringType().optional(),
+  cityId: numberType(),
+  vehicle: stringType().optional(),
+  vehicleNumber: stringType().optional()
+});
+var GetDeliveryPartnerParams = objectType({
+  id: coerce.number()
+});
+var GetDeliveryPartnerResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  name: stringType().nullish(),
+  phone: stringType().nullish(),
+  vehicle: stringType().nullish(),
+  vehicleNumber: stringType().nullish(),
+  avatar: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().nullish(),
+  currentLng: numberType().nullish(),
+  rating: numberType().optional(),
+  totalDeliveries: numberType().optional(),
+  totalEarnings: numberType().optional(),
+  walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  photoUrl: stringType().nullish(),
+  aadhaarNumber: stringType().nullish(),
+  aadhaarUrl: stringType().nullish(),
+  licenseNumber: stringType().nullish(),
+  licenseUrl: stringType().nullish(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish(),
+  createdAt: stringType()
+});
+var UpdateDeliveryPartnerParams = objectType({
+  id: coerce.number()
+});
+var UpdateDeliveryPartnerBody = objectType({
+  vehicle: stringType().optional(),
+  vehicleNumber: stringType().optional(),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().optional(),
+  currentLng: numberType().optional(),
+  payoutMethod: stringType().optional(),
+  bankAccountNumber: stringType().optional(),
+  bankIfsc: stringType().optional(),
+  bankName: stringType().optional(),
+  upiId: stringType().optional(),
+  photoUrl: stringType().optional(),
+  aadhaarNumber: stringType().optional(),
+  aadhaarUrl: stringType().optional(),
+  licenseNumber: stringType().optional(),
+  licenseUrl: stringType().optional(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish()
+});
+var UpdateDeliveryPartnerResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  name: stringType().nullish(),
+  phone: stringType().nullish(),
+  vehicle: stringType().nullish(),
+  vehicleNumber: stringType().nullish(),
+  avatar: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().nullish(),
+  currentLng: numberType().nullish(),
+  rating: numberType().optional(),
+  totalDeliveries: numberType().optional(),
+  totalEarnings: numberType().optional(),
+  walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  photoUrl: stringType().nullish(),
+  aadhaarNumber: stringType().nullish(),
+  aadhaarUrl: stringType().nullish(),
+  licenseNumber: stringType().nullish(),
+  licenseUrl: stringType().nullish(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish(),
+  createdAt: stringType()
+});
+var ApproveDeliveryPartnerParams = objectType({
+  id: coerce.number()
+});
+var ApproveDeliveryPartnerResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  name: stringType().nullish(),
+  phone: stringType().nullish(),
+  vehicle: stringType().nullish(),
+  vehicleNumber: stringType().nullish(),
+  avatar: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().nullish(),
+  currentLng: numberType().nullish(),
+  rating: numberType().optional(),
+  totalDeliveries: numberType().optional(),
+  totalEarnings: numberType().optional(),
+  walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  photoUrl: stringType().nullish(),
+  aadhaarNumber: stringType().nullish(),
+  aadhaarUrl: stringType().nullish(),
+  licenseNumber: stringType().nullish(),
+  licenseUrl: stringType().nullish(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish(),
+  createdAt: stringType()
+});
+var GetDeliveryPartnerStatsParams = objectType({
+  id: coerce.number()
+});
+var GetDeliveryPartnerStatsResponse = objectType({
+  totalEarnings: numberType(),
+  totalDeliveries: numberType(),
+  thisMonthEarnings: numberType(),
+  thisMonthDeliveries: numberType(),
+  averageRating: numberType().optional()
+});
+var GetWalletResponse = objectType({
+  userId: numberType(),
+  balance: numberType()
+});
+var ListWalletTransactionsQueryParams = objectType({
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListWalletTransactionsResponseItem = objectType({
+  id: numberType(),
+  userId: numberType(),
+  amount: numberType(),
+  type: enumType(["credit", "debit"]),
+  description: stringType(),
+  orderId: numberType().nullish(),
+  createdAt: stringType()
+});
+var ListWalletTransactionsResponse = arrayType(
+  ListWalletTransactionsResponseItem
+);
+var TopUpWalletBody = objectType({
+  amount: numberType()
+});
+var TopUpWalletResponse = objectType({
+  userId: numberType(),
+  balance: numberType()
+});
+var ListCouponsResponseItem = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  code: stringType(),
+  description: stringType().nullish(),
+  discountType: enumType(["percentage", "fixed"]),
+  discountValue: numberType(),
+  minOrderAmount: numberType().nullish(),
+  maxDiscount: numberType().nullish(),
+  usageLimit: numberType().nullish(),
+  usedCount: numberType().optional(),
+  isActive: booleanType(),
+  expiresAt: stringType().nullish(),
+  createdAt: stringType()
+});
+var ListCouponsResponse = arrayType(ListCouponsResponseItem);
+var CreateCouponBody = objectType({
+  code: stringType(),
+  cityId: numberType().optional(),
+  description: stringType().optional(),
+  discountType: enumType(["percentage", "fixed"]),
+  discountValue: numberType(),
+  minOrderAmount: numberType().optional(),
+  maxDiscount: numberType().optional(),
+  usageLimit: numberType().optional(),
+  expiresAt: stringType().optional()
+});
+var UpdateCouponParams = objectType({
+  id: coerce.number()
+});
+var UpdateCouponBody = objectType({
+  description: stringType().optional(),
+  discountValue: numberType().optional(),
+  minOrderAmount: numberType().optional(),
+  maxDiscount: numberType().optional(),
+  usageLimit: numberType().optional(),
+  isActive: booleanType().optional(),
+  expiresAt: stringType().optional()
+});
+var UpdateCouponResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  code: stringType(),
+  description: stringType().nullish(),
+  discountType: enumType(["percentage", "fixed"]),
+  discountValue: numberType(),
+  minOrderAmount: numberType().nullish(),
+  maxDiscount: numberType().nullish(),
+  usageLimit: numberType().nullish(),
+  usedCount: numberType().optional(),
+  isActive: booleanType(),
+  expiresAt: stringType().nullish(),
+  createdAt: stringType()
+});
+var DeleteCouponParams = objectType({
+  id: coerce.number()
+});
+var ValidateCouponBody = objectType({
+  code: stringType(),
+  orderAmount: numberType().optional()
+});
+var ValidateCouponResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  code: stringType(),
+  description: stringType().nullish(),
+  discountType: enumType(["percentage", "fixed"]),
+  discountValue: numberType(),
+  minOrderAmount: numberType().nullish(),
+  maxDiscount: numberType().nullish(),
+  usageLimit: numberType().nullish(),
+  usedCount: numberType().optional(),
+  isActive: booleanType(),
+  expiresAt: stringType().nullish(),
+  createdAt: stringType()
+});
+var ListReviewsQueryParams = objectType({
+  vendorId: coerce.number().optional(),
+  productId: coerce.number().optional()
+});
+var ListReviewsResponseItem = objectType({
+  id: numberType(),
+  userId: numberType(),
+  userName: stringType().nullish(),
+  vendorId: numberType().nullish(),
+  productId: numberType().nullish(),
+  orderId: numberType().nullish(),
+  rating: numberType(),
+  comment: stringType().nullish(),
+  createdAt: stringType()
+});
+var ListReviewsResponse = arrayType(ListReviewsResponseItem);
+var CreateReviewBody = objectType({
+  vendorId: numberType().optional(),
+  productId: numberType().optional(),
+  orderId: numberType().optional(),
+  rating: numberType(),
+  comment: stringType().optional()
+});
+var ListBannersResponseItem = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  title: stringType(),
+  imageUrl: stringType(),
+  linkUrl: stringType().nullish(),
+  position: numberType().optional(),
+  isActive: booleanType(),
+  createdAt: stringType()
+});
+var ListBannersResponse = arrayType(ListBannersResponseItem);
+var CreateBannerBody = objectType({
+  title: stringType(),
+  cityId: numberType().optional(),
+  imageUrl: stringType(),
+  linkUrl: stringType().optional(),
+  position: numberType().optional()
+});
+var UpdateBannerParams = objectType({
+  id: coerce.number()
+});
+var UpdateBannerBody = objectType({
+  title: stringType().optional(),
+  imageUrl: stringType().optional(),
+  linkUrl: stringType().optional(),
+  position: numberType().optional(),
+  isActive: booleanType().optional()
+});
+var UpdateBannerResponse = objectType({
+  id: numberType(),
+  cityId: numberType().nullish(),
+  title: stringType(),
+  imageUrl: stringType(),
+  linkUrl: stringType().nullish(),
+  position: numberType().optional(),
+  isActive: booleanType(),
+  createdAt: stringType()
+});
+var DeleteBannerParams = objectType({
+  id: coerce.number()
+});
+var ListCitiesResponseItem = objectType({
+  id: numberType(),
+  name: stringType(),
+  state: stringType(),
+  isActive: booleanType()
+});
+var ListCitiesResponse = arrayType(ListCitiesResponseItem);
+var CreateCityBody = objectType({
+  name: stringType(),
+  state: stringType()
+});
+var UpdateCityParams = objectType({
+  id: coerce.number()
+});
+var UpdateCityBody = objectType({
+  name: stringType().optional(),
+  state: stringType().optional(),
+  isActive: booleanType().optional()
+});
+var UpdateCityResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  state: stringType(),
+  isActive: booleanType()
+});
+var DeleteCityParams = objectType({
+  id: coerce.number()
+});
+var ListNotificationsQueryParams = objectType({
+  isRead: coerce.boolean().optional()
+});
+var ListNotificationsResponseItem = objectType({
+  id: numberType(),
+  userId: numberType(),
+  title: stringType(),
+  message: stringType(),
+  type: stringType().optional(),
+  isRead: booleanType(),
+  createdAt: stringType()
+});
+var ListNotificationsResponse = arrayType(
+  ListNotificationsResponseItem
+);
+var MarkNotificationReadParams = objectType({
+  id: coerce.number()
+});
+var MarkNotificationReadResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  title: stringType(),
+  message: stringType(),
+  type: stringType().optional(),
+  isRead: booleanType(),
+  createdAt: stringType()
+});
+var GetAdminDashboardResponse = objectType({
+  totalUsers: numberType(),
+  totalVendors: numberType(),
+  totalOrders: numberType(),
+  totalRevenue: numberType(),
+  pendingVendors: numberType(),
+  activeDeliveryPartners: numberType(),
+  todayOrders: numberType(),
+  todayRevenue: numberType(),
+  recentOrders: arrayType(
+    objectType({
+      id: numberType(),
+      cityId: numberType().nullish(),
+      customerId: numberType(),
+      customerName: stringType().nullish(),
+      vendorId: numberType(),
+      vendorName: stringType().nullish(),
+      deliveryPartnerId: numberType().nullish(),
+      deliveryPartnerName: stringType().nullish(),
+      status: enumType([
+        "pending",
+        "confirmed",
+        "preparing",
+        "ready",
+        "picked_up",
+        "delivered",
+        "cancelled"
+      ]),
+      items: arrayType(
+        objectType({
+          productId: numberType(),
+          name: stringType(),
+          image: stringType().nullish(),
+          price: numberType(),
+          quantity: numberType(),
+          subtotal: numberType()
+        })
+      ),
+      deliveryAddress: stringType().optional(),
+      deliveryLat: numberType().nullish(),
+      deliveryLng: numberType().nullish(),
+      subtotal: numberType().optional(),
+      deliveryFee: numberType().optional(),
+      discount: numberType().optional(),
+      total: numberType(),
+      paymentMethod: enumType(["cod", "wallet", "online"]),
+      paymentStatus: enumType(["pending", "paid", "failed", "refunded"]).optional(),
+      couponCode: stringType().nullish(),
+      notes: stringType().nullish(),
+      estimatedDeliveryTime: stringType().nullish(),
+      deliveredAt: stringType().nullish(),
+      customerPhone: stringType().nullish(),
+      vendorPhone: stringType().nullish(),
+      deliveryPartnerPhone: stringType().nullish(),
+      deliveryPartnerLat: numberType().nullish(),
+      deliveryPartnerLng: numberType().nullish(),
+      deliveryOtp: stringType().nullish(),
+      vendorRating: numberType().nullish(),
+      vendorRatingComment: stringType().nullish(),
+      deliveryRating: numberType().nullish(),
+      deliveryRatingComment: stringType().nullish(),
+      razorpayPaymentId: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ).optional(),
+  pendingVendorList: arrayType(
+    objectType({
+      id: numberType(),
+      userId: numberType(),
+      cityId: numberType().nullish(),
+      shopName: stringType(),
+      categoryId: numberType(),
+      categoryName: stringType().nullish(),
+      description: stringType().nullish(),
+      logo: stringType().nullish(),
+      coverImage: stringType().nullish(),
+      address: stringType().nullish(),
+      city: stringType().nullish(),
+      lat: numberType().nullish(),
+      lng: numberType().nullish(),
+      deliveryRadiusKm: numberType().optional(),
+      distanceKm: numberType().nullish(),
+      phone: stringType().nullish(),
+      status: enumType(["pending", "approved", "rejected", "suspended"]),
+      commissionRate: numberType().optional(),
+      rating: numberType().optional(),
+      totalOrders: numberType().optional(),
+      isOpen: booleanType().optional(),
+      isFeatured: booleanType().optional(),
+      openTime: stringType().nullish(),
+      closeTime: stringType().nullish(),
+      payoutMethod: stringType().nullish(),
+      bankAccountNumber: stringType().nullish(),
+      bankIfsc: stringType().nullish(),
+      bankName: stringType().nullish(),
+      upiId: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ).optional()
+});
+var GetRevenueAnalyticsQueryParams = objectType({
+  period: enumType(["daily", "weekly", "monthly"]).optional()
+});
+var GetRevenueAnalyticsResponseItem = objectType({
+  date: stringType(),
+  revenue: numberType(),
+  orders: numberType()
+});
+var GetRevenueAnalyticsResponse = arrayType(
+  GetRevenueAnalyticsResponseItem
+);
+var GetOrdersByStatusResponseItem = objectType({
+  status: stringType(),
+  count: numberType()
+});
+var GetOrdersByStatusResponse = arrayType(
+  GetOrdersByStatusResponseItem
+);
+var GetTopVendorsResponseItem = objectType({
+  vendorId: numberType(),
+  shopName: stringType(),
+  totalOrders: numberType(),
+  totalRevenue: numberType(),
+  rating: numberType()
+});
+var GetTopVendorsResponse = arrayType(GetTopVendorsResponseItem);
+var GetAdminSettingsResponse = objectType({
+  id: numberType(),
+  commissionRate: numberType(),
+  deliveryBaseFee: numberType(),
+  deliveryPerKmFee: numberType(),
+  minOrderAmount: numberType(),
+  maxDeliveryRadius: numberType().optional(),
+  currency: stringType().optional(),
+  supportEmail: stringType().nullish(),
+  supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
+  upiId: stringType().nullish(),
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
+  )
+});
+var UpdateAdminSettingsBody = objectType({
+  commissionRate: numberType().optional(),
+  deliveryBaseFee: numberType().optional(),
+  deliveryPerKmFee: numberType().optional(),
+  minOrderAmount: numberType().optional(),
+  maxDeliveryRadius: numberType().optional(),
+  currency: stringType().optional(),
+  supportEmail: stringType().optional(),
+  supportPhone: stringType().optional(),
+  orderPhone: stringType().optional(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
+  upiId: stringType().optional(),
+  upiName: stringType().optional(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary). Send empty string to clear."
+  )
+});
+var UpdateAdminSettingsResponse = objectType({
+  id: numberType(),
+  commissionRate: numberType(),
+  deliveryBaseFee: numberType(),
+  deliveryPerKmFee: numberType(),
+  minOrderAmount: numberType(),
+  maxDeliveryRadius: numberType().optional(),
+  currency: stringType().optional(),
+  supportEmail: stringType().nullish(),
+  supportPhone: stringType().nullish(),
+  orderPhone: stringType().nullish(),
+  callToOrderEnabled: booleanType().optional(),
+  riderCashLimit: numberType().optional(),
+  upiId: stringType().nullish(),
+  upiName: stringType().nullish(),
+  upiQrImage: stringType().nullish().describe(
+    "Merchant-uploaded UPI QR code image URL (hosted on Cloudinary)."
+  )
+});
+var ListDeliverySettlementsQueryParams = objectType({
+  status: coerce.string().optional(),
+  deliveryPartnerId: coerce.number().optional()
+});
+var ListDeliverySettlementsResponseItem = objectType({
+  id: numberType(),
+  deliveryPartnerId: numberType(),
+  partnerName: stringType().nullish(),
+  amount: numberType(),
+  status: enumType(["pending", "confirmed"]),
+  note: stringType().nullish(),
+  confirmedBy: numberType().nullish(),
+  createdAt: stringType(),
+  confirmedAt: stringType().nullish()
+});
+var ListDeliverySettlementsResponse = arrayType(
+  ListDeliverySettlementsResponseItem
+);
+var CreateDeliverySettlementBody = objectType({
+  amount: numberType(),
+  note: stringType().optional()
+});
+var ConfirmDeliverySettlementParams = objectType({
+  id: coerce.number()
+});
+var ConfirmDeliverySettlementBody = objectType({
+  note: stringType().optional()
+});
+var ConfirmDeliverySettlementResponse = objectType({
+  id: numberType(),
+  deliveryPartnerId: numberType(),
+  partnerName: stringType().nullish(),
+  amount: numberType(),
+  status: enumType(["pending", "confirmed"]),
+  note: stringType().nullish(),
+  confirmedBy: numberType().nullish(),
+  createdAt: stringType(),
+  confirmedAt: stringType().nullish()
+});
+var ListSubscriptionPlansResponseItem = objectType({
+  id: numberType(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  durationDays: numberType(),
+  features: arrayType(stringType()).optional(),
+  isActive: booleanType(),
+  createdAt: stringType()
+});
+var ListSubscriptionPlansResponse = arrayType(
+  ListSubscriptionPlansResponseItem
+);
+var CreateSubscriptionPlanBody = objectType({
+  name: stringType(),
+  description: stringType().optional(),
+  price: numberType(),
+  durationDays: numberType(),
+  features: arrayType(stringType()).optional()
+});
+var UpdateSubscriptionPlanParams = objectType({
+  id: coerce.number()
+});
+var UpdateSubscriptionPlanBody = objectType({
+  name: stringType().optional(),
+  description: stringType().optional(),
+  price: numberType().optional(),
+  durationDays: numberType().optional(),
+  features: arrayType(stringType()).optional(),
+  isActive: booleanType().optional()
+});
+var UpdateSubscriptionPlanResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  description: stringType().nullish(),
+  price: numberType(),
+  durationDays: numberType(),
+  features: arrayType(stringType()).optional(),
+  isActive: booleanType(),
+  createdAt: stringType()
+});
+var DeleteSubscriptionPlanParams = objectType({
+  id: coerce.number()
+});
+var SuspendVendorParams = objectType({
+  id: coerce.number()
+});
+var SuspendVendorResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  shopName: stringType(),
+  categoryId: numberType(),
+  categoryName: stringType().nullish(),
+  description: stringType().nullish(),
+  logo: stringType().nullish(),
+  coverImage: stringType().nullish(),
+  address: stringType().nullish(),
+  city: stringType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  deliveryRadiusKm: numberType().optional(),
+  distanceKm: numberType().nullish(),
+  phone: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  commissionRate: numberType().optional(),
+  rating: numberType().optional(),
+  totalOrders: numberType().optional(),
+  isOpen: booleanType().optional(),
+  isFeatured: booleanType().optional(),
+  openTime: stringType().nullish(),
+  closeTime: stringType().nullish(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  createdAt: stringType()
+});
+var SuspendDeliveryPartnerParams = objectType({
+  id: coerce.number()
+});
+var SuspendDeliveryPartnerResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  name: stringType().nullish(),
+  phone: stringType().nullish(),
+  vehicle: stringType().nullish(),
+  vehicleNumber: stringType().nullish(),
+  avatar: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().nullish(),
+  currentLng: numberType().nullish(),
+  rating: numberType().optional(),
+  totalDeliveries: numberType().optional(),
+  totalEarnings: numberType().optional(),
+  walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  photoUrl: stringType().nullish(),
+  aadhaarNumber: stringType().nullish(),
+  aadhaarUrl: stringType().nullish(),
+  licenseNumber: stringType().nullish(),
+  licenseUrl: stringType().nullish(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish(),
+  createdAt: stringType()
+});
+var RejectDeliveryPartnerParams = objectType({
+  id: coerce.number()
+});
+var RejectDeliveryPartnerResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  cityId: numberType().nullish(),
+  name: stringType().nullish(),
+  phone: stringType().nullish(),
+  vehicle: stringType().nullish(),
+  vehicleNumber: stringType().nullish(),
+  avatar: stringType().nullish(),
+  status: enumType(["pending", "approved", "rejected", "suspended"]),
+  isOnline: booleanType().optional(),
+  currentLat: numberType().nullish(),
+  currentLng: numberType().nullish(),
+  rating: numberType().optional(),
+  totalDeliveries: numberType().optional(),
+  totalEarnings: numberType().optional(),
+  walletBalance: numberType().optional(),
+  cashInHand: numberType().optional(),
+  payoutMethod: stringType().nullish(),
+  bankAccountNumber: stringType().nullish(),
+  bankIfsc: stringType().nullish(),
+  bankName: stringType().nullish(),
+  upiId: stringType().nullish(),
+  photoUrl: stringType().nullish(),
+  aadhaarNumber: stringType().nullish(),
+  aadhaarUrl: stringType().nullish(),
+  licenseNumber: stringType().nullish(),
+  licenseUrl: stringType().nullish(),
+  kycStatus: enumType(["pending", "submitted", "approved", "rejected"]).optional(),
+  kycNote: stringType().nullish(),
+  createdAt: stringType()
+});
+var BlockUserParams = objectType({
+  id: coerce.number()
+});
+var BlockUserResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var UnblockUserParams = objectType({
+  id: coerce.number()
+});
+var UnblockUserResponse = objectType({
+  id: numberType(),
+  name: stringType(),
+  email: stringType(),
+  phone: stringType().nullish(),
+  role: enumType([
+    "customer",
+    "vendor",
+    "delivery_partner",
+    "admin",
+    "super_admin",
+    "city_admin"
+  ]),
+  avatar: stringType().nullish(),
+  walletBalance: numberType().optional(),
+  isActive: booleanType().optional(),
+  cityId: numberType().nullish(),
+  lat: numberType().nullish(),
+  lng: numberType().nullish(),
+  city: stringType().nullish(),
+  state: stringType().nullish(),
+  pincode: stringType().nullish(),
+  area: stringType().nullish(),
+  permissions: arrayType(stringType()).nullish(),
+  createdAt: stringType()
+});
+var BroadcastNotificationBody = objectType({
+  title: stringType(),
+  message: stringType(),
+  targetRole: enumType(["all", "customer", "vendor", "delivery_partner"]).optional(),
+  type: stringType().optional()
+});
+var BroadcastNotificationResponse = objectType({
+  sent: numberType()
+});
+var GetSalesReportQueryParams = objectType({
+  period: enumType(["daily", "weekly", "monthly"]).optional()
+});
+var GetSalesReportResponse = objectType({
+  totalRevenue: numberType(),
+  totalOrders: numberType(),
+  totalCommission: numberType(),
+  totalDeliveryFees: numberType(),
+  averageOrderValue: numberType().optional(),
+  periodData: arrayType(
+    objectType({
+      date: stringType(),
+      revenue: numberType(),
+      orders: numberType()
+    })
+  )
+});
+var GetVendorEarningsReportResponseItem = objectType({
+  vendorId: numberType(),
+  shopName: stringType(),
+  totalOrders: numberType(),
+  totalRevenue: numberType(),
+  commission: numberType(),
+  netEarnings: numberType(),
+  rating: numberType().optional()
+});
+var GetVendorEarningsReportResponse = arrayType(
+  GetVendorEarningsReportResponseItem
+);
+var ListWithdrawalRequestsQueryParams = objectType({
+  status: coerce.string().optional(),
+  page: coerce.number().optional(),
+  limit: coerce.number().optional()
+});
+var ListWithdrawalRequestsResponse = objectType({
+  data: arrayType(
+    objectType({
+      id: numberType(),
+      userId: numberType(),
+      userName: stringType().nullish(),
+      role: stringType(),
+      amount: numberType(),
+      status: enumType(["pending", "approved", "rejected"]),
+      notes: stringType().nullish(),
+      adminNote: stringType().nullish(),
+      processedAt: stringType().nullish(),
+      createdAt: stringType()
+    })
+  ),
+  total: numberType(),
+  page: numberType(),
+  limit: numberType()
+});
+var CreateWithdrawalRequestBody = objectType({
+  amount: numberType(),
+  notes: stringType().optional()
+});
+var UpdateWithdrawalRequestParams = objectType({
+  id: coerce.number()
+});
+var UpdateWithdrawalRequestBody = objectType({
+  status: enumType(["approved", "rejected"]),
+  adminNote: stringType().optional()
+});
+var UpdateWithdrawalRequestResponse = objectType({
+  id: numberType(),
+  userId: numberType(),
+  userName: stringType().nullish(),
+  role: stringType(),
+  amount: numberType(),
+  status: enumType(["pending", "approved", "rejected"]),
+  notes: stringType().nullish(),
+  adminNote: stringType().nullish(),
+  processedAt: stringType().nullish(),
+  createdAt: stringType()
+});
+
+// src/routes/health.ts
+var router = (0, import_express.Router)();
+router.get("/healthz", async (_req, res) => {
+  try {
+    await pool.query("SELECT 1");
+    const data = HealthCheckResponse.parse({ status: "ok" });
+    res.json(data);
+  } catch {
+    res.status(503).json({ status: "error", message: "Database connection failed" });
+  }
+});
+var health_default = router;
+
+// src/routes/auth.ts
+var import_express2 = __toESM(require_express2(), 1);
+
+// ../../node_modules/.pnpm/bcryptjs@3.0.3/node_modules/bcryptjs/index.js
+import nodeCrypto from "crypto";
+var randomFallback = null;
+function randomBytes(len) {
+  try {
+    return crypto.getRandomValues(new Uint8Array(len));
+  } catch {
+  }
+  try {
+    return nodeCrypto.randomBytes(len);
+  } catch {
+  }
+  if (!randomFallback) {
+    throw Error(
+      "Neither WebCryptoAPI nor a crypto module is available. Use bcrypt.setRandomFallback to set an alternative"
+    );
+  }
+  return randomFallback(len);
+}
+function setRandomFallback(random) {
+  randomFallback = random;
+}
+function genSaltSync(rounds, seed_length) {
+  rounds = rounds || GENSALT_DEFAULT_LOG2_ROUNDS;
+  if (typeof rounds !== "number")
+    throw Error(
+      "Illegal arguments: " + typeof rounds + ", " + typeof seed_length
+    );
+  if (rounds < 4) rounds = 4;
+  else if (rounds > 31) rounds = 31;
+  var salt = [];
+  salt.push("$2b$");
+  if (rounds < 10) salt.push("0");
+  salt.push(rounds.toString());
+  salt.push("$");
+  salt.push(base64_encode(randomBytes(BCRYPT_SALT_LEN), BCRYPT_SALT_LEN));
+  return salt.join("");
+}
+function genSalt(rounds, seed_length, callback) {
+  if (typeof seed_length === "function")
+    callback = seed_length, seed_length = void 0;
+  if (typeof rounds === "function") callback = rounds, rounds = void 0;
+  if (typeof rounds === "undefined") rounds = GENSALT_DEFAULT_LOG2_ROUNDS;
+  else if (typeof rounds !== "number")
+    throw Error("illegal arguments: " + typeof rounds);
+  function _async(callback2) {
+    nextTick(function() {
+      try {
+        callback2(null, genSaltSync(rounds));
+      } catch (err) {
+        callback2(err);
+      }
+    });
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function hashSync(password, salt) {
+  if (typeof salt === "undefined") salt = GENSALT_DEFAULT_LOG2_ROUNDS;
+  if (typeof salt === "number") salt = genSaltSync(salt);
+  if (typeof password !== "string" || typeof salt !== "string")
+    throw Error("Illegal arguments: " + typeof password + ", " + typeof salt);
+  return _hash(password, salt);
+}
+function hash(password, salt, callback, progressCallback) {
+  function _async(callback2) {
+    if (typeof password === "string" && typeof salt === "number")
+      genSalt(salt, function(err, salt2) {
+        _hash(password, salt2, callback2, progressCallback);
+      });
+    else if (typeof password === "string" && typeof salt === "string")
+      _hash(password, salt, callback2, progressCallback);
+    else
+      nextTick(
+        callback2.bind(
+          this,
+          Error("Illegal arguments: " + typeof password + ", " + typeof salt)
+        )
+      );
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function safeStringCompare(known, unknown2) {
+  var diff = known.length ^ unknown2.length;
+  for (var i2 = 0; i2 < known.length; ++i2) {
+    diff |= known.charCodeAt(i2) ^ unknown2.charCodeAt(i2);
+  }
+  return diff === 0;
+}
+function compareSync(password, hash2) {
+  if (typeof password !== "string" || typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof password + ", " + typeof hash2);
+  if (hash2.length !== 60) return false;
+  return safeStringCompare(
+    hashSync(password, hash2.substring(0, hash2.length - 31)),
+    hash2
+  );
+}
+function compare(password, hashValue, callback, progressCallback) {
+  function _async(callback2) {
+    if (typeof password !== "string" || typeof hashValue !== "string") {
+      nextTick(
+        callback2.bind(
+          this,
+          Error(
+            "Illegal arguments: " + typeof password + ", " + typeof hashValue
+          )
+        )
+      );
+      return;
+    }
+    if (hashValue.length !== 60) {
+      nextTick(callback2.bind(this, null, false));
+      return;
+    }
+    hash(
+      password,
+      hashValue.substring(0, 29),
+      function(err, comp) {
+        if (err) callback2(err);
+        else callback2(null, safeStringCompare(comp, hashValue));
+      },
+      progressCallback
+    );
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function getRounds(hash2) {
+  if (typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof hash2);
+  return parseInt(hash2.split("$")[2], 10);
+}
+function getSalt(hash2) {
+  if (typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof hash2);
+  if (hash2.length !== 60)
+    throw Error("Illegal hash length: " + hash2.length + " != 60");
+  return hash2.substring(0, 29);
+}
+function truncates(password) {
+  if (typeof password !== "string")
+    throw Error("Illegal arguments: " + typeof password);
+  return utf8Length(password) > 72;
+}
+var nextTick = typeof setImmediate === "function" ? setImmediate : typeof scheduler === "object" && typeof scheduler.postTask === "function" ? scheduler.postTask.bind(scheduler) : setTimeout;
+function utf8Length(string4) {
+  var len = 0, c = 0;
+  for (var i2 = 0; i2 < string4.length; ++i2) {
+    c = string4.charCodeAt(i2);
+    if (c < 128) len += 1;
+    else if (c < 2048) len += 2;
+    else if ((c & 64512) === 55296 && (string4.charCodeAt(i2 + 1) & 64512) === 56320) {
+      ++i2;
+      len += 4;
+    } else len += 3;
+  }
+  return len;
+}
+function utf8Array(string4) {
+  var offset = 0, c1, c2;
+  var buffer = new Array(utf8Length(string4));
+  for (var i2 = 0, k = string4.length; i2 < k; ++i2) {
+    c1 = string4.charCodeAt(i2);
+    if (c1 < 128) {
+      buffer[offset++] = c1;
+    } else if (c1 < 2048) {
+      buffer[offset++] = c1 >> 6 | 192;
+      buffer[offset++] = c1 & 63 | 128;
+    } else if ((c1 & 64512) === 55296 && ((c2 = string4.charCodeAt(i2 + 1)) & 64512) === 56320) {
+      c1 = 65536 + ((c1 & 1023) << 10) + (c2 & 1023);
+      ++i2;
+      buffer[offset++] = c1 >> 18 | 240;
+      buffer[offset++] = c1 >> 12 & 63 | 128;
+      buffer[offset++] = c1 >> 6 & 63 | 128;
+      buffer[offset++] = c1 & 63 | 128;
+    } else {
+      buffer[offset++] = c1 >> 12 | 224;
+      buffer[offset++] = c1 >> 6 & 63 | 128;
+      buffer[offset++] = c1 & 63 | 128;
+    }
+  }
+  return buffer;
+}
+var BASE64_CODE = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split("");
+var BASE64_INDEX = [
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  0,
+  1,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  62,
+  63,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  52,
+  53,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1
+];
+function base64_encode(b, len) {
+  var off = 0, rs = [], c1, c2;
+  if (len <= 0 || len > b.length) throw Error("Illegal len: " + len);
+  while (off < len) {
+    c1 = b[off++] & 255;
+    rs.push(BASE64_CODE[c1 >> 2 & 63]);
+    c1 = (c1 & 3) << 4;
+    if (off >= len) {
+      rs.push(BASE64_CODE[c1 & 63]);
+      break;
+    }
+    c2 = b[off++] & 255;
+    c1 |= c2 >> 4 & 15;
+    rs.push(BASE64_CODE[c1 & 63]);
+    c1 = (c2 & 15) << 2;
+    if (off >= len) {
+      rs.push(BASE64_CODE[c1 & 63]);
+      break;
+    }
+    c2 = b[off++] & 255;
+    c1 |= c2 >> 6 & 3;
+    rs.push(BASE64_CODE[c1 & 63]);
+    rs.push(BASE64_CODE[c2 & 63]);
+  }
+  return rs.join("");
+}
+function base64_decode(s2, len) {
+  var off = 0, slen = s2.length, olen = 0, rs = [], c1, c2, c3, c4, o, code;
+  if (len <= 0) throw Error("Illegal len: " + len);
+  while (off < slen - 1 && olen < len) {
+    code = s2.charCodeAt(off++);
+    c1 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    code = s2.charCodeAt(off++);
+    c2 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    if (c1 == -1 || c2 == -1) break;
+    o = c1 << 2 >>> 0;
+    o |= (c2 & 48) >> 4;
+    rs.push(String.fromCharCode(o));
+    if (++olen >= len || off >= slen) break;
+    code = s2.charCodeAt(off++);
+    c3 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    if (c3 == -1) break;
+    o = (c2 & 15) << 4 >>> 0;
+    o |= (c3 & 60) >> 2;
+    rs.push(String.fromCharCode(o));
+    if (++olen >= len || off >= slen) break;
+    code = s2.charCodeAt(off++);
+    c4 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    o = (c3 & 3) << 6 >>> 0;
+    o |= c4;
+    rs.push(String.fromCharCode(o));
+    ++olen;
+  }
+  var res = [];
+  for (off = 0; off < olen; off++) res.push(rs[off].charCodeAt(0));
+  return res;
+}
+var BCRYPT_SALT_LEN = 16;
+var GENSALT_DEFAULT_LOG2_ROUNDS = 10;
+var BLOWFISH_NUM_ROUNDS = 16;
+var MAX_EXECUTION_TIME = 100;
+var P_ORIG = [
+  608135816,
+  2242054355,
+  320440878,
+  57701188,
+  2752067618,
+  698298832,
+  137296536,
+  3964562569,
+  1160258022,
+  953160567,
+  3193202383,
+  887688300,
+  3232508343,
+  3380367581,
+  1065670069,
+  3041331479,
+  2450970073,
+  2306472731
+];
+var S_ORIG = [
+  3509652390,
+  2564797868,
+  805139163,
+  3491422135,
+  3101798381,
+  1780907670,
+  3128725573,
+  4046225305,
+  614570311,
+  3012652279,
+  134345442,
+  2240740374,
+  1667834072,
+  1901547113,
+  2757295779,
+  4103290238,
+  227898511,
+  1921955416,
+  1904987480,
+  2182433518,
+  2069144605,
+  3260701109,
+  2620446009,
+  720527379,
+  3318853667,
+  677414384,
+  3393288472,
+  3101374703,
+  2390351024,
+  1614419982,
+  1822297739,
+  2954791486,
+  3608508353,
+  3174124327,
+  2024746970,
+  1432378464,
+  3864339955,
+  2857741204,
+  1464375394,
+  1676153920,
+  1439316330,
+  715854006,
+  3033291828,
+  289532110,
+  2706671279,
+  2087905683,
+  3018724369,
+  1668267050,
+  732546397,
+  1947742710,
+  3462151702,
+  2609353502,
+  2950085171,
+  1814351708,
+  2050118529,
+  680887927,
+  999245976,
+  1800124847,
+  3300911131,
+  1713906067,
+  1641548236,
+  4213287313,
+  1216130144,
+  1575780402,
+  4018429277,
+  3917837745,
+  3693486850,
+  3949271944,
+  596196993,
+  3549867205,
+  258830323,
+  2213823033,
+  772490370,
+  2760122372,
+  1774776394,
+  2652871518,
+  566650946,
+  4142492826,
+  1728879713,
+  2882767088,
+  1783734482,
+  3629395816,
+  2517608232,
+  2874225571,
+  1861159788,
+  326777828,
+  3124490320,
+  2130389656,
+  2716951837,
+  967770486,
+  1724537150,
+  2185432712,
+  2364442137,
+  1164943284,
+  2105845187,
+  998989502,
+  3765401048,
+  2244026483,
+  1075463327,
+  1455516326,
+  1322494562,
+  910128902,
+  469688178,
+  1117454909,
+  936433444,
+  3490320968,
+  3675253459,
+  1240580251,
+  122909385,
+  2157517691,
+  634681816,
+  4142456567,
+  3825094682,
+  3061402683,
+  2540495037,
+  79693498,
+  3249098678,
+  1084186820,
+  1583128258,
+  426386531,
+  1761308591,
+  1047286709,
+  322548459,
+  995290223,
+  1845252383,
+  2603652396,
+  3431023940,
+  2942221577,
+  3202600964,
+  3727903485,
+  1712269319,
+  422464435,
+  3234572375,
+  1170764815,
+  3523960633,
+  3117677531,
+  1434042557,
+  442511882,
+  3600875718,
+  1076654713,
+  1738483198,
+  4213154764,
+  2393238008,
+  3677496056,
+  1014306527,
+  4251020053,
+  793779912,
+  2902807211,
+  842905082,
+  4246964064,
+  1395751752,
+  1040244610,
+  2656851899,
+  3396308128,
+  445077038,
+  3742853595,
+  3577915638,
+  679411651,
+  2892444358,
+  2354009459,
+  1767581616,
+  3150600392,
+  3791627101,
+  3102740896,
+  284835224,
+  4246832056,
+  1258075500,
+  768725851,
+  2589189241,
+  3069724005,
+  3532540348,
+  1274779536,
+  3789419226,
+  2764799539,
+  1660621633,
+  3471099624,
+  4011903706,
+  913787905,
+  3497959166,
+  737222580,
+  2514213453,
+  2928710040,
+  3937242737,
+  1804850592,
+  3499020752,
+  2949064160,
+  2386320175,
+  2390070455,
+  2415321851,
+  4061277028,
+  2290661394,
+  2416832540,
+  1336762016,
+  1754252060,
+  3520065937,
+  3014181293,
+  791618072,
+  3188594551,
+  3933548030,
+  2332172193,
+  3852520463,
+  3043980520,
+  413987798,
+  3465142937,
+  3030929376,
+  4245938359,
+  2093235073,
+  3534596313,
+  375366246,
+  2157278981,
+  2479649556,
+  555357303,
+  3870105701,
+  2008414854,
+  3344188149,
+  4221384143,
+  3956125452,
+  2067696032,
+  3594591187,
+  2921233993,
+  2428461,
+  544322398,
+  577241275,
+  1471733935,
+  610547355,
+  4027169054,
+  1432588573,
+  1507829418,
+  2025931657,
+  3646575487,
+  545086370,
+  48609733,
+  2200306550,
+  1653985193,
+  298326376,
+  1316178497,
+  3007786442,
+  2064951626,
+  458293330,
+  2589141269,
+  3591329599,
+  3164325604,
+  727753846,
+  2179363840,
+  146436021,
+  1461446943,
+  4069977195,
+  705550613,
+  3059967265,
+  3887724982,
+  4281599278,
+  3313849956,
+  1404054877,
+  2845806497,
+  146425753,
+  1854211946,
+  1266315497,
+  3048417604,
+  3681880366,
+  3289982499,
+  290971e4,
+  1235738493,
+  2632868024,
+  2414719590,
+  3970600049,
+  1771706367,
+  1449415276,
+  3266420449,
+  422970021,
+  1963543593,
+  2690192192,
+  3826793022,
+  1062508698,
+  1531092325,
+  1804592342,
+  2583117782,
+  2714934279,
+  4024971509,
+  1294809318,
+  4028980673,
+  1289560198,
+  2221992742,
+  1669523910,
+  35572830,
+  157838143,
+  1052438473,
+  1016535060,
+  1802137761,
+  1753167236,
+  1386275462,
+  3080475397,
+  2857371447,
+  1040679964,
+  2145300060,
+  2390574316,
+  1461121720,
+  2956646967,
+  4031777805,
+  4028374788,
+  33600511,
+  2920084762,
+  1018524850,
+  629373528,
+  3691585981,
+  3515945977,
+  2091462646,
+  2486323059,
+  586499841,
+  988145025,
+  935516892,
+  3367335476,
+  2599673255,
+  2839830854,
+  265290510,
+  3972581182,
+  2759138881,
+  3795373465,
+  1005194799,
+  847297441,
+  406762289,
+  1314163512,
+  1332590856,
+  1866599683,
+  4127851711,
+  750260880,
+  613907577,
+  1450815602,
+  3165620655,
+  3734664991,
+  3650291728,
+  3012275730,
+  3704569646,
+  1427272223,
+  778793252,
+  1343938022,
+  2676280711,
+  2052605720,
+  1946737175,
+  3164576444,
+  3914038668,
+  3967478842,
+  3682934266,
+  1661551462,
+  3294938066,
+  4011595847,
+  840292616,
+  3712170807,
+  616741398,
+  312560963,
+  711312465,
+  1351876610,
+  322626781,
+  1910503582,
+  271666773,
+  2175563734,
+  1594956187,
+  70604529,
+  3617834859,
+  1007753275,
+  1495573769,
+  4069517037,
+  2549218298,
+  2663038764,
+  504708206,
+  2263041392,
+  3941167025,
+  2249088522,
+  1514023603,
+  1998579484,
+  1312622330,
+  694541497,
+  2582060303,
+  2151582166,
+  1382467621,
+  776784248,
+  2618340202,
+  3323268794,
+  2497899128,
+  2784771155,
+  503983604,
+  4076293799,
+  907881277,
+  423175695,
+  432175456,
+  1378068232,
+  4145222326,
+  3954048622,
+  3938656102,
+  3820766613,
+  2793130115,
+  2977904593,
+  26017576,
+  3274890735,
+  3194772133,
+  1700274565,
+  1756076034,
+  4006520079,
+  3677328699,
+  720338349,
+  1533947780,
+  354530856,
+  688349552,
+  3973924725,
+  1637815568,
+  332179504,
+  3949051286,
+  53804574,
+  2852348879,
+  3044236432,
+  1282449977,
+  3583942155,
+  3416972820,
+  4006381244,
+  1617046695,
+  2628476075,
+  3002303598,
+  1686838959,
+  431878346,
+  2686675385,
+  1700445008,
+  1080580658,
+  1009431731,
+  832498133,
+  3223435511,
+  2605976345,
+  2271191193,
+  2516031870,
+  1648197032,
+  4164389018,
+  2548247927,
+  300782431,
+  375919233,
+  238389289,
+  3353747414,
+  2531188641,
+  2019080857,
+  1475708069,
+  455242339,
+  2609103871,
+  448939670,
+  3451063019,
+  1395535956,
+  2413381860,
+  1841049896,
+  1491858159,
+  885456874,
+  4264095073,
+  4001119347,
+  1565136089,
+  3898914787,
+  1108368660,
+  540939232,
+  1173283510,
+  2745871338,
+  3681308437,
+  4207628240,
+  3343053890,
+  4016749493,
+  1699691293,
+  1103962373,
+  3625875870,
+  2256883143,
+  3830138730,
+  1031889488,
+  3479347698,
+  1535977030,
+  4236805024,
+  3251091107,
+  2132092099,
+  1774941330,
+  1199868427,
+  1452454533,
+  157007616,
+  2904115357,
+  342012276,
+  595725824,
+  1480756522,
+  206960106,
+  497939518,
+  591360097,
+  863170706,
+  2375253569,
+  3596610801,
+  1814182875,
+  2094937945,
+  3421402208,
+  1082520231,
+  3463918190,
+  2785509508,
+  435703966,
+  3908032597,
+  1641649973,
+  2842273706,
+  3305899714,
+  1510255612,
+  2148256476,
+  2655287854,
+  3276092548,
+  4258621189,
+  236887753,
+  3681803219,
+  274041037,
+  1734335097,
+  3815195456,
+  3317970021,
+  1899903192,
+  1026095262,
+  4050517792,
+  356393447,
+  2410691914,
+  3873677099,
+  3682840055,
+  3913112168,
+  2491498743,
+  4132185628,
+  2489919796,
+  1091903735,
+  1979897079,
+  3170134830,
+  3567386728,
+  3557303409,
+  857797738,
+  1136121015,
+  1342202287,
+  507115054,
+  2535736646,
+  337727348,
+  3213592640,
+  1301675037,
+  2528481711,
+  1895095763,
+  1721773893,
+  3216771564,
+  62756741,
+  2142006736,
+  835421444,
+  2531993523,
+  1442658625,
+  3659876326,
+  2882144922,
+  676362277,
+  1392781812,
+  170690266,
+  3921047035,
+  1759253602,
+  3611846912,
+  1745797284,
+  664899054,
+  1329594018,
+  3901205900,
+  3045908486,
+  2062866102,
+  2865634940,
+  3543621612,
+  3464012697,
+  1080764994,
+  553557557,
+  3656615353,
+  3996768171,
+  991055499,
+  499776247,
+  1265440854,
+  648242737,
+  3940784050,
+  980351604,
+  3713745714,
+  1749149687,
+  3396870395,
+  4211799374,
+  3640570775,
+  1161844396,
+  3125318951,
+  1431517754,
+  545492359,
+  4268468663,
+  3499529547,
+  1437099964,
+  2702547544,
+  3433638243,
+  2581715763,
+  2787789398,
+  1060185593,
+  1593081372,
+  2418618748,
+  4260947970,
+  69676912,
+  2159744348,
+  86519011,
+  2512459080,
+  3838209314,
+  1220612927,
+  3339683548,
+  133810670,
+  1090789135,
+  1078426020,
+  1569222167,
+  845107691,
+  3583754449,
+  4072456591,
+  1091646820,
+  628848692,
+  1613405280,
+  3757631651,
+  526609435,
+  236106946,
+  48312990,
+  2942717905,
+  3402727701,
+  1797494240,
+  859738849,
+  992217954,
+  4005476642,
+  2243076622,
+  3870952857,
+  3732016268,
+  765654824,
+  3490871365,
+  2511836413,
+  1685915746,
+  3888969200,
+  1414112111,
+  2273134842,
+  3281911079,
+  4080962846,
+  172450625,
+  2569994100,
+  980381355,
+  4109958455,
+  2819808352,
+  2716589560,
+  2568741196,
+  3681446669,
+  3329971472,
+  1835478071,
+  660984891,
+  3704678404,
+  4045999559,
+  3422617507,
+  3040415634,
+  1762651403,
+  1719377915,
+  3470491036,
+  2693910283,
+  3642056355,
+  3138596744,
+  1364962596,
+  2073328063,
+  1983633131,
+  926494387,
+  3423689081,
+  2150032023,
+  4096667949,
+  1749200295,
+  3328846651,
+  309677260,
+  2016342300,
+  1779581495,
+  3079819751,
+  111262694,
+  1274766160,
+  443224088,
+  298511866,
+  1025883608,
+  3806446537,
+  1145181785,
+  168956806,
+  3641502830,
+  3584813610,
+  1689216846,
+  3666258015,
+  3200248200,
+  1692713982,
+  2646376535,
+  4042768518,
+  1618508792,
+  1610833997,
+  3523052358,
+  4130873264,
+  2001055236,
+  3610705100,
+  2202168115,
+  4028541809,
+  2961195399,
+  1006657119,
+  2006996926,
+  3186142756,
+  1430667929,
+  3210227297,
+  1314452623,
+  4074634658,
+  4101304120,
+  2273951170,
+  1399257539,
+  3367210612,
+  3027628629,
+  1190975929,
+  2062231137,
+  2333990788,
+  2221543033,
+  2438960610,
+  1181637006,
+  548689776,
+  2362791313,
+  3372408396,
+  3104550113,
+  3145860560,
+  296247880,
+  1970579870,
+  3078560182,
+  3769228297,
+  1714227617,
+  3291629107,
+  3898220290,
+  166772364,
+  1251581989,
+  493813264,
+  448347421,
+  195405023,
+  2709975567,
+  677966185,
+  3703036547,
+  1463355134,
+  2715995803,
+  1338867538,
+  1343315457,
+  2802222074,
+  2684532164,
+  233230375,
+  2599980071,
+  2000651841,
+  3277868038,
+  1638401717,
+  4028070440,
+  3237316320,
+  6314154,
+  819756386,
+  300326615,
+  590932579,
+  1405279636,
+  3267499572,
+  3150704214,
+  2428286686,
+  3959192993,
+  3461946742,
+  1862657033,
+  1266418056,
+  963775037,
+  2089974820,
+  2263052895,
+  1917689273,
+  448879540,
+  3550394620,
+  3981727096,
+  150775221,
+  3627908307,
+  1303187396,
+  508620638,
+  2975983352,
+  2726630617,
+  1817252668,
+  1876281319,
+  1457606340,
+  908771278,
+  3720792119,
+  3617206836,
+  2455994898,
+  1729034894,
+  1080033504,
+  976866871,
+  3556439503,
+  2881648439,
+  1522871579,
+  1555064734,
+  1336096578,
+  3548522304,
+  2579274686,
+  3574697629,
+  3205460757,
+  3593280638,
+  3338716283,
+  3079412587,
+  564236357,
+  2993598910,
+  1781952180,
+  1464380207,
+  3163844217,
+  3332601554,
+  1699332808,
+  1393555694,
+  1183702653,
+  3581086237,
+  1288719814,
+  691649499,
+  2847557200,
+  2895455976,
+  3193889540,
+  2717570544,
+  1781354906,
+  1676643554,
+  2592534050,
+  3230253752,
+  1126444790,
+  2770207658,
+  2633158820,
+  2210423226,
+  2615765581,
+  2414155088,
+  3127139286,
+  673620729,
+  2805611233,
+  1269405062,
+  4015350505,
+  3341807571,
+  4149409754,
+  1057255273,
+  2012875353,
+  2162469141,
+  2276492801,
+  2601117357,
+  993977747,
+  3918593370,
+  2654263191,
+  753973209,
+  36408145,
+  2530585658,
+  25011837,
+  3520020182,
+  2088578344,
+  530523599,
+  2918365339,
+  1524020338,
+  1518925132,
+  3760827505,
+  3759777254,
+  1202760957,
+  3985898139,
+  3906192525,
+  674977740,
+  4174734889,
+  2031300136,
+  2019492241,
+  3983892565,
+  4153806404,
+  3822280332,
+  352677332,
+  2297720250,
+  60907813,
+  90501309,
+  3286998549,
+  1016092578,
+  2535922412,
+  2839152426,
+  457141659,
+  509813237,
+  4120667899,
+  652014361,
+  1966332200,
+  2975202805,
+  55981186,
+  2327461051,
+  676427537,
+  3255491064,
+  2882294119,
+  3433927263,
+  1307055953,
+  942726286,
+  933058658,
+  2468411793,
+  3933900994,
+  4215176142,
+  1361170020,
+  2001714738,
+  2830558078,
+  3274259782,
+  1222529897,
+  1679025792,
+  2729314320,
+  3714953764,
+  1770335741,
+  151462246,
+  3013232138,
+  1682292957,
+  1483529935,
+  471910574,
+  1539241949,
+  458788160,
+  3436315007,
+  1807016891,
+  3718408830,
+  978976581,
+  1043663428,
+  3165965781,
+  1927990952,
+  4200891579,
+  2372276910,
+  3208408903,
+  3533431907,
+  1412390302,
+  2931980059,
+  4132332400,
+  1947078029,
+  3881505623,
+  4168226417,
+  2941484381,
+  1077988104,
+  1320477388,
+  886195818,
+  18198404,
+  3786409e3,
+  2509781533,
+  112762804,
+  3463356488,
+  1866414978,
+  891333506,
+  18488651,
+  661792760,
+  1628790961,
+  3885187036,
+  3141171499,
+  876946877,
+  2693282273,
+  1372485963,
+  791857591,
+  2686433993,
+  3759982718,
+  3167212022,
+  3472953795,
+  2716379847,
+  445679433,
+  3561995674,
+  3504004811,
+  3574258232,
+  54117162,
+  3331405415,
+  2381918588,
+  3769707343,
+  4154350007,
+  1140177722,
+  4074052095,
+  668550556,
+  3214352940,
+  367459370,
+  261225585,
+  2610173221,
+  4209349473,
+  3468074219,
+  3265815641,
+  314222801,
+  3066103646,
+  3808782860,
+  282218597,
+  3406013506,
+  3773591054,
+  379116347,
+  1285071038,
+  846784868,
+  2669647154,
+  3771962079,
+  3550491691,
+  2305946142,
+  453669953,
+  1268987020,
+  3317592352,
+  3279303384,
+  3744833421,
+  2610507566,
+  3859509063,
+  266596637,
+  3847019092,
+  517658769,
+  3462560207,
+  3443424879,
+  370717030,
+  4247526661,
+  2224018117,
+  4143653529,
+  4112773975,
+  2788324899,
+  2477274417,
+  1456262402,
+  2901442914,
+  1517677493,
+  1846949527,
+  2295493580,
+  3734397586,
+  2176403920,
+  1280348187,
+  1908823572,
+  3871786941,
+  846861322,
+  1172426758,
+  3287448474,
+  3383383037,
+  1655181056,
+  3139813346,
+  901632758,
+  1897031941,
+  2986607138,
+  3066810236,
+  3447102507,
+  1393639104,
+  373351379,
+  950779232,
+  625454576,
+  3124240540,
+  4148612726,
+  2007998917,
+  544563296,
+  2244738638,
+  2330496472,
+  2058025392,
+  1291430526,
+  424198748,
+  50039436,
+  29584100,
+  3605783033,
+  2429876329,
+  2791104160,
+  1057563949,
+  3255363231,
+  3075367218,
+  3463963227,
+  1469046755,
+  985887462
+];
+var C_ORIG = [
+  1332899944,
+  1700884034,
+  1701343084,
+  1684370003,
+  1668446532,
+  1869963892
+];
+function _encipher(lr, off, P, S2) {
+  var n, l = lr[off], r2 = lr[off + 1];
+  l ^= P[0];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[1];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[2];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[3];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[4];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[5];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[6];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[7];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[8];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[9];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[10];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[11];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[12];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[13];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[14];
+  n = S2[l >>> 24];
+  n += S2[256 | l >> 16 & 255];
+  n ^= S2[512 | l >> 8 & 255];
+  n += S2[768 | l & 255];
+  r2 ^= n ^ P[15];
+  n = S2[r2 >>> 24];
+  n += S2[256 | r2 >> 16 & 255];
+  n ^= S2[512 | r2 >> 8 & 255];
+  n += S2[768 | r2 & 255];
+  l ^= n ^ P[16];
+  lr[off] = r2 ^ P[BLOWFISH_NUM_ROUNDS + 1];
+  lr[off + 1] = l;
+  return lr;
+}
+function _streamtoword(data, offp) {
+  for (var i2 = 0, word = 0; i2 < 4; ++i2)
+    word = word << 8 | data[offp] & 255, offp = (offp + 1) % data.length;
+  return { key: word, offp };
+}
+function _key(key, P, S2) {
+  var offset = 0, lr = [0, 0], plen = P.length, slen = S2.length, sw;
+  for (var i2 = 0; i2 < plen; i2++)
+    sw = _streamtoword(key, offset), offset = sw.offp, P[i2] = P[i2] ^ sw.key;
+  for (i2 = 0; i2 < plen; i2 += 2)
+    lr = _encipher(lr, 0, P, S2), P[i2] = lr[0], P[i2 + 1] = lr[1];
+  for (i2 = 0; i2 < slen; i2 += 2)
+    lr = _encipher(lr, 0, P, S2), S2[i2] = lr[0], S2[i2 + 1] = lr[1];
+}
+function _ekskey(data, key, P, S2) {
+  var offp = 0, lr = [0, 0], plen = P.length, slen = S2.length, sw;
+  for (var i2 = 0; i2 < plen; i2++)
+    sw = _streamtoword(key, offp), offp = sw.offp, P[i2] = P[i2] ^ sw.key;
+  offp = 0;
+  for (i2 = 0; i2 < plen; i2 += 2)
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S2), P[i2] = lr[0], P[i2 + 1] = lr[1];
+  for (i2 = 0; i2 < slen; i2 += 2)
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S2), S2[i2] = lr[0], S2[i2 + 1] = lr[1];
+}
+function _crypt(b, salt, rounds, callback, progressCallback) {
+  var cdata = C_ORIG.slice(), clen = cdata.length, err;
+  if (rounds < 4 || rounds > 31) {
+    err = Error("Illegal number of rounds (4-31): " + rounds);
+    if (callback) {
+      nextTick(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  if (salt.length !== BCRYPT_SALT_LEN) {
+    err = Error(
+      "Illegal salt length: " + salt.length + " != " + BCRYPT_SALT_LEN
+    );
+    if (callback) {
+      nextTick(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  rounds = 1 << rounds >>> 0;
+  var P, S2, i2 = 0, j;
+  if (typeof Int32Array === "function") {
+    P = new Int32Array(P_ORIG);
+    S2 = new Int32Array(S_ORIG);
+  } else {
+    P = P_ORIG.slice();
+    S2 = S_ORIG.slice();
+  }
+  _ekskey(salt, b, P, S2);
+  function next() {
+    if (progressCallback) progressCallback(i2 / rounds);
+    if (i2 < rounds) {
+      var start = Date.now();
+      for (; i2 < rounds; ) {
+        i2 = i2 + 1;
+        _key(b, P, S2);
+        _key(salt, P, S2);
+        if (Date.now() - start > MAX_EXECUTION_TIME) break;
+      }
+    } else {
+      for (i2 = 0; i2 < 64; i2++)
+        for (j = 0; j < clen >> 1; j++) _encipher(cdata, j << 1, P, S2);
+      var ret = [];
+      for (i2 = 0; i2 < clen; i2++)
+        ret.push((cdata[i2] >> 24 & 255) >>> 0), ret.push((cdata[i2] >> 16 & 255) >>> 0), ret.push((cdata[i2] >> 8 & 255) >>> 0), ret.push((cdata[i2] & 255) >>> 0);
+      if (callback) {
+        callback(null, ret);
+        return;
+      } else return ret;
+    }
+    if (callback) nextTick(next);
+  }
+  if (typeof callback !== "undefined") {
+    next();
+  } else {
+    var res;
+    while (true) if (typeof (res = next()) !== "undefined") return res || [];
+  }
+}
+function _hash(password, salt, callback, progressCallback) {
+  var err;
+  if (typeof password !== "string" || typeof salt !== "string") {
+    err = Error("Invalid string / salt: Not a string");
+    if (callback) {
+      nextTick(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  var minor, offset;
+  if (salt.charAt(0) !== "$" || salt.charAt(1) !== "2") {
+    err = Error("Invalid salt version: " + salt.substring(0, 2));
+    if (callback) {
+      nextTick(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  if (salt.charAt(2) === "$") minor = String.fromCharCode(0), offset = 3;
+  else {
+    minor = salt.charAt(2);
+    if (minor !== "a" && minor !== "b" && minor !== "y" || salt.charAt(3) !== "$") {
+      err = Error("Invalid salt revision: " + salt.substring(2, 4));
+      if (callback) {
+        nextTick(callback.bind(this, err));
+        return;
+      } else throw err;
+    }
+    offset = 4;
+  }
+  if (salt.charAt(offset + 2) > "$") {
+    err = Error("Missing salt rounds");
+    if (callback) {
+      nextTick(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  var r1 = parseInt(salt.substring(offset, offset + 1), 10) * 10, r2 = parseInt(salt.substring(offset + 1, offset + 2), 10), rounds = r1 + r2, real_salt = salt.substring(offset + 3, offset + 25);
+  password += minor >= "a" ? "\0" : "";
+  var passwordb = utf8Array(password), saltb = base64_decode(real_salt, BCRYPT_SALT_LEN);
+  function finish(bytes) {
+    var res = [];
+    res.push("$2");
+    if (minor >= "a") res.push(minor);
+    res.push("$");
+    if (rounds < 10) res.push("0");
+    res.push(rounds.toString());
+    res.push("$");
+    res.push(base64_encode(saltb, saltb.length));
+    res.push(base64_encode(bytes, C_ORIG.length * 4 - 1));
+    return res.join("");
+  }
+  if (typeof callback == "undefined")
+    return finish(_crypt(passwordb, saltb, rounds));
+  else {
+    _crypt(
+      passwordb,
+      saltb,
+      rounds,
+      function(err2, bytes) {
+        if (err2) callback(err2, null);
+        else callback(null, finish(bytes));
+      },
+      progressCallback
+    );
+  }
+}
+function encodeBase64(bytes, length) {
+  return base64_encode(bytes, length);
+}
+function decodeBase64(string4, length) {
+  return base64_decode(string4, length);
+}
+var bcryptjs_default = {
+  setRandomFallback,
+  genSaltSync,
+  genSalt,
+  hashSync,
+  hash,
+  compareSync,
+  compare,
+  getRounds,
+  getSalt,
+  truncates,
+  encodeBase64,
+  decodeBase64
+};
+
+// src/routes/auth.ts
+import crypto2 from "node:crypto";
 
 // src/lib/auth.ts
 var import_jsonwebtoken = __toESM(require_jsonwebtoken(), 1);
@@ -81172,6 +81269,14 @@ router2.post("/auth/register", async (req, res) => {
     return;
   }
   const { name, email: email3, password, phone, role } = parsed.data;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email3)) {
+    res.status(400).json({ error: "Invalid email address" });
+    return;
+  }
+  if (password.length < 6) {
+    res.status(400).json({ error: "Password must be at least 6 characters" });
+    return;
+  }
   if (!isPublicSignupRole(role)) {
     res.status(403).json({ error: "This account type cannot be created via public registration. Please contact admin." });
     return;
@@ -82026,14 +82131,43 @@ router6.post("/vendors", authenticate, async (req, res) => {
     res.status(400).json({ error: body.error.message });
     return;
   }
-  const [vendor] = await db.insert(vendorsTable).values({
-    ...body.data,
-    userId: req.user.id,
-    lat: body.data.lat != null ? String(body.data.lat) : null,
-    lng: body.data.lng != null ? String(body.data.lng) : null,
-    deliveryRadiusKm: body.data.deliveryRadiusKm != null ? String(body.data.deliveryRadiusKm) : void 0
-  }).returning();
-  res.status(201).json(toVendor(vendor, void 0, true));
+  const role = req.user.role;
+  if (role === "delivery_partner" || role === "city_admin") {
+    res.status(403).json({ error: "This account type cannot register a shop" });
+    return;
+  }
+  try {
+    const vendor = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM users WHERE id = ${req.user.id} FOR UPDATE`);
+      const [mine] = await tx.select().from(vendorsTable).where(eq(vendorsTable.userId, req.user.id));
+      if (mine) throw new Error("SHOP_ALREADY_EXISTS");
+      let categoryId = body.data.categoryId;
+      if (categoryId == null) {
+        const [other] = await tx.select().from(categoriesTable).where(eq(categoriesTable.slug, "other"));
+        if (!other) throw new Error("DEFAULT_CATEGORY_MISSING");
+        categoryId = other.id;
+      }
+      const [created] = await tx.insert(vendorsTable).values({
+        ...body.data,
+        categoryId,
+        userId: req.user.id,
+        lat: body.data.lat != null ? String(body.data.lat) : null,
+        lng: body.data.lng != null ? String(body.data.lng) : null,
+        deliveryRadiusKm: body.data.deliveryRadiusKm != null ? String(body.data.deliveryRadiusKm) : void 0
+      }).returning();
+      if (role === "customer") {
+        await tx.update(usersTable).set({ role: "vendor" }).where(eq(usersTable.id, req.user.id));
+      }
+      return created;
+    });
+    res.status(201).json(toVendor(vendor, void 0, true));
+  } catch (e2) {
+    if (e2.message === "SHOP_ALREADY_EXISTS") {
+      res.status(400).json({ error: "SHOP_ALREADY_EXISTS" });
+      return;
+    }
+    throw e2;
+  }
 });
 router6.get("/vendors/:id", optionalAuthenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
@@ -82042,8 +82176,13 @@ router6.get("/vendors/:id", optionalAuthenticate, async (req, res) => {
     res.status(404).json({ error: "Not found" });
     return;
   }
+  const privileged = isAdminRole(req.user?.role) || vendor.userId === req.user?.id;
+  if (vendor.status !== "approved" && !privileged) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
   const [cat] = await db.select().from(categoriesTable).where(eq(categoriesTable.id, vendor.categoryId));
-  const includePayout = isAdminRole(req.user?.role) || vendor.userId === req.user?.id;
+  const includePayout = privileged;
   res.json(toVendor(vendor, cat?.name, includePayout));
 });
 router6.patch("/vendors/:id", authenticate, async (req, res) => {
@@ -82139,6 +82278,12 @@ router6.get("/vendors/:id/stats", authenticate, async (req, res) => {
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, id));
   if (!vendor) {
     res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const r2 = req.user.role;
+  const statsAllowed = r2 === "admin" || r2 === "super_admin" || r2 === "city_admin" && req.user.cityId != null && vendor.cityId === req.user.cityId || vendor.userId === req.user.id;
+  if (!statsAllowed) {
+    res.status(403).json({ error: "Forbidden" });
     return;
   }
   const orders = await db.select().from(ordersTable).where(eq(ordersTable.vendorId, id));
@@ -82256,6 +82401,7 @@ router7.get("/products", async (req, res) => {
   }
   if (!includePending) {
     conditions.push(eq(productsTable.isApproved, true));
+    conditions.push(eq(productsTable.isAvailable, true));
     conditions.push(eq(categoriesTable.isActive, true));
     const subActive = or(isNull(productsTable.subcategoryId), eq(subcategoriesTable.isActive, true));
     if (subActive) conditions.push(subActive);
@@ -82350,7 +82496,7 @@ router7.get("/products/:id", async (req, res) => {
   const isAdmin = viewer?.role === "admin";
   const isOwner = viewer?.role === "vendor" && vendor != null && vendor.userId === viewer.userId;
   const privileged = isAdmin || isOwner;
-  if (!privileged && (cat?.isActive === false || sub && sub.isActive === false)) {
+  if (!privileged && (cat?.isActive === false || sub && sub.isActive === false || !product.isAvailable)) {
     res.status(404).json({ error: "Not found" });
     return;
   }
@@ -82468,7 +82614,15 @@ router8.post("/cart/items", authenticate, async (req, res) => {
     res.status(404).json({ error: "Product not found" });
     return;
   }
+  if (!product.isApproved || !product.isAvailable) {
+    res.status(400).json({ error: "This product is currently unavailable" });
+    return;
+  }
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, product.vendorId));
+  if (!vendor || vendor.status !== "approved") {
+    res.status(400).json({ error: "This shop is currently unavailable" });
+    return;
+  }
   let cart = carts.get(req.user.id);
   if (!cart || cart.items.length === 0) {
     cart = { vendorId: product.vendorId, vendorName: vendor?.shopName ?? null, items: [] };
@@ -82872,6 +83026,10 @@ router9.post("/orders", authenticate, async (req, res) => {
       res.status(404).json({ error: `Product ${item.productId} not found` });
       return;
     }
+    if (!product.isApproved || !product.isAvailable) {
+      res.status(400).json({ error: `"${product.name}" is currently unavailable. Please remove it from your cart.` });
+      return;
+    }
     const price = Number(product.price);
     const subtotalItem = price * item.quantity;
     subtotal += subtotalItem;
@@ -82879,34 +83037,61 @@ router9.post("/orders", authenticate, async (req, res) => {
   }
   const deliveryFee = 30;
   const total = subtotal + deliveryFee;
+  if (paymentMethod === "wallet") {
+    const [me] = await db.select().from(usersTable).where(eq(usersTable.id, req.user.id));
+    if (!me || Number(me.walletBalance ?? 0) < total) {
+      res.status(400).json({ error: "Insufficient wallet balance" });
+      return;
+    }
+  }
   const deliveryOtp = genOtp();
   const [vendorForCity] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, vendorId));
   let order;
   try {
-    [order] = await db.insert(ordersTable).values({
-      customerId: req.user.id,
-      vendorId,
-      status: "pending",
-      cityId: vendorForCity?.cityId ?? null,
-      items: orderItems,
-      deliveryAddress,
-      deliveryLat: deliveryLat != null ? String(deliveryLat) : null,
-      deliveryLng: deliveryLng != null ? String(deliveryLng) : null,
-      subtotal: String(subtotal),
-      deliveryFee: String(deliveryFee),
-      discount: "0",
-      total: String(total),
-      paymentMethod,
-      paymentStatus: "pending",
-      couponCode: couponCode ?? null,
-      notes: notes ?? null,
-      customerName: customerName?.trim() || req.user.name,
-      customerPhone: customerPhone?.trim() || null,
-      clientOrderId: clientOrderId ?? null,
-      estimatedDeliveryTime: "30-45 minutes",
-      deliveryOtp
-    }).returning();
+    order = await db.transaction(async (tx) => {
+      const [o] = await tx.insert(ordersTable).values({
+        customerId: req.user.id,
+        vendorId,
+        status: "pending",
+        cityId: vendorForCity?.cityId ?? null,
+        items: orderItems,
+        deliveryAddress,
+        deliveryLat: deliveryLat != null ? String(deliveryLat) : null,
+        deliveryLng: deliveryLng != null ? String(deliveryLng) : null,
+        subtotal: String(subtotal),
+        deliveryFee: String(deliveryFee),
+        discount: "0",
+        total: String(total),
+        paymentMethod,
+        paymentStatus: "pending",
+        couponCode: couponCode ?? null,
+        notes: notes ?? null,
+        customerName: customerName?.trim() || req.user.name,
+        customerPhone: customerPhone?.trim() || null,
+        clientOrderId: clientOrderId ?? null,
+        estimatedDeliveryTime: "30-45 minutes",
+        deliveryOtp
+      }).returning();
+      if (paymentMethod === "wallet") {
+        const debited = await tx.update(usersTable).set({ walletBalance: sql`wallet_balance - ${total}` }).where(and(eq(usersTable.id, req.user.id), sql`wallet_balance >= ${total}`)).returning({ id: usersTable.id });
+        if (!debited.length) throw new Error("INSUFFICIENT_WALLET_BALANCE");
+        await tx.insert(walletTransactionsTable).values({
+          userId: req.user.id,
+          amount: String(total),
+          type: "debit",
+          description: `Order #${o.id} payment`,
+          orderId: o.id
+        });
+        const [paid] = await tx.update(ordersTable).set({ paymentStatus: "paid" }).where(eq(ordersTable.id, o.id)).returning();
+        return paid;
+      }
+      return o;
+    });
   } catch (err) {
+    if (err instanceof Error && err.message === "INSUFFICIENT_WALLET_BALANCE") {
+      res.status(400).json({ error: "Insufficient wallet balance" });
+      return;
+    }
     const code = err?.code ?? err?.cause?.code;
     if (code === "23505" && clientOrderId && await respondExisting(clientOrderId)) return;
     throw err;
@@ -82920,16 +83105,6 @@ router9.post("/orders", authenticate, async (req, res) => {
     }
   } catch (err) {
     req.log.warn({ err, orderId: order.id }, "Failed to save customer contact to profile");
-  }
-  if (paymentMethod === "wallet") {
-    await db.insert(walletTransactionsTable).values({
-      userId: req.user.id,
-      amount: String(total),
-      type: "debit",
-      description: `Order #${order.id} payment`,
-      orderId: order.id
-    });
-    await db.update(usersTable).set({ walletBalance: sql`wallet_balance - ${total}` }).where(eq(usersTable.id, req.user.id));
   }
   const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, vendorId));
   await db.update(vendorsTable).set({ totalOrders: sql`total_orders + 1` }).where(eq(vendorsTable.id, vendorId));
@@ -83037,6 +83212,49 @@ router9.get("/orders/:id", authenticate, async (req, res) => {
     viewerId: req.user.id
   }));
 });
+router9.patch("/orders/:id/payment-status", authenticate, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const body = UpdateOrderPaymentStatusBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
+  if (!order) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const role = req.user.role;
+  const allowed = isSuperAdmin(role) || role === "city_admin" && req.user.cityId != null && order.cityId === req.user.cityId;
+  if (!allowed) {
+    res.status(403).json({ error: "Only admin can confirm payments" });
+    return;
+  }
+  if (order.paymentMethod !== "online") {
+    res.status(400).json({ error: "Only online (UPI) payments can be confirmed manually" });
+    return;
+  }
+  if (order.paymentStatus !== "pending") {
+    res.status(409).json({ error: `Payment already ${order.paymentStatus}` });
+    return;
+  }
+  const [updated] = await db.update(ordersTable).set({ paymentStatus: body.data.paymentStatus }).where(and(eq(ordersTable.id, id), eq(ordersTable.paymentStatus, "pending"))).returning();
+  if (!updated) {
+    res.status(409).json({ error: "Payment status changed, please refresh" });
+    return;
+  }
+  try {
+    await db.insert(notificationsTable).values({
+      userId: updated.customerId,
+      title: body.data.paymentStatus === "paid" ? "Payment confirmed" : "Payment not received",
+      message: body.data.paymentStatus === "paid" ? `Your payment of \u20B9${updated.total} for Order #${updated.id} has been confirmed.` : `We could not verify your payment for Order #${updated.id}. Please pay again or contact support.`,
+      data: { orderId: updated.id }
+    });
+  } catch (err) {
+    req.log.warn({ err, orderId: updated.id }, "Failed to notify customer of payment status");
+  }
+  res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
+});
 router9.patch("/orders/:id/status", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
   const body = UpdateOrderStatusBody.safeParse(req.body);
@@ -83090,19 +83308,60 @@ router9.patch("/orders/:id/status", authenticate, async (req, res) => {
     await applyCodCashOnDelivery(updated);
   }
   await notifyStatusChange(updated, prev);
-  let finalOrder = updated;
-  if (next === "ready" && !updated.deliveryPartnerId) {
-    try {
-      const assigned = await autoAssignNearestRider(updated);
-      if (assigned) {
-        const [refreshed] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
-        if (refreshed) finalOrder = refreshed;
-      }
-    } catch (err) {
-      req.log.warn({ err, orderId: id }, "Auto-assign nearest rider on ready failed");
-    }
+  res.json(toOrder(updated, { viewerRole: role, viewerId: req.user.id }));
+});
+router9.post("/orders/:id/payment-utr", authenticate, async (req, res) => {
+  const id = parseInt(String(req.params.id), 10);
+  const utr = String(req.body?.utr ?? "").trim();
+  if (!/^[A-Za-z0-9-]{6,30}$/.test(utr)) {
+    res.status(400).json({ error: "Sahi UTR / transaction ID daalein (6-30 letters/numbers)" });
+    return;
   }
-  res.json(toOrder(finalOrder, { viewerRole: role, viewerId: req.user.id }));
+  const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
+  if (!order) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  if (order.customerId !== req.user.id) {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  if (order.paymentMethod !== "online") {
+    res.status(400).json({ error: "This order is not an online payment order" });
+    return;
+  }
+  if (order.paymentStatus === "paid") {
+    res.status(409).json({ error: "Payment already confirmed" });
+    return;
+  }
+  const [updated] = await db.update(ordersTable).set({ razorpayPaymentId: utr }).where(eq(ordersTable.id, id)).returning();
+  try {
+    const adminIds = await getAdminUserIds();
+    const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
+    const data = { orderId: order.id, utr };
+    const rows = adminIds.map((uid) => ({
+      userId: uid,
+      title: "UPI payment - confirm karein",
+      message: `Order #${order.id}: customer ne UPI payment kar di (UTR: ${utr}). Bank me check karke confirm karein.`,
+      data
+    }));
+    if (vendor?.userId) {
+      rows.push({
+        userId: vendor.userId,
+        title: "Payment reference mila",
+        message: `Order #${order.id} ke liye customer ne UPI payment ka UTR bhej diya hai. Admin confirm karega.`,
+        data
+      });
+    }
+    if (rows.length) {
+      await db.insert(notificationsTable).values(
+        rows.map((r2) => ({ userId: r2.userId, title: r2.title, message: r2.message, type: "payment", data: r2.data }))
+      );
+    }
+  } catch (err) {
+    req.log.warn({ err, orderId: id }, "UTR notification insert failed");
+  }
+  res.json(toOrder(updated, { viewerRole: req.user.role, viewerId: req.user.id }));
 });
 router9.post("/orders/:id/verify-otp", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
@@ -84139,9 +84398,6 @@ function toSettings(s2) {
     orderPhone: s2.orderPhone,
     callToOrderEnabled: s2.callToOrderEnabled,
     riderCashLimit: Number(s2.riderCashLimit),
-    razorpayKeyId: s2.razorpayKeyId,
-    razorpayKeySecret: s2.razorpayKeySecret,
-    razorpayWebhookSecret: s2.razorpayWebhookSecret,
     upiId: s2.upiId,
     upiName: s2.upiName,
     upiQrImage: s2.upiQrImage
@@ -84482,22 +84738,22 @@ var withdrawals_default = router19;
 // src/routes/city-admins.ts
 var import_express20 = __toESM(require_express2(), 1);
 var router20 = (0, import_express20.Router)();
-var CreateCityAdminBody = external_exports.object({
-  name: external_exports.string().min(1),
-  email: external_exports.string().email(),
-  password: external_exports.string().min(6),
-  phone: external_exports.string().optional().nullable(),
-  cityId: external_exports.number().int().positive(),
-  permissions: external_exports.array(external_exports.string()).optional()
+var CreateCityAdminBody = external_exports2.object({
+  name: external_exports2.string().min(1),
+  email: external_exports2.string().email(),
+  password: external_exports2.string().min(6),
+  phone: external_exports2.string().optional().nullable(),
+  cityId: external_exports2.number().int().positive(),
+  permissions: external_exports2.array(external_exports2.string()).optional()
 });
-var UpdateCityAdminBody = external_exports.object({
-  name: external_exports.string().optional(),
-  phone: external_exports.string().nullable().optional(),
-  cityId: external_exports.number().int().positive().optional(),
-  permissions: external_exports.array(external_exports.string()).nullable().optional(),
-  isActive: external_exports.boolean().optional()
+var UpdateCityAdminBody = external_exports2.object({
+  name: external_exports2.string().optional(),
+  phone: external_exports2.string().nullable().optional(),
+  cityId: external_exports2.number().int().positive().optional(),
+  permissions: external_exports2.array(external_exports2.string()).nullable().optional(),
+  isActive: external_exports2.boolean().optional()
 });
-var ResetPasswordBody = external_exports.object({ password: external_exports.string().min(6) });
+var ResetPasswordBody = external_exports2.object({ password: external_exports2.string().min(6) });
 function toAdmin(u, cityName) {
   let perms = null;
   if (u.permissions) {
@@ -84618,17 +84874,17 @@ var city_admins_default = router20;
 var import_express21 = __toESM(require_express2(), 1);
 var router21 = (0, import_express21.Router)();
 var SUPER_ROLES = ["admin", "super_admin"];
-var CreateSuperAdminBody = external_exports.object({
-  name: external_exports.string().min(1),
-  email: external_exports.string().email(),
-  password: external_exports.string().min(6),
-  phone: external_exports.string().optional().nullable()
+var CreateSuperAdminBody = external_exports2.object({
+  name: external_exports2.string().min(1),
+  email: external_exports2.string().email(),
+  password: external_exports2.string().min(6),
+  phone: external_exports2.string().optional().nullable()
 });
-var UpdateSuperAdminBody = external_exports.object({
-  name: external_exports.string().min(1).optional(),
-  phone: external_exports.string().nullable().optional()
+var UpdateSuperAdminBody = external_exports2.object({
+  name: external_exports2.string().min(1).optional(),
+  phone: external_exports2.string().nullable().optional()
 });
-var ResetPasswordBody2 = external_exports.object({ password: external_exports.string().min(6) });
+var ResetPasswordBody2 = external_exports2.object({ password: external_exports2.string().min(6) });
 function toAdmin2(u) {
   return {
     id: u.id,
@@ -84750,215 +85006,13 @@ var super_admins_default = router21;
 
 // src/routes/payments.ts
 var import_express22 = __toESM(require_express2(), 1);
-import crypto3 from "node:crypto";
 var router22 = (0, import_express22.Router)();
-async function markOrderPaid(orderId, paymentId) {
-  const [updated] = await db.update(ordersTable).set({ paymentStatus: "paid", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
-  return updated ? "paid" : "noop";
-}
-async function markOrderFailed(orderId, paymentId) {
-  const [updated] = await db.update(ordersTable).set({ paymentStatus: "failed", ...paymentId ? { razorpayPaymentId: paymentId } : {} }).where(and(eq(ordersTable.id, orderId), eq(ordersTable.paymentStatus, "pending"))).returning();
-  return updated ? "failed" : "noop";
-}
-async function resolveOrderId(rzpOrderId, notes) {
-  const rawNote = notes?.orderId;
-  const noteId = typeof rawNote === "string" || typeof rawNote === "number" ? Number(rawNote) : NaN;
-  if (Number.isInteger(noteId) && noteId > 0) {
-    const [o] = await db.select({ id: ordersTable.id }).from(ordersTable).where(eq(ordersTable.id, noteId));
-    if (o) return o.id;
-  }
-  if (rzpOrderId) {
-    const [o] = await db.select({ id: ordersTable.id }).from(ordersTable).where(eq(ordersTable.razorpayOrderId, rzpOrderId));
-    if (o) return o.id;
-  }
-  return null;
-}
-function rawBodyOf(req) {
-  return req.rawBody;
-}
 router22.get("/payments/config", authenticate, async (_req, res) => {
   const [settings] = await db.select().from(adminSettingsTable);
   const upiId = settings?.upiId?.trim() || null;
   const upiName = settings?.upiName?.trim() || null;
   const upiQrImage = settings?.upiQrImage?.trim() || null;
-  const razorpayEnabled = Boolean(settings?.razorpayKeyId?.trim() && settings?.razorpayKeySecret?.trim());
-  res.json({ upiEnabled: Boolean(upiId || upiQrImage), upiId, upiName, upiQrImage, razorpayEnabled });
-});
-router22.post("/payments/razorpay/order", authenticate, async (req, res) => {
-  const parsed = CreateRazorpayOrderBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const { orderId } = parsed.data;
-  const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
-  if (!order) {
-    res.status(404).json({ error: "Order not found" });
-    return;
-  }
-  if (order.customerId !== req.user.id) {
-    res.status(403).json({ error: "Forbidden" });
-    return;
-  }
-  if (order.paymentMethod !== "online") {
-    res.status(400).json({ error: "This order is not an online payment order" });
-    return;
-  }
-  if (order.paymentStatus === "paid") {
-    res.status(409).json({ error: "Order already paid" });
-    return;
-  }
-  const [settings] = await db.select().from(adminSettingsTable);
-  const keyId = settings?.razorpayKeyId?.trim();
-  const keySecret = settings?.razorpayKeySecret?.trim();
-  if (!keyId || !keySecret) {
-    res.status(400).json({ error: "Online payment is not configured. Admin must add Razorpay keys in Settings." });
-    return;
-  }
-  const amount = Math.round(Number(order.total) * 100);
-  const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-  let rzpData;
-  try {
-    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Basic ${auth}` },
-      body: JSON.stringify({ amount, currency: "INR", receipt: `order_${order.id}`, notes: { orderId: String(order.id) } })
-    });
-    if (!rzpRes.ok) {
-      const text2 = await rzpRes.text();
-      req.log.error({ status: rzpRes.status, body: text2, orderId }, "Razorpay order creation rejected");
-      res.status(502).json({ error: "Payment gateway rejected the request. Please check Razorpay keys in admin settings." });
-      return;
-    }
-    rzpData = await rzpRes.json();
-  } catch (err) {
-    req.log.error({ err, orderId }, "Razorpay order request failed");
-    res.status(502).json({ error: "Could not reach the payment gateway. Please try again." });
-    return;
-  }
-  await db.update(ordersTable).set({ razorpayOrderId: rzpData.id }).where(eq(ordersTable.id, order.id));
-  res.json({ razorpayOrderId: rzpData.id, amount: rzpData.amount, currency: rzpData.currency, keyId });
-});
-router22.post("/payments/razorpay/verify", authenticate, async (req, res) => {
-  const parsed = VerifyRazorpayPaymentBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const { orderId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = parsed.data;
-  const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
-  if (!order) {
-    res.status(404).json({ error: "Order not found" });
-    return;
-  }
-  if (order.customerId !== req.user.id) {
-    res.status(403).json({ error: "Forbidden" });
-    return;
-  }
-  if (order.paymentMethod !== "online") {
-    res.status(400).json({ error: "This order is not an online payment order" });
-    return;
-  }
-  if (order.paymentStatus === "paid") {
-    res.json({ success: true, paymentStatus: order.paymentStatus });
-    return;
-  }
-  if (!order.razorpayOrderId || order.razorpayOrderId !== razorpayOrderId) {
-    req.log.warn({ orderId, razorpayOrderId, stored: order.razorpayOrderId }, "Razorpay order id mismatch on verify");
-    res.status(400).json({ error: "Payment does not match this order" });
-    return;
-  }
-  const [settings] = await db.select().from(adminSettingsTable);
-  const keySecret = settings?.razorpayKeySecret?.trim();
-  if (!keySecret) {
-    res.status(400).json({ error: "Online payment is not configured." });
-    return;
-  }
-  const expected = crypto3.createHmac("sha256", keySecret).update(`${razorpayOrderId}|${razorpayPaymentId}`).digest("hex");
-  const expectedBuf = Buffer.from(expected);
-  const providedBuf = Buffer.from(razorpaySignature);
-  const valid = expectedBuf.length === providedBuf.length && crypto3.timingSafeEqual(expectedBuf, providedBuf);
-  if (!valid) {
-    req.log.warn({ orderId }, "Razorpay signature verification failed");
-    res.status(400).json({ error: "Payment verification failed" });
-    return;
-  }
-  const result = await markOrderPaid(orderId, razorpayPaymentId);
-  req.log.info({ orderId, paymentId: razorpayPaymentId, result }, "Payment confirmed via client verify");
-  const [finalOrder] = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId));
-  res.json({ success: finalOrder?.paymentStatus === "paid", paymentStatus: finalOrder?.paymentStatus ?? "paid" });
-});
-router22.post("/payments/webhook", async (req, res) => {
-  const signature = req.header("x-razorpay-signature");
-  const raw = rawBodyOf(req);
-  if (!raw || !signature) {
-    req.log.warn({ hasBody: Boolean(raw), hasSig: Boolean(signature) }, "Webhook missing raw body or signature");
-    res.status(400).json({ error: "Invalid webhook request" });
-    return;
-  }
-  const [settings] = await db.select().from(adminSettingsTable);
-  const webhookSecret = settings?.razorpayWebhookSecret?.trim();
-  if (!webhookSecret) {
-    req.log.error("Webhook received but no webhook secret configured in admin settings");
-    res.status(500).json({ error: "Webhook not configured" });
-    return;
-  }
-  const expected = crypto3.createHmac("sha256", webhookSecret).update(raw).digest("hex");
-  const expectedBuf = Buffer.from(expected);
-  const providedBuf = Buffer.from(signature);
-  const valid = expectedBuf.length === providedBuf.length && crypto3.timingSafeEqual(expectedBuf, providedBuf);
-  if (!valid) {
-    req.log.warn("Webhook signature verification failed");
-    res.status(400).json({ error: "Invalid signature" });
-    return;
-  }
-  let event;
-  try {
-    event = JSON.parse(raw.toString("utf8"));
-  } catch {
-    req.log.warn("Webhook payload is not valid JSON");
-    res.status(400).json({ error: "Invalid JSON" });
-    return;
-  }
-  const eventType = event.event;
-  try {
-    if (eventType === "payment.captured" || eventType === "order.paid") {
-      const payment = event.payload?.payment?.entity;
-      const orderEntity = event.payload?.order?.entity;
-      const rzpOrderId = payment?.order_id ?? orderEntity?.id;
-      const paymentId = payment?.id ?? null;
-      const ourOrderId = await resolveOrderId(rzpOrderId, payment?.notes ?? orderEntity?.notes);
-      if (ourOrderId == null) {
-        req.log.warn({ eventType, rzpOrderId }, "Webhook: no matching order found");
-        res.status(200).json({ received: true, handled: false });
-        return;
-      }
-      const result = await markOrderPaid(ourOrderId, paymentId);
-      req.log.info({ eventType, orderId: ourOrderId, paymentId, result }, "Webhook: payment success processed");
-      res.status(200).json({ received: true, handled: true, result });
-      return;
-    }
-    if (eventType === "payment.failed") {
-      const payment = event.payload?.payment?.entity;
-      const rzpOrderId = payment?.order_id;
-      const paymentId = payment?.id ?? null;
-      const ourOrderId = await resolveOrderId(rzpOrderId, payment?.notes);
-      if (ourOrderId == null) {
-        req.log.warn({ eventType, rzpOrderId }, "Webhook: no matching order found");
-        res.status(200).json({ received: true, handled: false });
-        return;
-      }
-      const result = await markOrderFailed(ourOrderId, paymentId);
-      req.log.info({ eventType, orderId: ourOrderId, paymentId, result }, "Webhook: payment failure processed");
-      res.status(200).json({ received: true, handled: true, result });
-      return;
-    }
-    req.log.info({ eventType }, "Webhook: unhandled event type acknowledged");
-    res.status(200).json({ received: true, handled: false });
-  } catch (err) {
-    req.log.error({ err, eventType }, "Webhook processing failed");
-    res.status(500).json({ error: "Webhook processing failed" });
-  }
+  res.json({ upiEnabled: Boolean(upiId || upiQrImage), upiId, upiName, upiQrImage });
 });
 var payments_default = router22;
 
@@ -85030,13 +85084,7 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(
-  import_express25.default.json({
-    verify: (req, _res, buf) => {
-      req.rawBody = buf;
-    }
-  })
-);
+app.use(import_express25.default.json());
 app.use(import_express25.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 app.get("/", (_req, res) => {
