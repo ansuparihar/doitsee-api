@@ -1,29 +1,54 @@
-"use strict";
+const path = require("path");
+const express = require("express");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
-console.log("[doitsee-api] Booting Doitsee API Server...");
-console.log("[doitsee-api] Node version:", process.version);
-console.log("[doitsee-api] PORT:", process.env.PORT || "(not set, using 3000 fallback)");
-console.log("[doitsee-api] DATABASE_URL set:", process.env.DATABASE_URL ? "yes" : "NO - app will crash");
-console.log("[doitsee-api] SESSION_SECRET set:", process.env.SESSION_SECRET ? "yes" : "NO - app will crash");
+const app = express();
+const PORT = process.env.PORT || 3000;
+const API_UPSTREAM_URL = process.env.API_UPSTREAM_URL || "";
+const PUBLIC_DIR = path.join(__dirname, "public");
+const APP_NAME = "vendor-app";
 
-if (!process.env.PORT) {
-  process.env.PORT = "3000";
+app.disable("x-powered-by");
+
+if (API_UPSTREAM_URL) {
+  app.use(
+    "/api",
+    createProxyMiddleware({
+      target: API_UPSTREAM_URL,
+      changeOrigin: true,
+      xfwd: true,
+      logLevel: "warn",
+      pathRewrite: (p) => '/api' + p,
+    }),
+  );
+  console.log(`[${APP_NAME}] Proxying /api/* -> ${API_UPSTREAM_URL}`);
+} else {
+  console.warn(`[${APP_NAME}] API_UPSTREAM_URL is not set. /api requests will return 502.`);
+  app.use("/api", (_req, res) => {
+    res.status(502).json({
+      error: "API_UPSTREAM_URL is not configured on the server. Set it in your Hostinger Node.js app environment variables.",
+    });
+  });
 }
 
-process.on("uncaughtException", (err) => {
-  console.error("[doitsee-api] UNCAUGHT EXCEPTION:", err && err.stack ? err.stack : err);
-  process.exit(1);
-});
-process.on("unhandledRejection", (err) => {
-  console.error("[doitsee-api] UNHANDLED REJECTION:", err && err.stack ? err.stack : err);
-  process.exit(1);
+app.use(
+  express.static(PUBLIC_DIR, {
+    index: false,
+    maxAge: "1h",
+    setHeaders: (res, filePath) => {
+      if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  }),
+);
+
+app.get("*", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"));
 });
 
-import("./index.mjs")
-  .then(() => {
-    console.log("[doitsee-api] Bundle loaded successfully");
-  })
-  .catch((err) => {
-    console.error("[doitsee-api] FAILED TO LOAD BUNDLE:", err && err.stack ? err.stack : err);
-    process.exit(1);
-  });
+app.listen(PORT, () => {
+  console.log(`[${APP_NAME}] Listening on port ${PORT}`);
+});
+
