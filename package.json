@@ -1,13 +1,15 @@
 {
-  "name": "doitsee-vendor-app",
+  "name": "doitsee-api-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Doitsee - Vendor App - production server bundle for Hostinger Node.js hosting",
-  "main": "app.js",
-  "scripts": { "start": "node app.js" },
+  "description": "Doitsee API Server - production bundle for Hostinger Node.js hosting",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "engines": { "node": ">=18" },
   "dependencies": {
-    "express": "^4.21.2",
-    "http-proxy-middleware": "^3.0.3"
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.20.0"
   }
 }

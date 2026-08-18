@@ -72816,6 +72816,10 @@ var adminSettingsTable = pgTable("admin_settings", {
   id: serial("id").primaryKey(),
   commissionRate: numeric("commission_rate", { precision: 5, scale: 2 }).notNull().default("10"),
   deliveryBaseFee: numeric("delivery_base_fee", { precision: 10, scale: 2 }).notNull().default("20"),
+  // Small-order tier: orders with subtotal below smallOrderThreshold pay
+  // smallOrderDeliveryFee instead of deliveryBaseFee. Both admin-configurable.
+  smallOrderThreshold: numeric("small_order_threshold", { precision: 10, scale: 2 }).notNull().default("100"),
+  smallOrderDeliveryFee: numeric("small_order_delivery_fee", { precision: 10, scale: 2 }).notNull().default("5"),
   deliveryPerKmFee: numeric("delivery_per_km_fee", { precision: 10, scale: 2 }).notNull().default("5"),
   minOrderAmount: numeric("min_order_amount", { precision: 10, scale: 2 }).notNull().default("100"),
   maxDeliveryRadius: numeric("max_delivery_radius", { precision: 10, scale: 2 }).notNull().default("10"),
@@ -77928,6 +77932,9 @@ var GetPublicSettingsResponse = objectType({
   orderPhone: stringType().nullish(),
   callToOrderEnabled: booleanType().optional(),
   riderCashLimit: numberType().optional(),
+  deliveryBaseFee: numberType().optional(),
+  smallOrderThreshold: numberType().optional(),
+  smallOrderDeliveryFee: numberType().optional(),
   upiId: stringType().nullish(),
   upiName: stringType().nullish(),
   upiQrImage: stringType().nullish()
@@ -77936,8 +77943,8 @@ var SubmitOrderPaymentUtrParams = objectType({
   id: coerce.number()
 });
 var SubmitOrderPaymentUtrBody = objectType({
-  utr: stringType().describe(
-    "UPI transaction reference number (UTR / transaction ID) the customer sees after paying"
+  utr: stringType().optional().describe(
+    "Optional UPI transaction reference (UTR / transaction ID). Customers may confirm payment without it; admin verifies against the bank."
   )
 });
 var SubmitOrderPaymentUtrResponse = objectType({
@@ -78928,6 +78935,10 @@ var GetAdminSettingsResponse = objectType({
   orderPhone: stringType().nullish(),
   callToOrderEnabled: booleanType().optional(),
   riderCashLimit: numberType().optional(),
+  smallOrderThreshold: numberType().optional().describe(
+    "Orders with subtotal below this pay smallOrderDeliveryFee instead of deliveryBaseFee."
+  ),
+  smallOrderDeliveryFee: numberType().optional(),
   upiId: stringType().nullish(),
   upiName: stringType().nullish(),
   upiQrImage: stringType().nullish().describe(
@@ -78946,6 +78957,8 @@ var UpdateAdminSettingsBody = objectType({
   orderPhone: stringType().optional(),
   callToOrderEnabled: booleanType().optional(),
   riderCashLimit: numberType().optional(),
+  smallOrderThreshold: numberType().optional(),
+  smallOrderDeliveryFee: numberType().optional(),
   upiId: stringType().optional(),
   upiName: stringType().optional(),
   upiQrImage: stringType().nullish().describe(
@@ -78965,6 +78978,10 @@ var UpdateAdminSettingsResponse = objectType({
   orderPhone: stringType().nullish(),
   callToOrderEnabled: booleanType().optional(),
   riderCashLimit: numberType().optional(),
+  smallOrderThreshold: numberType().optional().describe(
+    "Orders with subtotal below this pay smallOrderDeliveryFee instead of deliveryBaseFee."
+  ),
+  smallOrderDeliveryFee: numberType().optional(),
   upiId: stringType().nullish(),
   upiName: stringType().nullish(),
   upiQrImage: stringType().nullish().describe(
@@ -82286,21 +82303,21 @@ router6.get("/vendors/:id/stats", authenticate, async (req, res) => {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
-  const orders = await db.select().from(ordersTable).where(eq(ordersTable.vendorId, id));
-  const completed = orders.filter((o) => o.status === "delivered");
-  const pending = orders.filter((o) => !["delivered", "cancelled"].includes(o.status));
-  const totalEarnings = completed.reduce((s2, o) => s2 + Number(o.total), 0);
   const now = /* @__PURE__ */ new Date();
-  const thisMonth = completed.filter((o) => {
-    const d = new Date(o.createdAt);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [agg] = await db.select({
+    totalOrders: sql`count(*)::int`,
+    completedOrders: sql`count(*) filter (where ${ordersTable.status} = 'delivered')::int`,
+    pendingOrders: sql`count(*) filter (where ${ordersTable.status} not in ('delivered','cancelled'))::int`,
+    totalEarnings: sql`coalesce(sum(${ordersTable.total}) filter (where ${ordersTable.status} = 'delivered'), 0)`,
+    thisMonthEarnings: sql`coalesce(sum(${ordersTable.total}) filter (where ${ordersTable.status} = 'delivered' and ${ordersTable.createdAt} >= ${monthStart}), 0)`
+  }).from(ordersTable).where(eq(ordersTable.vendorId, id));
   res.json({
-    totalEarnings,
-    totalOrders: orders.length,
-    pendingOrders: pending.length,
-    completedOrders: completed.length,
-    thisMonthEarnings: thisMonth.reduce((s2, o) => s2 + Number(o.total), 0),
+    totalEarnings: Number(agg?.totalEarnings ?? 0),
+    totalOrders: agg?.totalOrders ?? 0,
+    pendingOrders: agg?.pendingOrders ?? 0,
+    completedOrders: agg?.completedOrders ?? 0,
+    thisMonthEarnings: Number(agg?.thisMonthEarnings ?? 0),
     averageRating: Number(vendor.rating)
   });
 });
@@ -82580,9 +82597,13 @@ var products_default = router7;
 var import_express8 = __toESM(require_express2(), 1);
 var router8 = (0, import_express8.Router)();
 var carts = /* @__PURE__ */ new Map();
-function buildCartResponse(cart) {
-  const subtotal = cart.items.reduce((s2, i2) => s2 + i2.subtotal, 0);
-  const deliveryFee = subtotal > 0 ? 30 : 0;
+async function buildCartResponse(cart) {
+  const subtotal = cart.items.reduce((s3, i2) => s3 + i2.subtotal, 0);
+  const [s2] = await db.select().from(adminSettingsTable);
+  const smallThreshold = s2 ? Number(s2.smallOrderThreshold) : 100;
+  const smallFee = s2 ? Number(s2.smallOrderDeliveryFee) : 5;
+  const baseFee = s2 ? Number(s2.deliveryBaseFee) : 20;
+  const deliveryFee = subtotal > 0 ? subtotal < smallThreshold ? smallFee : baseFee : 0;
   return {
     vendorId: cart.vendorId,
     vendorName: cart.vendorName,
@@ -82591,12 +82612,12 @@ function buildCartResponse(cart) {
     deliveryFee,
     discount: 0,
     total: subtotal + deliveryFee,
-    itemCount: cart.items.reduce((s2, i2) => s2 + i2.quantity, 0)
+    itemCount: cart.items.reduce((s3, i2) => s3 + i2.quantity, 0)
   };
 }
 router8.get("/cart", authenticate, async (req, res) => {
   const cart = carts.get(req.user.id) || { vendorId: null, vendorName: null, items: [] };
-  res.json(buildCartResponse(cart));
+  res.json(await buildCartResponse(cart));
 });
 router8.delete("/cart", authenticate, async (req, res) => {
   carts.delete(req.user.id);
@@ -82647,7 +82668,7 @@ router8.post("/cart/items", authenticate, async (req, res) => {
     });
   }
   carts.set(req.user.id, cart);
-  res.json(buildCartResponse(cart));
+  res.json(await buildCartResponse(cart));
 });
 router8.patch("/cart/items/:productId", authenticate, async (req, res) => {
   const productId = parseInt(String(req.params.productId), 10);
@@ -82673,21 +82694,21 @@ router8.patch("/cart/items/:productId", authenticate, async (req, res) => {
   }
   if (cart.items.length === 0) {
     carts.delete(req.user.id);
-    res.json(buildCartResponse({ vendorId: null, vendorName: null, items: [] }));
+    res.json(await buildCartResponse({ vendorId: null, vendorName: null, items: [] }));
     return;
   }
-  res.json(buildCartResponse(cart));
+  res.json(await buildCartResponse(cart));
 });
 router8.delete("/cart/items/:productId", authenticate, async (req, res) => {
   const productId = parseInt(String(req.params.productId), 10);
   const cart = carts.get(req.user.id);
   if (!cart) {
-    res.json(buildCartResponse({ vendorId: null, vendorName: null, items: [] }));
+    res.json(await buildCartResponse({ vendorId: null, vendorName: null, items: [] }));
     return;
   }
   cart.items = cart.items.filter((i2) => i2.productId !== productId);
   if (cart.items.length === 0) carts.delete(req.user.id);
-  res.json(buildCartResponse(cart.items.length ? cart : { vendorId: null, vendorName: null, items: [] }));
+  res.json(await buildCartResponse(cart.items.length ? cart : { vendorId: null, vendorName: null, items: [] }));
 });
 var cart_default = router8;
 
@@ -82770,9 +82791,9 @@ async function getMyVendorIds(userId) {
   const rows = await db.select({ id: vendorsTable.id }).from(vendorsTable).where(eq(vendorsTable.userId, userId));
   return rows.map((r2) => r2.id);
 }
-async function getAdminUserIds() {
-  const admins = await db.select({ id: usersTable.id }).from(usersTable).where(and(eq(usersTable.role, "admin"), eq(usersTable.isActive, true)));
-  return admins.map((a) => a.id);
+async function getAdminUserIds(cityId) {
+  const admins = await db.select({ id: usersTable.id, role: usersTable.role, cityId: usersTable.cityId }).from(usersTable).where(and(inArray(usersTable.role, ["admin", "super_admin", "city_admin"]), eq(usersTable.isActive, true)));
+  return admins.filter((a) => a.role !== "city_admin" || cityId != null && a.cityId === cityId).map((a) => a.id);
 }
 async function sendNotifications(rows) {
   if (rows.length === 0) return;
@@ -83020,8 +83041,10 @@ router9.post("/orders", authenticate, async (req, res) => {
   if (clientOrderId && await respondExisting(clientOrderId)) return;
   let subtotal = 0;
   const orderItems = [];
+  const productRows = items.length ? await db.select().from(productsTable).where(inArray(productsTable.id, items.map((i2) => i2.productId))) : [];
+  const productById = new Map(productRows.map((p) => [p.id, p]));
   for (const item of items) {
-    const [product] = await db.select().from(productsTable).where(eq(productsTable.id, item.productId));
+    const product = productById.get(item.productId);
     if (!product) {
       res.status(404).json({ error: `Product ${item.productId} not found` });
       return;
@@ -83035,7 +83058,11 @@ router9.post("/orders", authenticate, async (req, res) => {
     subtotal += subtotalItem;
     orderItems.push({ productId: item.productId, name: product.name, image: product.images?.[0] ?? null, price, quantity: item.quantity, subtotal: subtotalItem });
   }
-  const deliveryFee = 30;
+  const [feeSettings] = await db.select().from(adminSettingsTable);
+  const smallThreshold = feeSettings ? Number(feeSettings.smallOrderThreshold) : 100;
+  const smallFee = feeSettings ? Number(feeSettings.smallOrderDeliveryFee) : 5;
+  const baseFee = feeSettings ? Number(feeSettings.deliveryBaseFee) : 20;
+  const deliveryFee = subtotal < smallThreshold ? smallFee : baseFee;
   const total = subtotal + deliveryFee;
   if (paymentMethod === "wallet") {
     const [me] = await db.select().from(usersTable).where(eq(usersTable.id, req.user.id));
@@ -83312,11 +83339,12 @@ router9.patch("/orders/:id/status", authenticate, async (req, res) => {
 });
 router9.post("/orders/:id/payment-utr", authenticate, async (req, res) => {
   const id = parseInt(String(req.params.id), 10);
-  const utr = String(req.body?.utr ?? "").trim();
-  if (!/^[A-Za-z0-9-]{6,30}$/.test(utr)) {
+  const utrRaw = String(req.body?.utr ?? "").trim();
+  if (utrRaw && !/^[A-Za-z0-9-]{6,30}$/.test(utrRaw)) {
     res.status(400).json({ error: "Sahi UTR / transaction ID daalein (6-30 letters/numbers)" });
     return;
   }
+  const utr = utrRaw || "CUSTOMER_CONFIRMED";
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
   if (!order) {
     res.status(404).json({ error: "Not found" });
@@ -83336,23 +83364,30 @@ router9.post("/orders/:id/payment-utr", authenticate, async (req, res) => {
   }
   const [updated] = await db.update(ordersTable).set({ razorpayPaymentId: utr }).where(eq(ordersTable.id, id)).returning();
   try {
-    const adminIds = await getAdminUserIds();
+    const adminIds = await getAdminUserIds(order.cityId);
     const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, order.vendorId));
     const data = { orderId: order.id, utr };
+    const utrNote = utrRaw ? ` (UTR: ${utrRaw})` : "";
     const rows = adminIds.map((uid) => ({
       userId: uid,
       title: "UPI payment - confirm karein",
-      message: `Order #${order.id}: customer ne UPI payment kar di (UTR: ${utr}). Bank me check karke confirm karein.`,
+      message: `Order #${order.id}: customer ne UPI payment kar di${utrNote}. Bank me check karke confirm karein.`,
       data
     }));
     if (vendor?.userId) {
       rows.push({
         userId: vendor.userId,
-        title: "Payment reference mila",
-        message: `Order #${order.id} ke liye customer ne UPI payment ka UTR bhej diya hai. Admin confirm karega.`,
+        title: "Payment ho gayi (confirm hona baaki)",
+        message: `Order #${order.id} ke liye customer ne UPI payment kar di hai. Admin bank me check karke confirm karega.`,
         data
       });
     }
+    rows.push({
+      userId: order.customerId,
+      title: "Order ho gaya! \u{1F389}",
+      message: `Order #${order.id} mil gaya hai \u2014 payment ki jaankari store ko bhej di gayi hai. Confirm hote hi update milega.`,
+      data
+    });
     if (rows.length) {
       await db.insert(notificationsTable).values(
         rows.map((r2) => ({ userId: r2.userId, title: r2.title, message: r2.message, type: "payment", data: r2.data }))
@@ -84342,7 +84377,7 @@ function toNotif(n) {
   return { id: n.id, userId: n.userId, title: n.title, message: n.message, type: n.type, isRead: n.isRead, createdAt: n.createdAt.toISOString() };
 }
 router16.get("/notifications", authenticate, async (req, res) => {
-  const notifs = await db.select().from(notificationsTable).where(eq(notificationsTable.userId, req.user.id));
+  const notifs = await db.select().from(notificationsTable).where(eq(notificationsTable.userId, req.user.id)).orderBy(desc(notificationsTable.createdAt), desc(notificationsTable.id)).limit(100);
   res.json(notifs.map(toNotif));
 });
 router16.patch("/notifications/:id/read", authenticate, async (req, res) => {
@@ -84398,6 +84433,8 @@ function toSettings(s2) {
     orderPhone: s2.orderPhone,
     callToOrderEnabled: s2.callToOrderEnabled,
     riderCashLimit: Number(s2.riderCashLimit),
+    smallOrderThreshold: Number(s2.smallOrderThreshold),
+    smallOrderDeliveryFee: Number(s2.smallOrderDeliveryFee),
     upiId: s2.upiId,
     upiName: s2.upiName,
     upiQrImage: s2.upiQrImage
@@ -84592,6 +84629,8 @@ router17.patch("/admin/settings", authenticate, requireRole("admin"), async (req
   if (body.data.minOrderAmount != null) updateData.minOrderAmount = String(body.data.minOrderAmount);
   if (body.data.maxDeliveryRadius != null) updateData.maxDeliveryRadius = String(body.data.maxDeliveryRadius);
   if (body.data.riderCashLimit != null) updateData.riderCashLimit = String(body.data.riderCashLimit);
+  if (body.data.smallOrderThreshold != null) updateData.smallOrderThreshold = String(body.data.smallOrderThreshold);
+  if (body.data.smallOrderDeliveryFee != null) updateData.smallOrderDeliveryFee = String(body.data.smallOrderDeliveryFee);
   if (!settings) {
     [settings] = await db.insert(adminSettingsTable).values({ ...updateData }).returning();
   } else {
@@ -85028,6 +85067,9 @@ router23.get("/public/settings", async (_req, res) => {
     orderPhone: s2?.orderPhone ?? null,
     callToOrderEnabled: s2?.callToOrderEnabled ?? false,
     riderCashLimit: s2 ? Number(s2.riderCashLimit) : 2e3,
+    deliveryBaseFee: s2 ? Number(s2.deliveryBaseFee) : 20,
+    smallOrderThreshold: s2 ? Number(s2.smallOrderThreshold) : 100,
+    smallOrderDeliveryFee: s2 ? Number(s2.smallOrderDeliveryFee) : 5,
     upiId: s2?.upiId ?? null,
     upiName: s2?.upiName ?? null,
     upiQrImage: s2?.upiQrImage ?? null
